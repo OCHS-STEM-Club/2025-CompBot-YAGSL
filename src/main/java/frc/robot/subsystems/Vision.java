@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -109,6 +111,7 @@ public class Vision
    *                    itself correctly.
    * @return The target pose of the AprilTag.
    */
+  @AutoLogOutput
   public static Pose2d getAprilTagPose(int aprilTag, Transform2d robotOffset)
   {
     Optional<Pose3d> aprilTagPose3d = fieldLayout.getTagPose(aprilTag);
@@ -338,25 +341,25 @@ public class Vision
     /**
      * Left Camera
      */
-    LEFT_CAM("left",
-             new Rotation3d(0, Math.toRadians(-24.094), Math.toRadians(30)),
-             new Translation3d(Units.inchesToMeters(12.056),
-                               Units.inchesToMeters(10.981),
-                               Units.inchesToMeters(8.44)),
-             VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
-    /**
-     * Right Camera
-     */
-    RIGHT_CAM("right",
-              new Rotation3d(0, Math.toRadians(-24.094), Math.toRadians(-30)),
-              new Translation3d(Units.inchesToMeters(12.056),
-                                Units.inchesToMeters(-10.981),
-                                Units.inchesToMeters(8.44)),
-              VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
+    // LEFT_CAM("left",
+    //          new Rotation3d(0, Math.toRadians(-24.094), Math.toRadians(30)),
+    //          new Translation3d(Units.inchesToMeters(12.056),
+    //                            Units.inchesToMeters(10.981),
+    //                            Units.inchesToMeters(8.44)),
+    //          VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
+    // /**
+    //  * Right Camera
+    //  */
+    // RIGHT_CAM("right",
+    //           new Rotation3d(0, Math.toRadians(-24.094), Math.toRadians(-30)),
+    //           new Translation3d(Units.inchesToMeters(12.056),
+    //                             Units.inchesToMeters(-10.981),
+    //                             Units.inchesToMeters(8.44)),
+    //           VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
     /**
      * Center Camera
      */
-    CENTER_CAM("center",
+    CENTER_CAM("Center",
                new Rotation3d(0, Units.degreesToRadians(18), 0),
                new Translation3d(Units.inchesToMeters(-4.628),
                                  Units.inchesToMeters(-10.687),

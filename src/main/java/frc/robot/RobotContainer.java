@@ -36,7 +36,7 @@ public class RobotContainer
   // Controller definitions
   final CommandXboxController m_driverController = new CommandXboxController(0);
   // Subsystem definitions
-  private final SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/neo"));
+  private final SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -44,7 +44,7 @@ public class RobotContainer
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_swerveSubsystem.getSwerveDrive(),
                                                                 () -> m_driverController.getLeftY() * -1,
                                                                 () -> m_driverController.getLeftX() * -1)
-                                                            .withControllerRotationAxis(() -> m_driverController.getRightX() * 1)
+                                                            .withControllerRotationAxis(() -> m_driverController.getRightX() * -1)
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -106,6 +106,10 @@ public class RobotContainer
           m_swerveSubsystem.driveToPose(
               new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
                               );
+
+      m_driverController.a().onTrue(
+        Commands.runOnce(m_swerveSubsystem :: zeroGyro)
+      );
     }
 
   }
