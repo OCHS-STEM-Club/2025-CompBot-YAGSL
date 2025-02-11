@@ -48,4 +48,67 @@ public final class Constants
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
   }
+
+  public static class EndEffectorConstants 
+  {
+    // End Effector IDs
+    public static final int kEndEffectorIntakeID = 23;
+    public static final int kEndEffectorPivotID = 22;
+    // End Effector Speeds
+    public static final double kEndEffectorSpeed = 0.5;
+    public static final double kPivotSpeed = 0.15;
+    // End Effector Current Spike
+    public static final double kEndEffectorCurrentSpike = 10;
+    // End Effector PID Values
+    public static final double kEndEffectorPivotPIDValueP = 0;
+    public static final double kEndEffectorPivotPIDValueI = 0;
+    public static final double kEndEffectorPivotPIDValueD = 0;
+    // End Effector Beam Break ID
+    public static final int kEndEffectorBeamBreakPort = 0;
+    // End Effector Pivot Encoder DIO Port
+    public static final int kEndEffectorPivotEncoderPort = 1;
+
+  }
+
+  public static class CoralGroundIntakeConstants 
+  {
+    // Coral Ground Intake IDs
+    public static final int kCoralGroundIntakeID = 21;
+    public static final int kCoralGroundPivotID = 20;
+    // Coral Ground Intake Speeds
+    public static final double kCoralGroundIntakeSpeed = 0.25;
+    public static final double kCoralGroundPivotSpeed = 0.25;
+    // Coral Ground Intake PID Values
+    public static final double kCoralGroundPivotPIDValueP = 0;
+    public static final double kCoralGroundPivotPIDValueI = 0;
+    public static final double kCoralGroundPivotPIDValueD = 0;
+    // Coral Ground Beam Break ID
+    public static final int kCoralGroundBeamBreakPort = 2;
+    // Coral Ground Pivot Encoder DIO Port
+    public static final int kCoralGroundPivotEncoderPort = 3;
+
+  }
+
+  public static class ElevatorConstants{
+    // Elevator Motor IDs
+    public static final int kElevatorRightMotorID = 18;
+    public static final int kElevatorLeftMotorID = 19;
+
+    // Elevator PID Values
+    public static final double kElevatorPIDValueP = 0;
+    public static final double kElevatorPIDValueI = 0;
+    public static final double kElevatorPIDValueD = 0;
+    public static final double kElevatorPIDValueS = 0;
+    public static final double kElevatorPIDValueV = 0;
+    public static final double kElevatorPIDValueA = 0;
+    public static final double kElevatorPIDValueG = 0;
+    // Sensor To Mechanism Ratio
+    public static final double kElevatorSensorToMechRatio = 0;
+    // Motion Magic Configs
+    public static final double kElevatorMotionMagicAcceleration = 0;
+    public static final double kElevatorMotionMagicCruiseVelocity = 0;
+    // Elevator Speed
+    public static final double kElevatorSpeed = 0.25;
+
+  }
 }
