@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.*;
+
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -28,6 +31,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   private TalonFX intakePivot;
   // Intake Configs
   private TalonFXSConfiguration intakeConfigs;
+  // Pivot Configs
   private TalonFXConfiguration pivotConfigs;
   // Pivot Encoder
   private DutyCycleEncoder pivotEncoder;
@@ -74,11 +78,13 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   // Coral Ground Intake
   public void coralIntake() {
     coralIntake.set(CoralGroundIntakeConstants.kCoralGroundIntakeSpeed);
+  
   }
 
   // Coral Ground Outtake
   public void coralOuttake() {
     coralIntake.set(-CoralGroundIntakeConstants.kCoralGroundIntakeSpeed);
+
   }
 
   // Coral Ground Intake Stop

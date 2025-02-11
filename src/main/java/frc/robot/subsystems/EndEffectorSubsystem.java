@@ -4,20 +4,27 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.*;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.EndEffectorConstants;
 
 public class EndEffectorSubsystem extends SubsystemBase {
@@ -40,6 +47,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
   // Pivot PID Controller
   private PIDController pivotPIDController;
+
+  private VoltageOut voltageRequest;
 
   public EndEffectorSubsystem() {
     // End Effector Intake
@@ -74,6 +83,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
     pivotPIDController = new PIDController(EndEffectorConstants.kEndEffectorPivotPIDValueP, 
                                            EndEffectorConstants.kEndEffectorPivotPIDValueI, 
                                            EndEffectorConstants.kEndEffectorPivotPIDValueD);
+    // Sys id voltage request
+    voltageRequest = new VoltageOut(0);
   }
 
 
@@ -141,6 +152,30 @@ public class EndEffectorSubsystem extends SubsystemBase {
   // End Effector Pivot Position Control
   public void setEndEffectorPivotPosition(double position) {
     endEffectorPivot.set(pivotPIDController.calculate(pivotEncoder.get(), position));
+  }
+
+  private final SysIdRoutine m_sysIdRoutine =
+    new SysIdRoutine(
+        new SysIdRoutine.Config(
+          null,         // Use default ramp rate (1 V/s)
+          Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
+          Seconds.of(4),           // Use default timeout (10 s)
+                                          // Log state with Phoenix SignalLogger class
+          (state) -> SignalLogger.writeString("End Effector State", state.toString())
+        ),
+        new SysIdRoutine.Mechanism(
+          (volts) -> endEffectorPivot.setControl(voltageRequest.withOutput(volts.in(Volts))),
+          null,
+          this
+        )
+    );
+
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.dynamic(direction);
   }
 
 

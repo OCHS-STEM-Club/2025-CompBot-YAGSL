@@ -4,11 +4,10 @@
 
 package frc.robot;
 
+import java.io.File;
+
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -18,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.CoralGroundIntake.Intake.Manual.CoralGroundManualIntake;
 import frc.robot.commands.CoralGroundIntake.Intake.Manual.CoralGroundManualOuttake;
@@ -33,8 +33,6 @@ import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-
-import java.io.File;
 import swervelib.SwerveInputStream;
 
 /**
@@ -47,7 +45,25 @@ public class RobotContainer
   private final SendableChooser<Command> autoChooser;
 
   // Controller definitions
-  final CommandXboxController m_driverController = new CommandXboxController(0);
+  CommandXboxController m_driverController = new CommandXboxController(0);
+
+
+
+  private final Trigger DRIVER_A_BUTTON = new Trigger(() -> m_driverController.getHID().getAButton());
+  private final Trigger DRIVER_B_BUTTON = new Trigger(() -> m_driverController.getHID().getBButton());
+  private final Trigger DRIVER_X_BUTTON = new Trigger(() -> m_driverController.getHID().getXButton());
+  private final Trigger DRIVER_Y_BUTTON = new Trigger(() -> m_driverController.getHID().getYButton());
+
+  private final Trigger DRIVER_POV_UP = new Trigger(m_driverController.povUp());
+  private final Trigger DRIVER_POV_DOWN = new Trigger(m_driverController.povDown());
+  private final Trigger DRIVER_POV_LEFT = new Trigger(m_driverController.povLeft());
+  private final Trigger DRIVER_POV_RIGHT = new Trigger(m_driverController.povRight());
+
+  private final Trigger DRIVER_LEFT_TRIGGER = new Trigger(m_driverController.leftTrigger());
+  private final Trigger DRIVER_RIGHT_TRIGGER = new Trigger(m_driverController.rightTrigger());
+  private final Trigger DRIVER_LEFT_BUMPER = new Trigger(m_driverController.leftBumper());
+  private final Trigger DRIVER_RIGHT_BUMPER = new Trigger(m_driverController.rightBumper());
+
   // Subsystem definitions
   SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
   EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem();
@@ -126,7 +142,6 @@ public class RobotContainer
     if (Robot.isSimulation())
     {
       // Simulation driver bindings
-      m_driverController.start().onTrue(Commands.runOnce(() -> m_swerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
       
 
     }
@@ -138,49 +153,55 @@ public class RobotContainer
 
     } else
     {
-      m_driverController.a().onTrue(
+      DRIVER_A_BUTTON.onTrue(
         Commands.runOnce(m_swerveSubsystem :: zeroGyro)
       );
 
-      m_driverController.povUp().whileTrue(
+      DRIVER_POV_UP.whileTrue(
         m_elevatorManualUp
       );
 
-      m_driverController.povDown().whileTrue(
+      DRIVER_POV_DOWN.whileTrue(
         m_elevatorManualDown
       );
 
-      m_driverController.povRight().whileTrue(
+      DRIVER_POV_RIGHT.whileTrue(
         m_endEffectorManualPivotUp
       );
 
-      m_driverController.povLeft().whileTrue(
+      DRIVER_POV_LEFT.whileTrue(
         m_endEffectorManualPivotDown
       );
 
-      m_driverController.leftBumper().whileTrue(
+      DRIVER_LEFT_BUMPER.whileTrue(
         m_endEffectorManualIntake
       );
 
-      m_driverController.rightBumper().whileTrue(
+      DRIVER_RIGHT_BUMPER.whileTrue(
         m_endEffectorManualOuttake
       );
 
-      m_driverController.y().whileTrue(
+      DRIVER_Y_BUTTON.whileTrue(
         m_coralGroundManualPivotUp
       );
 
-      m_driverController.x().whileTrue(
+      DRIVER_X_BUTTON.whileTrue(
         m_coralGroundManualPivotDown
       );
 
-      m_driverController.leftTrigger().whileTrue(
+      DRIVER_LEFT_TRIGGER.whileTrue(
         m_coralGroundManualIntake
       );
 
-      m_driverController.rightTrigger().whileTrue(
+      DRIVER_RIGHT_TRIGGER.whileTrue(
         m_coralGroundManualOuttake
       );
+
+
+      // m_driverController.y().whileTrue(m_endEffectorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+      // m_driverController.a().whileTrue(m_endEffectorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+      // m_driverController.b().whileTrue(m_endEffectorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+      // m_driverController.x().whileTrue(m_endEffectorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
       
 
   }
