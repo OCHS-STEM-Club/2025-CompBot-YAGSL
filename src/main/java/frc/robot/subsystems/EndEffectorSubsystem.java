@@ -13,8 +13,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -80,22 +78,22 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
 
   // End Effector Intake
-  public void endEffectorIntake() {
+  public void rollersIntake() {
     endEffectorIntake.set(EndEffectorConstants.kEndEffectorSpeed);
   }
 
   // End Effector Outtake
-  public void endEffectorOuttake() {
+  public void rollersOuttake() {
     endEffectorIntake.set(-EndEffectorConstants.kEndEffectorSpeed);
   }
 
   // End Effector Stop
-  public void endEffectorStop() {
+  public void rollersStop() {
     endEffectorIntake.set(0);
   }
 
   // Intake with current spike detection
-  public void intakeCoral() {
+  public void intakeCoralWithCurrentSpikeDetection() {
     if (endEffectorIntake.getSupplyCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike) {
       endEffectorIntake.set(0);
     } else {
@@ -104,7 +102,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   }
 
   // Intake with beam break detection
-  public void intakeAlgae() {
+  public void intakeAlgaeWithBeamBreak() {
     if (intakeBeamBreak.get()) {
       endEffectorIntake.set(0);
     } else {
@@ -141,7 +139,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   } 
 
   // End Effector Pivot Position Control
-  public void setPivotPosition(double position) {
+  public void setEndEffectorPivotPosition(double position) {
     endEffectorPivot.set(pivotPIDController.calculate(pivotEncoder.get(), position));
   }
 

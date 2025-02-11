@@ -29,7 +29,7 @@ public class EndEffectorManualPivotDown extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_endEffectorSubsystem.endEffectorStop();
+    m_endEffectorSubsystem.EndEffectorPivotStop();
   }
 
   // Returns true when the command should end.

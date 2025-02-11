@@ -87,7 +87,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   }
 
   // Intake Coral with Beam Break
-  public void intakeCoralWithBeamBreak(){
+  public void coralIntakeWithBeamBreak(){
     if(intakeBeamBreak.get()){
       coralIntake.set(CoralGroundIntakeConstants.kCoralGroundIntakeSpeed);
     }else{
@@ -117,7 +117,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   }
 
   // Intake Pivot Position
-  public void intakePivotPosition(double position){
+  public void setIntakePivotPosition(double position){
     intakePivot.set(pivotPIDController.calculate(pivotEncoder.get(), position));
   }
 
