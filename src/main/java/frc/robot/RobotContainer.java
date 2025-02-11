@@ -44,9 +44,9 @@ public class RobotContainer
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_swerveSubsystem.getSwerveDrive(),
                                                                 () -> m_driverController.getLeftY() * -1,
                                                                 () -> m_driverController.getLeftX() * -1)
-                                                            .withControllerRotationAxis(() -> m_driverController.getRightX() * -1)
+                                                            .withControllerRotationAxis(() -> m_driverController.getRightX() * 1)
                                                             .deadband(OperatorConstants.DEADBAND)
-                                                            .scaleTranslation(0.8)
+                                                            .scaleTranslation(0.4)
                                                             .allianceRelativeControl(true);
 
   /**
@@ -90,7 +90,7 @@ public class RobotContainer
     {
       // Simulation driver bindings
       m_driverController.start().onTrue(Commands.runOnce(() -> m_swerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-  
+      
 
     }
     if (DriverStation.isTest())
@@ -107,9 +107,11 @@ public class RobotContainer
               new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
                               );
 
+      m_driverController.x().whileTrue(m_swerveSubsystem.sysIdDriveMotorCommand());
+      m_driverController.b().whileTrue(m_swerveSubsystem.sysIdAngleMotorCommand());
+
       m_driverController.a().onTrue(
-        Commands.runOnce(m_swerveSubsystem :: zeroGyro)
-      );
+        Commands.runOnce(m_swerveSubsystem :: zeroGyro));
     }
 
   }
