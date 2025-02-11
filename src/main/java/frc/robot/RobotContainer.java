@@ -198,10 +198,10 @@ public class RobotContainer
       );
 
 
-      // m_driverController.y().whileTrue(m_endEffectorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-      // m_driverController.a().whileTrue(m_endEffectorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-      // m_driverController.b().whileTrue(m_endEffectorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-      // m_driverController.x().whileTrue(m_endEffectorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+      // DRIVER_Y_BUTTON.whileTrue(m_endEffectorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+      // DRIVER_A_BUTTON.whileTrue(m_endEffectorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+      // DRIVER_B_BUTTON.whileTrue(m_endEffectorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+      // DRIVER_X_BUTTON.whileTrue(m_endEffectorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
       
 
   }

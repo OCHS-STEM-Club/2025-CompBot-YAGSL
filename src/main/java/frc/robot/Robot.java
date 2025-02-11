@@ -32,7 +32,7 @@ public class Robot extends LoggedRobot
 
   private RobotContainer m_robotContainer;
 
-  private Timer disabledTimer;
+  // private Timer disabledTimer;
 
   public Robot()
   {
@@ -65,7 +65,7 @@ public class Robot extends LoggedRobot
 
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
-    disabledTimer = new Timer();
+    // disabledTimer = new Timer();
 
     if (isSimulation())
     {
@@ -97,15 +97,15 @@ public class Robot extends LoggedRobot
   public void disabledInit()
   {
     m_robotContainer.setMotorBrake(true);
-    disabledTimer.reset();
-    disabledTimer.start();
+    // disabledTimer.reset();
+    // disabledTimer.start();
   }
 
   @Override
   public void disabledPeriodic()
   {
-      m_robotContainer.setMotorBrake(false);
-      disabledTimer.stop();
+      // m_robotContainer.setMotorBrake(false);
+      // disabledTimer.stop();
   }
 
   /**
