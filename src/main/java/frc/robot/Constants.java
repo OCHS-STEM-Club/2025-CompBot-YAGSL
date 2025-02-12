@@ -43,9 +43,9 @@ public final class Constants
   {
 
     // Joystick Deadband
-    public static final double DEADBAND        = 0.1;
-    public static final double LEFT_Y_DEADBAND = 0.1;
-    public static final double RIGHT_X_DEADBAND = 0.1;
+    public static final double DEADBAND        = 0.2;
+    public static final double LEFT_Y_DEADBAND = 0.2;
+    public static final double RIGHT_X_DEADBAND = 0.2;
     public static final double TURN_CONSTANT    = 6;
   }
 
@@ -55,18 +55,18 @@ public final class Constants
     public static final int kEndEffectorIntakeID = 23;
     public static final int kEndEffectorPivotID = 22;
     // End Effector Speeds
-    public static final double kEndEffectorSpeed = 0.5;
+    public static final double kEndEffectorSpeed = 0.75;
     public static final double kPivotSpeed = 0.15;
     // End Effector Current Spike
-    public static final double kEndEffectorCurrentSpike = 10;
+    public static final double kEndEffectorCurrentSpike = 110;
     // End Effector PID Values
     public static final double kEndEffectorPivotPIDValueP = 0;
     public static final double kEndEffectorPivotPIDValueI = 0;
     public static final double kEndEffectorPivotPIDValueD = 0;
     // End Effector Beam Break ID
-    public static final int kEndEffectorBeamBreakPort = 0;
+    // public static final int kEndEffectorBeamBreakPort = ;
     // End Effector Pivot Encoder DIO Port
-    public static final int kEndEffectorPivotEncoderPort = 1;
+    public static final int kEndEffectorPivotEncoderPort = 3;
 
   }
 
@@ -83,9 +83,9 @@ public final class Constants
     public static final double kCoralGroundPivotPIDValueI = 0;
     public static final double kCoralGroundPivotPIDValueD = 0;
     // Coral Ground Beam Break ID
-    public static final int kCoralGroundBeamBreakPort = 2;
+    // public static final int kCoralGroundBeamBreakPort = null;
     // Coral Ground Pivot Encoder DIO Port
-    public static final int kCoralGroundPivotEncoderPort = 3;
+    public static final int kCoralGroundPivotEncoderPort = 9;
 
   }
 
@@ -108,7 +108,7 @@ public final class Constants
     public static final double kElevatorMotionMagicAcceleration = 0;
     public static final double kElevatorMotionMagicCruiseVelocity = 0;
     // Elevator Speed
-    public static final double kElevatorSpeed = 0.25;
+    public static final double kElevatorSpeed = 0.15;
 
   }
 }

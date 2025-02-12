@@ -9,12 +9,14 @@ import static edu.wpi.first.units.Units.*;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.ctre.phoenix6.configs.CommutationConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -36,7 +38,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   // Pivot Encoder
   private DutyCycleEncoder pivotEncoder;
   // Intake Beam Break
-  private DigitalInput intakeBeamBreak;
+  // private DigitalInput intakeBeamBreak;
   // Pivot PID Controller
   private PIDController pivotPIDController;
 
@@ -47,7 +49,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     intakePivot = new TalonFX(CoralGroundIntakeConstants.kCoralGroundPivotID);
 
     // Intake Beam Break
-    intakeBeamBreak = new DigitalInput(CoralGroundIntakeConstants.kCoralGroundBeamBreakPort);
+    // intakeBeamBreak = new DigitalInput(CoralGroundIntakeConstants.kCoralGroundBeamBreakPort);
     // Pivot Encoder
     pivotEncoder = new DutyCycleEncoder(CoralGroundIntakeConstants.kCoralGroundPivotEncoderPort);
 
@@ -55,7 +57,10 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     intakeConfigs = new TalonFXSConfiguration()
                         .withMotorOutput(new MotorOutputConfigs()
                                               .withInverted(InvertedValue.Clockwise_Positive)
-                                              .withNeutralMode(NeutralModeValue.Brake));
+                                              .withNeutralMode(NeutralModeValue.Brake))
+                        .withCommutation(new CommutationConfigs()
+                                              .withMotorArrangement(MotorArrangementValue.Minion_JST));
+
     // Apply Intake Configs
     coralIntake.getConfigurator().apply(intakeConfigs);
 
@@ -71,19 +76,22 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     pivotPIDController = new PIDController( CoralGroundIntakeConstants.kCoralGroundPivotPIDValueP, 
                                             CoralGroundIntakeConstants.kCoralGroundPivotPIDValueI,
                                             CoralGroundIntakeConstants.kCoralGroundPivotPIDValueD);
+
+    pivotEncoder.setDutyCycleRange(0, 1);
+    pivotEncoder.setAssumedFrequency(975.6);
     
   }
 
   
   // Coral Ground Intake
   public void coralIntake() {
-    coralIntake.set(CoralGroundIntakeConstants.kCoralGroundIntakeSpeed);
+    coralIntake.set(0.5);
   
   }
 
   // Coral Ground Outtake
   public void coralOuttake() {
-    coralIntake.set(-CoralGroundIntakeConstants.kCoralGroundIntakeSpeed);
+    coralIntake.set(-0.5);
 
   }
 
@@ -93,19 +101,19 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   }
 
   // Intake Coral with Beam Break
-  public void coralIntakeWithBeamBreak(){
-    if(intakeBeamBreak.get()){
-      coralIntake.set(CoralGroundIntakeConstants.kCoralGroundIntakeSpeed);
-    }else{
-      coralIntake.set(0);
-    }
-  }
+  // public void coralIntakeWithBeamBreak(){
+  //   if(intakeBeamBreak.get()){
+  //     coralIntake.set(CoralGroundIntakeConstants.kCoralGroundIntakeSpeed);
+  //   }else{
+  //     coralIntake.set(0);
+  //   }
+  // }
 
   // Does the Coral Ground Intake have a Coral?
-  @AutoLogOutput(key = "Subsystems/CoralGroundIntakeSubsystem/Intake/HasCoral?")
-  public boolean hasCoral(){
-    return intakeBeamBreak.get();
-  }
+  // @AutoLogOutput(key = "Subsystems/CoralGroundIntakeSubsystem/Intake/HasCoral?")
+  // public boolean hasCoral(){
+  //   return intakeBeamBreak.get();
+  // }
 
   // Intake Pivot Up
   public void intakePivotUp(){
@@ -158,10 +166,21 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     return coralIntake.getSupplyCurrent().getValueAsDouble();
   }
 
+  // get intake pivot encoder 
+  @AutoLogOutput(key = "Subsystems/CoralGroundIntakeSubsystem/IntakePivot/CoralGroundPivotEncoder")
+  public double getIntakePivotEncoder(){
+    return pivotEncoder.get();
+  }
+
+  // is the pivot encoder connected?
+  @AutoLogOutput(key = "Subsystems/CoralGroundIntakeSubsystem/IntakePivot/isCoralGroundPivotEncoderConnected?")
+  public boolean isIntakePivotEncoderConnected(){
+    return pivotEncoder.isConnected();
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("Subsystems/CoralGroundIntakeSubsystem/Intake/CoralGroundIntakeHasCoral?", hasCoral());
+    // SmartDashboard.putBoolean("Subsystems/CoralGroundIntakeSubsystem/Intake/CoralGroundIntakeHasCoral?", hasCoral());
     SmartDashboard.putNumber("Subsystems/CoralGroundIntakeSubsystem/IntakePivot/CoralGroundPivotPosition", getIntakePivotPosition());
     SmartDashboard.putNumber("Subsystems/CoralGroundIntakeSubsystem/IntakePivot/CoralGroundPivotVelocity", getIntakePivotVelocity());
     SmartDashboard.putNumber("Subsystems/CoralGroundIntakeSubsystem/IntakePivot/CoralGroundPivotCurrent", getIntakePivotCurrent());

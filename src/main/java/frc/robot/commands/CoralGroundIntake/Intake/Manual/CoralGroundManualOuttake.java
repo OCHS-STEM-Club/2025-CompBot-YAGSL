@@ -25,6 +25,7 @@ public class CoralGroundManualOuttake extends Command {
   @Override
   public void execute() {
     m_coralGroundIntakeSubsystem.coralOuttake();
+    System.out.println("Coral Ground Outtake Running");
   }
 
   // Called once the command ends or is interrupted.

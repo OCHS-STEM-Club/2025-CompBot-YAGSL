@@ -24,6 +24,7 @@ import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
@@ -41,6 +42,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private MotionMagicVoltage elevatorPositionRequest;
   // Last Desired Position
   private Distance lastDesiredPosition;
+
+  private DigitalInput elevatorTopLimit;
 
   public ElevatorSubsystem() {
     // Elevator Motors
@@ -77,6 +80,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Apply elevatorConfigs
     elevatorLeftLeaderMotor.getConfigurator().apply(elevatorConfigs);
     elevatorRightFollowerMotor.getConfigurator().apply(elevatorConfigs);
+
+    // Set Elevator Top Limit
+    elevatorTopLimit = new DigitalInput(6);
 
 
     }
@@ -134,6 +140,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   public boolean isAtSetpoint() {
     return (getElevatorPosition().compareTo(getLastDesiredPosition().minus(Units.Inches.of(0.5))) > 0) &&
             getElevatorPosition().compareTo(getLastDesiredPosition().plus(Units.Inches.of(0.5))) < 0;
+  }
+  // is at Bottom Limit?
+  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtTopLimit?")
+  public boolean isAtTopLimit() {
+    return elevatorTopLimit.get();
   }
 
   @Override
