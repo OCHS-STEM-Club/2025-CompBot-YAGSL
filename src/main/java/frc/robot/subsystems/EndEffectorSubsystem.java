@@ -16,6 +16,7 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.PWM1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -47,22 +48,21 @@ public class EndEffectorSubsystem extends SubsystemBase {
   private TalonFXSConfiguration intakeConfigs;
   // Pivot Configs
   private TalonFXConfiguration pivotConfigs;
-  
+
   // Intake Beam Break
-  // private DigitalInput intakeBeamBreak;
-  // Pivot Encoder
-  private DutyCycleEncoder pivotEncoder;
+  private DigitalInput intakeBeamBreak;
 
   // Pivot PID Controller
   private PIDController pivotPIDController;
 
-  private VoltageOut voltageRequest;
-
-  private DigitalInput input;
+  // Voltage Request
+  private VoltageOut m_voltageRequest;
 
   private CANdi canDi;
 
   private CANdiConfiguration canDiConfigs;
+
+  private PositionVoltage m_positionRequest;
 
   public EndEffectorSubsystem() {
     // End Effector Intake
@@ -70,19 +70,17 @@ public class EndEffectorSubsystem extends SubsystemBase {
     // End Effector Pivot
     endEffectorPivot = new TalonFX(EndEffectorConstants.kEndEffectorPivotID);
 
-    input  = new DigitalInput(3);
     // Intake Beam Break
-    // intakeBeamBreak = new DigitalInput(EndEffectorConstants.kEndEffectorBeamBreakPort);
+    intakeBeamBreak = new DigitalInput(EndEffectorConstants.kEndEffectorBeamBreakPort);
 
-    // Pivot Encoder
-    pivotEncoder = new DutyCycleEncoder(input);
+    // CANdi 
+    canDi = new CANdi(EndEffectorConstants.kCANdiID);
 
-    canDi = new CANdi(26);
-
+    // CANdi Configs
     canDiConfigs = new CANdiConfiguration()
                         .withPWM1(new PWM1Configs()
-                                      .withAbsoluteSensorOffset(-0.2553)
-                                      .withAbsoluteSensorDiscontinuityPoint(0.5));
+                                      .withAbsoluteSensorOffset(EndEffectorConstants.kPWM1AbsoluteEncoderOffset)
+                                      .withAbsoluteSensorDiscontinuityPoint(EndEffectorConstants.kPWM1AbsoluteEncoderDiscontinuityPoint));
 
     canDi.getConfigurator().apply(canDiConfigs);
 
@@ -103,27 +101,17 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                             .withInverted(InvertedValue.Clockwise_Positive)
                                             .withNeutralMode(NeutralModeValue.Brake))
                         .withFeedback(new FeedbackConfigs()
-                                            .withFeedbackRemoteSensorID(26)
-                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANdiPWM1)
-                                            .withFeedbackRotorOffset(0.2));
+                                            .withFeedbackRemoteSensorID(EndEffectorConstants.kCANdiID)
+                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANdiPWM1));
     // Apply Pivot Configs
     endEffectorPivot.getConfigurator().apply(pivotConfigs);
   
-    // Pivot PID Controller
-    pivotPIDController = new PIDController(EndEffectorConstants.kEndEffectorPivotPIDValueP, 
-                                           EndEffectorConstants.kEndEffectorPivotPIDValueI, 
-                                           EndEffectorConstants.kEndEffectorPivotPIDValueD);
-    // Sys id voltage request
-    voltageRequest = new VoltageOut(0);
+    // SysID voltage request
+    m_voltageRequest = new VoltageOut(0);
+
+    m_positionRequest = new PositionVoltage(0).withSlot(0);
 
 
-
-    // pivotEncoder.setDutyCycleRange(0, 1);
-    // pivotEncoder.setAssumedFrequency(0);
-    // pivotEncoder.setDutyCycleRange(1/1024,1023/1024);
-    // pivotEncoder.setAssumedFrequency(975.6);
-    // pivotEncoder.setConnectedFrequencyThreshold(1);
-    // pivotEncoder.setInverted(true);
 
   }
 
@@ -153,13 +141,13 @@ public class EndEffectorSubsystem extends SubsystemBase {
   }
 
   // Intake with beam break detection
-  // public void intakeAlgaeWithBeamBreak() {
-  //   if (intakeBeamBreak.get()) {
-  //     endEffectorIntake.set(0);
-  //   } else {
-  //     endEffectorIntake.set(EndEffectorConstants.kEndEffectorSpeed);
-  //   }
-  // }
+  public void intakeAlgaeWithBeamBreak() {
+    if (intakeBeamBreak.get()) {
+      endEffectorIntake.set(0);
+    } else {
+      endEffectorIntake.set(EndEffectorConstants.kEndEffectorSpeed);
+    }
+  }
 
   // Do we have coral?
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/HasCoral?")
@@ -168,10 +156,10 @@ public class EndEffectorSubsystem extends SubsystemBase {
   }
 
   // Do we have algae?
-  // @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/HasAlgae?")
-  // public boolean hasAlgae(){
-  //   return intakeBeamBreak.get();
-  // }
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/HasAlgae?")
+  public boolean hasAlgae(){
+    return intakeBeamBreak.get();
+  }
 
 
   // End Effector Pivot Up
@@ -189,10 +177,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
     endEffectorPivot.set(0);
   } 
 
-  // End Effector Pivot Position Control
-  public void setEndEffectorPivotPosition(double position) {
-    endEffectorPivot.set(pivotPIDController.calculate(pivotEncoder.get(), position));
-  }
 
   private final SysIdRoutine m_sysIdRoutine =
     new SysIdRoutine(
@@ -204,7 +188,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
           (state) -> SignalLogger.writeString("End Effector State", state.toString())
         ),
         new SysIdRoutine.Mechanism(
-          (volts) -> endEffectorPivot.setControl(voltageRequest.withOutput(volts.in(Volts))),
+          (volts) -> endEffectorPivot.setControl(m_voltageRequest.withOutput(volts.in(Volts))),
           null,
           this
         )
@@ -218,6 +202,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return m_sysIdRoutine.dynamic(direction);
   }
 
+  public void setPivotPosition(){
+    // endEffectorPivot.setControl(voltageRequest.withpo)
+  }
 
   // Get Pivot Position
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotPosition")
@@ -249,26 +236,13 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return endEffectorIntake.getTorqueCurrent().getValueAsDouble();
   }
 
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotEncoder")
-  public double getPivotEncoder() {
-    return pivotEncoder.get() * (2 * Math.PI);
-  }
-  // Get Pivot Encoder
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/IsPivotEncoderConnected?")
-  public boolean isPivotEncoderConnected() {
-    return pivotEncoder.isConnected();
-  }
-
-  
-  // Get Pivot Encoder Frequency
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotEncoderFrequency")
-  public int getPivotEncoderFrequency() {
-    return pivotEncoder.getFrequency();
-  }
-
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorCANdiPWM1Position")
   public double getCANdiPosition(){
     return canDi.getPWM1Position().getValueAsDouble();
+  }
+
+  public CANdi getCANdi(){
+    return canDi;
   }
 
 
@@ -276,15 +250,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("Subsystems/EndEffectorSubsystem/Intake/EndEffectorHasCoral?", hasCoral());
-    // SmartDashboard.putBoolean("Subsystems/EndEffectorSubsystem/Intake/EndEffectorHasAlgae?", hasAlgae());
-    SmartDashboard.putNumber("Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotPosition", getPivotPosition());
-    SmartDashboard.putNumber("Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotVelocity", getPivotVelocity());
-    SmartDashboard.putNumber("Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotCurrent", getPivotCurrent());
-    SmartDashboard.putNumber("Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeVelocity", getIntakeVelocity());
-    SmartDashboard.putNumber("Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeCurrent", getIntakeCurrent());
-    SmartDashboard.putNumber("Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotEncoderPosition", getPivotEncoder());
 
   }
   

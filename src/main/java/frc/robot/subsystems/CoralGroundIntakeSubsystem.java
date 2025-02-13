@@ -35,12 +35,8 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   private TalonFXSConfiguration intakeConfigs;
   // Pivot Configs
   private TalonFXConfiguration pivotConfigs;
-  // Pivot Encoder
-  private DutyCycleEncoder pivotEncoder;
   // Intake Beam Break
-  // private DigitalInput intakeBeamBreak;
-  // Pivot PID Controller
-  private PIDController pivotPIDController;
+  private DigitalInput intakeBeamBreak;
 
   public CoralGroundIntakeSubsystem() {
     // Coral Ground Intake
@@ -49,9 +45,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     intakePivot = new TalonFX(CoralGroundIntakeConstants.kCoralGroundPivotID);
 
     // Intake Beam Break
-    // intakeBeamBreak = new DigitalInput(CoralGroundIntakeConstants.kCoralGroundBeamBreakPort);
-    // Pivot Encoder
-    pivotEncoder = new DutyCycleEncoder(CoralGroundIntakeConstants.kCoralGroundPivotEncoderPort);
+    intakeBeamBreak = new DigitalInput(CoralGroundIntakeConstants.kCoralGroundBeamBreakPort);
 
     // Intake Configs
     intakeConfigs = new TalonFXSConfiguration()
@@ -71,14 +65,6 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
                                             .withNeutralMode(NeutralModeValue.Brake));
     // Apply Pivot Configs
     intakePivot.getConfigurator().apply(pivotConfigs);
-
-    // Pivot PID Controller
-    pivotPIDController = new PIDController( CoralGroundIntakeConstants.kCoralGroundPivotPIDValueP, 
-                                            CoralGroundIntakeConstants.kCoralGroundPivotPIDValueI,
-                                            CoralGroundIntakeConstants.kCoralGroundPivotPIDValueD);
-
-    pivotEncoder.setDutyCycleRange(0, 1);
-    pivotEncoder.setAssumedFrequency(975.6);
     
   }
 
@@ -132,7 +118,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
 
   // Intake Pivot Position
   public void setIntakePivotPosition(double position){
-    intakePivot.set(pivotPIDController.calculate(pivotEncoder.get(), position));
+    // intakePivot.set(pivotPIDController.calculate(pivotEncoder.get(), position));
   }
 
 
@@ -166,17 +152,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     return coralIntake.getSupplyCurrent().getValueAsDouble();
   }
 
-  // get intake pivot encoder 
-  @AutoLogOutput(key = "Subsystems/CoralGroundIntakeSubsystem/IntakePivot/CoralGroundPivotEncoder")
-  public double getIntakePivotEncoder(){
-    return pivotEncoder.get();
-  }
 
-  // is the pivot encoder connected?
-  @AutoLogOutput(key = "Subsystems/CoralGroundIntakeSubsystem/IntakePivot/isCoralGroundPivotEncoderConnected?")
-  public boolean isIntakePivotEncoderConnected(){
-    return pivotEncoder.isConnected();
-  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

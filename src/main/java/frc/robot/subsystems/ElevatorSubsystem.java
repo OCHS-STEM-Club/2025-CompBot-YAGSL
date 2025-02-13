@@ -42,8 +42,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   private MotionMagicVoltage elevatorPositionRequest;
   // Last Desired Position
   private Distance lastDesiredPosition;
-
+  // Top Limit
   private DigitalInput elevatorTopLimit;
+  // Bottom Limit
+  private DigitalInput elevatorBottonLimit;
 
   public ElevatorSubsystem() {
     // Elevator Motors
@@ -82,8 +84,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorRightFollowerMotor.getConfigurator().apply(elevatorConfigs);
 
     // Set Elevator Top Limit
-    elevatorTopLimit = new DigitalInput(6);
-
+    elevatorTopLimit = new DigitalInput(ElevatorConstants.kTopElevatorLimitPort);
+    // Set Elevator Bottom Limit
+    elevatorBottonLimit = new DigitalInput(ElevatorConstants.kBottomElevatorLimitPort);
 
     }
 
@@ -147,12 +150,14 @@ public class ElevatorSubsystem extends SubsystemBase {
     return elevatorTopLimit.get();
   }
 
+  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtBottomLimit?")
+  public boolean isAtBottomLimit(){
+    return elevatorBottonLimit.get();
+  }
+
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtSetpoint?", isAtSetpoint());
-    SmartDashboard.putNumber("Subsystems/ElevatorSubsystem/Elevator/ElevatorPosition", getElevatorPositionDouble());
-    SmartDashboard.putNumber("Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorLeftMotorVelocity", getElevatorLeftMotorVelocity());
-    SmartDashboard.putNumber("Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorRightMotorVelocity", getElevatorRightMotorVelocity());
+   
   }
 
 }

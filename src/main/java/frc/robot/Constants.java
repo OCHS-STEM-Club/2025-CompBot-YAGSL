@@ -64,9 +64,12 @@ public final class Constants
     public static final double kEndEffectorPivotPIDValueI = 0;
     public static final double kEndEffectorPivotPIDValueD = 0;
     // End Effector Beam Break ID
-    // public static final int kEndEffectorBeamBreakPort = ;
-    // End Effector Pivot Encoder DIO Port
-    public static final int kEndEffectorPivotEncoderPort = 3;
+    public static final int kEndEffectorBeamBreakPort = 3;
+    // CANdi ID
+    public static final int kCANdiID = 26;
+    // CANdi Cofigs
+    public static final double kPWM1AbsoluteEncoderOffset = -0.2553;
+    public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 0.5;
 
   }
 
@@ -83,9 +86,7 @@ public final class Constants
     public static final double kCoralGroundPivotPIDValueI = 0;
     public static final double kCoralGroundPivotPIDValueD = 0;
     // Coral Ground Beam Break ID
-    // public static final int kCoralGroundBeamBreakPort = null;
-    // Coral Ground Pivot Encoder DIO Port
-    public static final int kCoralGroundPivotEncoderPort = 9;
+    public static final int kCoralGroundBeamBreakPort = 2;
 
   }
 
@@ -109,6 +110,9 @@ public final class Constants
     public static final double kElevatorMotionMagicCruiseVelocity = 0;
     // Elevator Speed
     public static final double kElevatorSpeed = 0.15;
+    // Elevator Limits
+    public static final int kTopElevatorLimitPort = 0;
+    public static final int kBottomElevatorLimitPort = 1;
 
   }
 }
