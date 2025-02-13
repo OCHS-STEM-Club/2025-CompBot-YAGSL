@@ -14,6 +14,7 @@ import com.ctre.phoenix6.configs.CommutationConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.PWM1Configs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -44,23 +45,20 @@ public class EndEffectorSubsystem extends SubsystemBase {
   // End Effector Pivot
   private TalonFX endEffectorPivot;
 
+  private CANdi canDi;
+
   // End Effector Configs
   private TalonFXSConfiguration intakeConfigs;
   // Pivot Configs
   private TalonFXConfiguration pivotConfigs;
 
+  private CANdiConfiguration canDiConfigs;
+
   // Intake Beam Break
   private DigitalInput intakeBeamBreak;
 
-  // Pivot PID Controller
-  private PIDController pivotPIDController;
-
   // Voltage Request
   private VoltageOut m_voltageRequest;
-
-  private CANdi canDi;
-
-  private CANdiConfiguration canDiConfigs;
 
   private PositionVoltage m_positionRequest;
 
@@ -100,6 +98,10 @@ public class EndEffectorSubsystem extends SubsystemBase {
                         .withMotorOutput(new MotorOutputConfigs()
                                             .withInverted(InvertedValue.Clockwise_Positive)
                                             .withNeutralMode(NeutralModeValue.Brake))
+                        .withSlot0(new Slot0Configs()
+                                        .withKP(0)
+                                        .withKI(0)
+                                        .withKD(0))
                         .withFeedback(new FeedbackConfigs()
                                             .withFeedbackRemoteSensorID(EndEffectorConstants.kCANdiID)
                                             .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANdiPWM1));
@@ -202,8 +204,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return m_sysIdRoutine.dynamic(direction);
   }
 
-  public void setPivotPosition(){
-    // endEffectorPivot.setControl(voltageRequest.withpo)
+  public void setPivotPosition(double position){
+    endEffectorPivot.setControl(m_positionRequest.withPosition(position));
   }
 
   // Get Pivot Position
