@@ -60,9 +60,13 @@ public final class Constants
     // End Effector Current Spike
     public static final double kEndEffectorCurrentSpike = 110;
     // End Effector PID Values
-    public static final double kEndEffectorPivotPIDValueP = 0;
+    public static final double kEndEffectorPivotPIDValueP = 4.8171;
     public static final double kEndEffectorPivotPIDValueI = 0;
     public static final double kEndEffectorPivotPIDValueD = 0;
+    public static final double kEndEffectorPivotPIDValueS = 0;
+    public static final double kEndEffectorPivotPIDValueV = 3.4698;
+    public static final double kEndEffectorPivotPIDValueA = 0.93125;
+    public static final double kEndEffectorPivotPIDValueG = 2.2252;
     // End Effector Beam Break ID
     public static final int kEndEffectorBeamBreakPort = 3;
     // CANdi ID
@@ -70,6 +74,8 @@ public final class Constants
     // CANdi Cofigs
     public static final double kPWM1AbsoluteEncoderOffset = -0.74511;
     public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 1;
+    // Pivot Current Limits
+    public static final double kEndEffectorPivotCurrentLimit = 40;
 
   }
 
