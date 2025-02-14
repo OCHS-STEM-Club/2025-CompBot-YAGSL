@@ -119,6 +119,8 @@ public final class Constants
     // Elevator Limits
     public static final int kTopElevatorLimitPort = 0;
     public static final int kBottomElevatorLimitPort = 1;
+    // ElevatorSetpointThreshold
+    public static final double kElevatorSetpointThreshold = 0.5;
 
   }
 }

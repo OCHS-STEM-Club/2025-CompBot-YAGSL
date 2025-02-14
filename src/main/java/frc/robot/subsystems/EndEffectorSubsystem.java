@@ -274,8 +274,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return canDi;
   }
 
-
-
+  
 
   @Override
   public void periodic() {
