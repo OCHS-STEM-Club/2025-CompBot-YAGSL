@@ -10,7 +10,9 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
+import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CommutationConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.PWM1Configs;
@@ -18,16 +20,21 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
@@ -61,6 +68,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
   private VoltageOut m_voltageRequest;
 
   private PositionVoltage m_positionRequest;
+
+  private PIDController m_pidController = new PIDController(0.280975, 0, 0);
 
   public EndEffectorSubsystem() {
     // End Effector Intake
@@ -96,15 +105,24 @@ public class EndEffectorSubsystem extends SubsystemBase {
     // Pivot Configs
     pivotConfigs = new TalonFXConfiguration()
                         .withMotorOutput(new MotorOutputConfigs()
-                                            .withInverted(InvertedValue.Clockwise_Positive)
+                                            .withInverted(InvertedValue.CounterClockwise_Positive)
                                             .withNeutralMode(NeutralModeValue.Brake))
                         .withSlot0(new Slot0Configs()
-                                        .withKP(0)
+                                        .withKP(4.8171)
                                         .withKI(0)
-                                        .withKD(0))
+                                        .withKD(0)
+                                        .withKG(2.2252)
+                                        .withKS(0)
+                                        .withKV(3.4698)
+                                        .withKA(0.93125)
+                                        .withGravityType(GravityTypeValue.Arm_Cosine))
                         .withFeedback(new FeedbackConfigs()
                                             .withFeedbackRemoteSensorID(EndEffectorConstants.kCANdiID)
-                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANdiPWM1));
+                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANdiPWM1))
+                        .withClosedLoopRamps(new ClosedLoopRampsConfigs()
+                                                .withVoltageClosedLoopRampPeriod(0))
+                        .withCurrentLimits(new CurrentLimitsConfigs()
+                                            .withStatorCurrentLimit(Units.Amps.of(40)));
     // Apply Pivot Configs
     endEffectorPivot.getConfigurator().apply(pivotConfigs);
   
@@ -112,6 +130,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
     m_voltageRequest = new VoltageOut(0);
 
     m_positionRequest = new PositionVoltage(0).withSlot(0);
+    
+    
 
 
 
@@ -184,8 +204,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
     new SysIdRoutine(
         new SysIdRoutine.Config(
           null,         // Use default ramp rate (1 V/s)
-          Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
-          Seconds.of(4),           // Use default timeout (10 s)
+          Volts.of(2), // Reduce dynamic step voltage to 4 to prevent brownout
+          Seconds.of(8),           // Use default timeout (10 s)
                                           // Log state with Phoenix SignalLogger class
           (state) -> SignalLogger.writeString("End Effector State", state.toString())
         ),
@@ -220,10 +240,28 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return endEffectorPivot.get();
   }
 
+  // Get Pivot Position Request
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotPositionRequest")
+  public double getPositionRequestPosition(){
+    return m_positionRequest.Position;
+  }
+
   // Get Pivot Current
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotCurrent")
   public double getPivotCurrent() {
     return endEffectorPivot.getStatorCurrent().getValueAsDouble();
+  }
+
+  // Get Pivot Voltage
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotMotorVoltage")
+  public double getPivotMotorVoltage(){
+    return endEffectorPivot.getMotorVoltage().getValueAsDouble();
+  }
+
+  // Get Pivot Supply Voltage
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotSupplyVoltage")
+  public double getPivotSupplyVoltage(){
+    return endEffectorPivot.getSupplyVoltage().getValueAsDouble();
   }
 
   // Get Intake Velocity

@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.io.File;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -46,8 +47,6 @@ public class RobotContainer
 
   // Controller definitions
   CommandXboxController m_driverController = new CommandXboxController(0);
-
-
 
   private final Trigger DRIVER_A_BUTTON = new Trigger(() -> m_driverController.getHID().getAButton());
   private final Trigger DRIVER_B_BUTTON = new Trigger(() -> m_driverController.getHID().getBButton());
@@ -143,13 +142,11 @@ public class RobotContainer
     {
       // Simulation driver bindings
       
-
     }
     if (DriverStation.isTest())
     {
       // Test driver bindings
       m_swerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
-
 
     } else
     {
@@ -157,53 +154,60 @@ public class RobotContainer
         Commands.runOnce(m_swerveSubsystem :: zeroGyro)
       );
 
-      DRIVER_POV_UP.whileTrue(
-        m_elevatorManualUp
-      );
+      // DRIVER_POV_UP.whileTrue(
+      //   m_elevatorManualUp
+      // );
 
-      DRIVER_POV_DOWN.whileTrue(
-        m_elevatorManualDown
-      );
+      // DRIVER_POV_DOWN.whileTrue(
+      //   m_elevatorManualDown
+      // );
 
-      DRIVER_POV_RIGHT.whileTrue(
-        m_endEffectorManualPivotUp
-      );
+      // DRIVER_POV_RIGHT.whileTrue(
+      //   m_endEffectorManualPivotUp
+      // );
 
-      DRIVER_POV_LEFT.whileTrue(
-        m_endEffectorManualPivotDown
-      );
+      // DRIVER_POV_LEFT.whileTrue(
+      //   m_endEffectorManualPivotDown
+      // );
 
-      DRIVER_LEFT_BUMPER.whileTrue(
-        m_endEffectorManualIntake
-      );
+      // DRIVER_LEFT_BUMPER.whileTrue(
+      //   m_endEffectorManualIntake
+      // );
 
-      DRIVER_RIGHT_BUMPER.whileTrue(
-        m_endEffectorManualOuttake
-      );
+      // DRIVER_RIGHT_BUMPER.whileTrue(
+      //   m_endEffectorManualOuttake
+      // );
 
-      DRIVER_Y_BUTTON.whileTrue(
-        m_coralGroundManualPivotUp
-      );
+      // DRIVER_Y_BUTTON.whileTrue(
+      //   m_coralGroundManualPivotUp
+      // );
 
-      DRIVER_X_BUTTON.whileTrue(
-        m_coralGroundManualPivotDown
-      );
+      // DRIVER_X_BUTTON.whileTrue(
+      //   m_coralGroundManualPivotDown
+      // );
 
-      DRIVER_LEFT_TRIGGER.whileTrue(
-        m_coralGroundManualIntake
-      );
+      // DRIVER_LEFT_TRIGGER.whileTrue(
+      //   m_coralGroundManualIntake
+      // );
 
-      DRIVER_RIGHT_TRIGGER.whileTrue(
-        m_coralGroundManualOuttake
-      );
+      // DRIVER_RIGHT_TRIGGER.whileTrue(
+      //   m_coralGroundManualOuttake
+      // );
+
+      
+
+      DRIVER_Y_BUTTON.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.8)));
+      DRIVER_Y_BUTTON.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
+
+      // DRIVER_LEFT_BUMPER.onTrue(Commands.runOnce(SignalLogger::start));
+      // DRIVER_RIGHT_BUMPER.onTrue(Commands.runOnce(SignalLogger::stop));
 
 
-      // DRIVER_Y_BUTTON.whileTrue(Commands.runOnce(()-> m_endEffectorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward)).until());
+      // DRIVER_Y_BUTTON.whileTrue(m_endEffectorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
       // DRIVER_A_BUTTON.whileTrue(m_endEffectorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
       // DRIVER_B_BUTTON.whileTrue(m_endEffectorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
       // DRIVER_X_BUTTON.whileTrue(m_endEffectorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
       
-
   }
 }
 

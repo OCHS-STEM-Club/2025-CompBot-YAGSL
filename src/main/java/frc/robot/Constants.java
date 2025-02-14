@@ -68,8 +68,8 @@ public final class Constants
     // CANdi ID
     public static final int kCANdiID = 26;
     // CANdi Cofigs
-    public static final double kPWM1AbsoluteEncoderOffset = -0.2553;
-    public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 0.5;
+    public static final double kPWM1AbsoluteEncoderOffset = -0.74511;
+    public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 1;
 
   }
 
