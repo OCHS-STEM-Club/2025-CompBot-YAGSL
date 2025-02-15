@@ -93,7 +93,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 
     // Elevator Position Request
-    elevatorPositionRequest = new MotionMagicVoltage(0);
+    elevatorPositionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(0.025574);
 
     }
 

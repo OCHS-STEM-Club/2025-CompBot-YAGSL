@@ -63,10 +63,10 @@ public final class Constants
     public static final double kEndEffectorPivotPIDValueP = 38.029;
     public static final double kEndEffectorPivotPIDValueI = 0;
     public static final double kEndEffectorPivotPIDValueD = 0;
-    public static final double kEndEffectorPivotPIDValueS = 0;
-    public static final double kEndEffectorPivotPIDValueV = 3.7822;
-    public static final double kEndEffectorPivotPIDValueA = 1.3466;
-    public static final double kEndEffectorPivotPIDValueG = 2.4047;
+    // public static final double kEndEffectorPivotPIDValueS = 0;
+    // public static final double kEndEffectorPivotPIDValueV = 3.7822;
+    // public static final double kEndEffectorPivotPIDValueA = 1.3466;
+    // public static final double kEndEffectorPivotPIDValueG = 2.4047;
     // End Effector Beam Break ID
     public static final int kEndEffectorBeamBreakPort = 3;
     // CANdi ID
