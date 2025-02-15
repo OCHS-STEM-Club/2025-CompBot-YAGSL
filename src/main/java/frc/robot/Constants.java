@@ -106,18 +106,20 @@ public final class Constants
     public static final int kElevatorLeftMotorID = 19;
 
     // Elevator PID Values
-    public static final double kElevatorPIDValueP = 0.025574;
+    public static final double kElevatorPIDValueP = 3.596;
     public static final double kElevatorPIDValueI = 0;
     public static final double kElevatorPIDValueD = 0;
-    public static final double kElevatorPIDValueS = 5;
-    public static final double kElevatorPIDValueV = 0;
+    public static final double kElevatorPIDValueS = 0;
+    public static final double kElevatorPIDValueV = 0.21303;
     public static final double kElevatorPIDValueA = 0;
-    public static final double kElevatorPIDValueG = 0;
+    public static final double kElevatorPIDValueG = 1.2061;
     // Sensor To Mechanism Ratio
     public static final double kElevatorSensorToMechRatio = 0.875;
     // Motion Magic Configs
-    public static final double kElevatorMotionMagicAcceleration = 45633;
-    public static final double kElevatorMotionMagicCruiseVelocity = 45633;
+    public static final double kElevatorMotionMagicAcceleration = 30633;
+    public static final double kElevatorMotionMagicCruiseVelocity = 35633;
+    public static final double kElevatorMotionMagicJerk = 45000;
+
     // Elevator Speed
     public static final double kElevatorSpeed = 0.15;
     // Elevator Limits

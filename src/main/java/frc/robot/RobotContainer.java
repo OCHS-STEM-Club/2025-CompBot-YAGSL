@@ -198,23 +198,23 @@ public class RobotContainer
 
       
 
-      DRIVER_POV_RIGHT.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.3)));
-      DRIVER_POV_RIGHT.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
+      // DRIVER_POV_RIGHT.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.3)));
+      // DRIVER_POV_RIGHT.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
 
       DRIVER_POV_UP.onTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.5)));
-
-      DRIVER_POV_LEFT.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.75)));
-      DRIVER_POV_LEFT.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
-      
       DRIVER_POV_DOWN.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
+      // DRIVER_POV_LEFT.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.75)));
+      // DRIVER_POV_LEFT.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
+      
+      
 
-      DRIVER_B_BUTTON.whileTrue(Commands.runOnce(() -> m_elevatorSubsystem.setElevatorPosition(10)));
+      DRIVER_B_BUTTON.whileTrue(Commands.runOnce(() -> m_elevatorSubsystem.setElevatorPosition(2)));
       DRIVER_B_BUTTON.whileFalse(Commands.runOnce(m_elevatorSubsystem :: elevatorStop));
 
-      DRIVER_Y_BUTTON.whileTrue(Commands.runOnce(() -> m_elevatorSubsystem.setElevatorPosition(20)));
+      DRIVER_Y_BUTTON.whileTrue(Commands.runOnce(() -> m_elevatorSubsystem.setElevatorPosition(5)));
       DRIVER_Y_BUTTON.whileFalse(Commands.runOnce(m_elevatorSubsystem :: elevatorStop));
       
-      DRIVER_X_BUTTON.whileTrue(Commands.runOnce(() -> m_elevatorSubsystem.setElevatorPosition(30)));
+      DRIVER_X_BUTTON.whileTrue(Commands.runOnce(() -> m_elevatorSubsystem.setElevatorPosition(15)));
       DRIVER_X_BUTTON.whileFalse(Commands.runOnce(m_elevatorSubsystem :: elevatorStop));
       
 
@@ -224,10 +224,10 @@ public class RobotContainer
       // DRIVER_RIGHT_BUMPER.onTrue(Commands.runOnce(SignalLogger::stop));
 
 
-      // DRIVER_Y_BUTTON.whileTrue(m_endEffectorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-      // DRIVER_A_BUTTON.whileTrue(m_endEffectorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-      // DRIVER_B_BUTTON.whileTrue(m_endEffectorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-      // DRIVER_X_BUTTON.whileTrue(m_endEffectorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+      // DRIVER_Y_BUTTON.whileTrue(m_elevatorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+      // DRIVER_A_BUTTON.whileTrue(m_elevatorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+      // DRIVER_B_BUTTON.whileTrue(m_elevatorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+      // DRIVER_X_BUTTON.whileTrue(m_elevatorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
       
   }
 }
