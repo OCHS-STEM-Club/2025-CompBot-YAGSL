@@ -129,4 +129,26 @@ public final class Constants
     public static final double kElevatorSetpointThreshold = 0.5;
 
   }
+
+  public static class SetpointConstants{
+    public static final double kL1ElevatorSetpoint = 0;
+    public static final double kL1EndEffectorSetpoint = 0.4;
+
+    public static final double kL2ElevatorSetpoint = 10.5;
+    public static final double kL2EndEffectorSetpoint = 0.13;
+
+    public static final double kL3ElevatorSetpoint = 14.8;
+    public static final double kL3EndEffectorSetpoint = 0.13;
+
+    public static final double kL4ElevatorSetpoint = 0;
+    public static final double kL4EndEffectorSetpoint = 0;
+
+    public static final double kCSElevatorSetpoint = 0;
+    public static final double kCSEndEffectorSetpoint = 0;
+
+    public static final double kStowElevatorSetpoint = 0;
+    public static final double kStowEndEffectorSetpoint = 0.5;
+
+    
+  }
 }

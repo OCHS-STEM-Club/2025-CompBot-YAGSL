@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OperatorConstants;
+
 import frc.robot.commands.CoralGroundIntake.Intake.Manual.CoralGroundManualIntake;
 import frc.robot.commands.CoralGroundIntake.Intake.Manual.CoralGroundManualOuttake;
 import frc.robot.commands.CoralGroundIntake.Pivot.Manual.CoralGroundManualPivotDown;
@@ -32,6 +33,22 @@ import frc.robot.commands.EndEffector.Intake.Manual.EndEffectorManualIntake;
 import frc.robot.commands.EndEffector.Intake.Manual.EndEffectorManualOuttake;
 import frc.robot.commands.EndEffector.Pivot.Manual.EndEffectorManualPivotDown;
 import frc.robot.commands.EndEffector.Pivot.Manual.EndEffectorManualPivotUp;
+import frc.robot.commands.Sequential.CS_CMD;
+import frc.robot.commands.Sequential.L1_CMD;
+import frc.robot.commands.Sequential.L2_CMD;
+import frc.robot.commands.Sequential.L3_CMD;
+import frc.robot.commands.Sequential.L4_CMD;
+import frc.robot.commands.Sequential.STOW_CMD;
+import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L1;
+import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L2;
+import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L3;
+import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L4;
+import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_Stow;
+import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_L1;
+import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_L2;
+import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_L3;
+import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_L4;
+import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_Stow;
 import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
@@ -49,6 +66,7 @@ public class RobotContainer
 
   // Controller definitions
   CommandXboxController m_driverController = new CommandXboxController(0);
+  CommandXboxController m_operatorController = new CommandXboxController(2);
 
   private final Trigger DRIVER_A_BUTTON = new Trigger(() -> m_driverController.getHID().getAButton());
   private final Trigger DRIVER_B_BUTTON = new Trigger(() -> m_driverController.getHID().getBButton());
@@ -64,6 +82,23 @@ public class RobotContainer
   private final Trigger DRIVER_RIGHT_TRIGGER = new Trigger(m_driverController.rightTrigger());
   private final Trigger DRIVER_LEFT_BUMPER = new Trigger(m_driverController.leftBumper());
   private final Trigger DRIVER_RIGHT_BUMPER = new Trigger(m_driverController.rightBumper());
+
+
+
+  private final Trigger OPERATOR_A_BUTTON = new Trigger(() -> m_operatorController.getHID().getAButton());
+  private final Trigger OPERATOR_B_BUTTON = new Trigger(() -> m_operatorController.getHID().getBButton());
+  private final Trigger OPERATOR_X_BUTTON = new Trigger(() -> m_operatorController.getHID().getXButton());
+  private final Trigger OPERATOR_Y_BUTTON = new Trigger(() -> m_operatorController.getHID().getYButton());
+
+  private final Trigger OPERATOR_POV_UP = new Trigger(m_operatorController.povUp());
+  private final Trigger OPERATOR_POV_DOWN = new Trigger(m_operatorController.povDown());
+  private final Trigger OPERATOR_POV_LEFT = new Trigger(m_operatorController.povLeft());
+  private final Trigger OPERATOR_POV_RIGHT = new Trigger(m_operatorController.povRight());
+
+  private final Trigger OPERATOR_LEFT_TRIGGER = new Trigger(m_operatorController.leftTrigger());
+  private final Trigger OPERATOR_RIGHT_TRIGGER = new Trigger(m_operatorController.rightTrigger());
+  private final Trigger OPERATOR_LEFT_BUMPER = new Trigger(m_operatorController.leftBumper());
+  private final Trigger OPERATOR_RIGHT_BUMPER = new Trigger(m_operatorController.rightBumper());
 
   // Subsystem definitions
   SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
@@ -88,6 +123,25 @@ public class RobotContainer
   EndEffectorManualOuttake m_endEffectorManualOuttake = new EndEffectorManualOuttake(m_endEffectorSubsystem);
   EndEffectorManualPivotDown m_endEffectorManualPivotDown = new EndEffectorManualPivotDown(m_endEffectorSubsystem);
   EndEffectorManualPivotUp m_endEffectorManualPivotUp = new EndEffectorManualPivotUp(m_endEffectorSubsystem);
+
+  Elevator_L1 m_elevatorL1 = new Elevator_L1(m_elevatorSubsystem);
+  Elevator_L2 m_elevatorL2 = new Elevator_L2(m_elevatorSubsystem);
+  Elevator_L3 m_elevatorL3 = new Elevator_L3(m_elevatorSubsystem);
+  Elevator_L4 m_elevatorL4 = new Elevator_L4(m_elevatorSubsystem);
+  Elevator_Stow m_elevatorStow = new Elevator_Stow(m_elevatorSubsystem);
+
+  EndEffector_L1 m_endEffectorL1 = new EndEffector_L1(m_endEffectorSubsystem);
+  EndEffector_L2 m_endEffectorL2 = new EndEffector_L2(m_endEffectorSubsystem);
+  EndEffector_L3 m_endEffectorL3 = new EndEffector_L3(m_endEffectorSubsystem);
+  EndEffector_L4 m_endEffectorL4 = new EndEffector_L4(m_endEffectorSubsystem);
+  EndEffector_Stow m_endEffectorStow = new EndEffector_Stow(m_endEffectorSubsystem);
+
+  // Sequence Commands
+  CS_CMD m_CS_CMD = new CS_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
+  STOW_CMD m_STOW_CMD = new STOW_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
+  L1_CMD m_L1_CMD = new L1_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
+  L2_CMD m_L2_CMD = new L2_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
+  L3_CMD m_L3_CMD = new L3_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
 
 
   /**
@@ -155,79 +209,45 @@ public class RobotContainer
       DRIVER_A_BUTTON.onTrue(
         Commands.runOnce(m_swerveSubsystem :: zeroGyro)
       );
-
-      DRIVER_RIGHT_BUMPER.whileTrue(
-        m_elevatorManualUp
+      
+      DRIVER_LEFT_TRIGGER.whileTrue(
+        m_endEffectorManualIntake
       );
 
-      DRIVER_LEFT_BUMPER.whileTrue(
+      DRIVER_RIGHT_TRIGGER.whileTrue(
+        m_endEffectorManualOuttake
+      );
+
+
+      OPERATOR_X_BUTTON.whileTrue(
+        m_L1_CMD
+      );
+      OPERATOR_Y_BUTTON.whileTrue(
+        m_L2_CMD
+      );
+      OPERATOR_RIGHT_BUMPER.whileTrue(
+        m_L3_CMD
+      );
+
+      OPERATOR_LEFT_TRIGGER.whileTrue(
+        m_STOW_CMD
+      );
+
+      OPERATOR_RIGHT_TRIGGER.whileTrue(
+        m_CS_CMD
+      );
+
+      OPERATOR_POV_DOWN.whileTrue(
         m_elevatorManualDown
       );
 
-      // DRIVER_POV_RIGHT.whileTrue(
-      //   m_endEffectorManualPivotUp
-      // );
+      OPERATOR_POV_UP.whileTrue(
+        m_elevatorManualUp
+      );
 
-      // DRIVER_POV_LEFT.whileTrue(
-      //   m_endEffectorManualPivotDown
-      // );
-
-      // DRIVER_LEFT_BUMPER.whileTrue(
-      //   m_endEffectorManualIntake
-      // );
-
-      // DRIVER_RIGHT_BUMPER.whileTrue(
-      //   m_endEffectorManualOuttake
-      // );
-
-      // DRIVER_Y_BUTTON.whileTrue(
-      //   m_coralGroundManualPivotUp
-      // );
-
-      // DRIVER_X_BUTTON.whileTrue(
-      //   m_coralGroundManualPivotDown
-      // );
-
-      // DRIVER_LEFT_TRIGGER.whileTrue(
-      //   m_coralGroundManualIntake
-      // );
-
-      // DRIVER_RIGHT_TRIGGER.whileTrue(
-      //   m_coralGroundManualOuttake
-      // );
 
       
-
-      // DRIVER_POV_RIGHT.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.3)));
-      // DRIVER_POV_RIGHT.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
-
-      DRIVER_POV_UP.onTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.5)));
-      DRIVER_POV_DOWN.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
-      // DRIVER_POV_LEFT.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.75)));
-      // DRIVER_POV_LEFT.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
       
-      
-
-      DRIVER_B_BUTTON.whileTrue(Commands.runOnce(() -> m_elevatorSubsystem.setElevatorPosition(2)));
-      DRIVER_B_BUTTON.whileFalse(Commands.runOnce(m_elevatorSubsystem :: elevatorStop));
-
-      DRIVER_Y_BUTTON.whileTrue(Commands.runOnce(() -> m_elevatorSubsystem.setElevatorPosition(5)));
-      DRIVER_Y_BUTTON.whileFalse(Commands.runOnce(m_elevatorSubsystem :: elevatorStop));
-      
-      DRIVER_X_BUTTON.whileTrue(Commands.runOnce(() -> m_elevatorSubsystem.setElevatorPosition(15)));
-      DRIVER_X_BUTTON.whileFalse(Commands.runOnce(m_elevatorSubsystem :: elevatorStop));
-      
-
-      
-
-      // DRIVER_LEFT_BUMPER.onTrue(Commands.runOnce(SignalLogger::start));
-      // DRIVER_RIGHT_BUMPER.onTrue(Commands.runOnce(SignalLogger::stop));
-
-
-      // DRIVER_Y_BUTTON.whileTrue(m_elevatorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-      // DRIVER_A_BUTTON.whileTrue(m_elevatorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-      // DRIVER_B_BUTTON.whileTrue(m_elevatorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-      // DRIVER_X_BUTTON.whileTrue(m_elevatorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
       
   }
 }
