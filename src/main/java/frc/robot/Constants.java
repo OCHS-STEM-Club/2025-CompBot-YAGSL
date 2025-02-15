@@ -43,7 +43,7 @@ public final class Constants
   {
 
     // Joystick Deadband
-    public static final double DEADBAND        = 0.2;
+    public static final double DEADBAND        = 0.1;
     public static final double LEFT_Y_DEADBAND = 0.2;
     public static final double RIGHT_X_DEADBAND = 0.2;
     public static final double TURN_CONSTANT    = 6;
@@ -55,7 +55,7 @@ public final class Constants
     public static final int kEndEffectorIntakeID = 23;
     public static final int kEndEffectorPivotID = 22;
     // End Effector Speeds
-    public static final double kEndEffectorSpeed = 0.75;
+    public static final double kEndEffectorSpeed = 0.95;
     public static final double kPivotSpeed = 0.15;
     // End Effector Current Spike
     public static final double kEndEffectorCurrentSpike = 110;
@@ -135,16 +135,16 @@ public final class Constants
     public static final double kL1EndEffectorSetpoint = 0.4;
 
     public static final double kL2ElevatorSetpoint = 10.5;
-    public static final double kL2EndEffectorSetpoint = 0.13;
+    public static final double kL2EndEffectorSetpoint = 0.19;
 
     public static final double kL3ElevatorSetpoint = 14.8;
-    public static final double kL3EndEffectorSetpoint = 0.13;
+    public static final double kL3EndEffectorSetpoint = 0.2;
 
     public static final double kL4ElevatorSetpoint = 0;
     public static final double kL4EndEffectorSetpoint = 0;
 
-    public static final double kCSElevatorSetpoint = 0;
-    public static final double kCSEndEffectorSetpoint = 0;
+    public static final double kCSElevatorSetpoint = 4;
+    public static final double kCSEndEffectorSetpoint = 0.643;
 
     public static final double kStowElevatorSetpoint = 0;
     public static final double kStowEndEffectorSetpoint = 0.5;

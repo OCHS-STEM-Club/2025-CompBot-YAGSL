@@ -29,7 +29,7 @@ public class STOW_CMD extends SequentialCommandGroup {
     m_elevatorSubsystem = elevatorSubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
 
-    addCommands( new EndEffector_Stow(m_endEffectorSubsystem).withTimeout(2),
-                 new Elevator_Stow(m_elevatorSubsystem).withTimeout(3));
+    addCommands( new Elevator_Stow(m_elevatorSubsystem).withTimeout(1),
+                  new EndEffector_Stow(m_endEffectorSubsystem));
   }
 }

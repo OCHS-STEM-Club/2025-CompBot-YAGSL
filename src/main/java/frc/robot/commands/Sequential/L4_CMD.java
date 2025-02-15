@@ -5,6 +5,7 @@
 package frc.robot.commands.Sequential;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L4;
@@ -27,8 +28,9 @@ public class L4_CMD extends SequentialCommandGroup {
     m_elevatorSubsystem = elevatorSubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
 
-    addCommands( new EndEffector_Stow(m_endEffectorSubsystem).withTimeout(2),
+    addCommands(
+    new ParallelCommandGroup(
                 new Elevator_L4(m_elevatorSubsystem).withTimeout(4), 
-                new EndEffector_L4(m_endEffectorSubsystem));
+                new EndEffector_L4(m_endEffectorSubsystem)));
   }
 }

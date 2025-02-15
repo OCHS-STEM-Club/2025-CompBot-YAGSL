@@ -5,6 +5,7 @@
 package frc.robot.commands.Sequential;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_Coral_Station;
 import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L1;
@@ -28,8 +29,9 @@ public class CS_CMD extends SequentialCommandGroup {
     m_elevatorSubsystem = elevatorSubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
 
-    addCommands( new EndEffector_Stow(m_endEffectorSubsystem).withTimeout(2),
-                 new Elevator_Coral_Station(m_elevatorSubsystem).withTimeout(3), 
-                 new EndEffector_Coral_Station(m_endEffectorSubsystem));
+    addCommands(
+    new ParallelCommandGroup(
+                 new Elevator_Coral_Station(m_elevatorSubsystem), 
+                 new EndEffector_Coral_Station(m_endEffectorSubsystem)));
   }
 }

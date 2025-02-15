@@ -94,6 +94,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                               .withNeutralMode(NeutralModeValue.Brake))
                         .withCommutation(new CommutationConfigs()
                                               .withMotorArrangement(MotorArrangementValue.Minion_JST));
+                        // .withCurrentLimits(new CurrentLimitsConfigs()
+                        //                       .withStatorCurrentLimit(40));
 
     // Apply Intake Configs
     endEffectorIntake.getConfigurator().apply(intakeConfigs);

@@ -13,11 +13,14 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -66,7 +69,9 @@ public class RobotContainer
 
   // Controller definitions
   CommandXboxController m_driverController = new CommandXboxController(0);
-  CommandXboxController m_operatorController = new CommandXboxController(2);
+  CommandJoystick m_operatorController1 = new CommandJoystick(1);
+  CommandJoystick m_operatorController2 = new CommandJoystick(2);
+
 
   private final Trigger DRIVER_A_BUTTON = new Trigger(() -> m_driverController.getHID().getAButton());
   private final Trigger DRIVER_B_BUTTON = new Trigger(() -> m_driverController.getHID().getBButton());
@@ -85,34 +90,34 @@ public class RobotContainer
 
 
 
-  private final Trigger OPERATOR_A_BUTTON = new Trigger(() -> m_operatorController.getHID().getAButton());
-  private final Trigger OPERATOR_B_BUTTON = new Trigger(() -> m_operatorController.getHID().getBButton());
-  private final Trigger OPERATOR_X_BUTTON = new Trigger(() -> m_operatorController.getHID().getXButton());
-  private final Trigger OPERATOR_Y_BUTTON = new Trigger(() -> m_operatorController.getHID().getYButton());
+  // private final Trigger OPERATOR_A_BUTTON = new Trigger(() -> m_operatorController.getHID().getAButton());
+  // private final Trigger OPERATOR_B_BUTTON = new Trigger(() -> m_operatorController.getHID().getBButton());
+  // private final Trigger OPERATOR_X_BUTTON = new Trigger(() -> m_operatorController.getHID().getXButton());
+  // private final Trigger OPERATOR_Y_BUTTON = new Trigger(() -> m_operatorController.getHID().getYButton());
 
-  private final Trigger OPERATOR_POV_UP = new Trigger(m_operatorController.povUp());
-  private final Trigger OPERATOR_POV_DOWN = new Trigger(m_operatorController.povDown());
-  private final Trigger OPERATOR_POV_LEFT = new Trigger(m_operatorController.povLeft());
-  private final Trigger OPERATOR_POV_RIGHT = new Trigger(m_operatorController.povRight());
+  // private final Trigger OPERATOR_POV_UP = new Trigger(m_operatorController.povUp());
+  // private final Trigger OPERATOR_POV_DOWN = new Trigger(m_operatorController.povDown());
+  // private final Trigger OPERATOR_POV_LEFT = new Trigger(m_operatorController.povLeft());
+  // private final Trigger OPERATOR_POV_RIGHT = new Trigger(m_operatorController.povRight());
 
-  private final Trigger OPERATOR_LEFT_TRIGGER = new Trigger(m_operatorController.leftTrigger());
-  private final Trigger OPERATOR_RIGHT_TRIGGER = new Trigger(m_operatorController.rightTrigger());
-  private final Trigger OPERATOR_LEFT_BUMPER = new Trigger(m_operatorController.leftBumper());
-  private final Trigger OPERATOR_RIGHT_BUMPER = new Trigger(m_operatorController.rightBumper());
+  // private final Trigger OPERATOR_LEFT_TRIGGER = new Trigger(m_operatorController.leftTrigger());
+  // private final Trigger OPERATOR_RIGHT_TRIGGER = new Trigger(m_operatorController.rightTrigger());
+  // private final Trigger OPERATOR_LEFT_BUMPER = new Trigger(m_operatorController.leftBumper());
+  // private final Trigger OPERATOR_RIGHT_BUMPER = new Trigger(m_operatorController.rightBumper());
 
   // Subsystem definitions
   SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
   EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem();
-  CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem = new CoralGroundIntakeSubsystem();
+  // CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem = new CoralGroundIntakeSubsystem();
   ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
 
   // Commands Definitions
 
   //Coral Ground Intake Commands
-  CoralGroundManualIntake m_coralGroundManualIntake = new CoralGroundManualIntake(m_coralGroundIntakeSubsystem);
-  CoralGroundManualOuttake m_coralGroundManualOuttake = new CoralGroundManualOuttake(m_coralGroundIntakeSubsystem);
-  CoralGroundManualPivotDown m_coralGroundManualPivotDown = new CoralGroundManualPivotDown(m_coralGroundIntakeSubsystem);
-  CoralGroundManualPivotUp m_coralGroundManualPivotUp = new CoralGroundManualPivotUp(m_coralGroundIntakeSubsystem);
+  // CoralGroundManualIntake m_coralGroundManualIntake = new CoralGroundManualIntake(m_coralGroundIntakeSubsystem);
+  // CoralGroundManualOuttake m_coralGroundManualOuttake = new CoralGroundManualOuttake(m_coralGroundIntakeSubsystem);
+  // CoralGroundManualPivotDown m_coralGroundManualPivotDown = new CoralGroundManualPivotDown(m_coralGroundIntakeSubsystem);
+  // CoralGroundManualPivotUp m_coralGroundManualPivotUp = new CoralGroundManualPivotUp(m_coralGroundIntakeSubsystem);
 
   //Elevator Commands
   ElevatorManualDown m_elevatorManualDown = new ElevatorManualDown(m_elevatorSubsystem);
@@ -210,40 +215,76 @@ public class RobotContainer
         Commands.runOnce(m_swerveSubsystem :: zeroGyro)
       );
       
+      // Driver End Effector Manual Intake
       DRIVER_LEFT_TRIGGER.whileTrue(
         m_endEffectorManualIntake
       );
-
+      // Driver End Effector Manual Outtake
       DRIVER_RIGHT_TRIGGER.whileTrue(
         m_endEffectorManualOuttake
       );
+      
+      // Driver End Effector Manual Pivot Up
+      DRIVER_RIGHT_BUMPER.whileTrue(
+        m_endEffectorManualPivotUp
+      );
+      // Driver End Effector Manual Pivot Down
+      DRIVER_LEFT_BUMPER.whileTrue(
+        m_endEffectorManualPivotDown
+      );
+      // Driver Elevator Stow
+      DRIVER_B_BUTTON.whileTrue(
+        m_endEffectorStow
+      );
 
-
-      OPERATOR_X_BUTTON.whileTrue(
+      // Operator L1
+      m_operatorController1.button(2).whileTrue(
         m_L1_CMD
       );
-      OPERATOR_Y_BUTTON.whileTrue(
+      m_operatorController1.button(2).whileFalse(
+        m_endEffectorStow
+      );
+      // Operator L2
+      m_operatorController1.button(1).whileTrue(
         m_L2_CMD
       );
-      OPERATOR_RIGHT_BUMPER.whileTrue(
+      m_operatorController1.button(1).whileFalse(
+        m_endEffectorStow
+      );
+      
+      // Operator L3
+      m_operatorController1.button(3).whileTrue(
         m_L3_CMD
       );
-
-      OPERATOR_LEFT_TRIGGER.whileTrue(
-        m_STOW_CMD
+      m_operatorController1.button(3).whileFalse(
+        m_endEffectorStow
       );
-
-      OPERATOR_RIGHT_TRIGGER.whileTrue(
+      // Operator Coral Station
+      m_operatorController2.button(11).whileTrue(
         m_CS_CMD
       );
-
-      OPERATOR_POV_DOWN.whileTrue(
-        m_elevatorManualDown
+      m_operatorController2.button(11).whileFalse(
+        m_endEffectorStow
+      );
+      // Operator Coral Station
+      m_operatorController2.button(10).whileTrue(
+        m_CS_CMD
+      );
+      m_operatorController2.button(10).whileFalse(
+        m_endEffectorStow
       );
 
-      OPERATOR_POV_UP.whileTrue(
+
+
+      // Operator Elevator Manual Up
+      m_operatorController2.button(12).whileTrue(
         m_elevatorManualUp
       );
+      // Operator Elevator Manual Down
+      m_operatorController1.button(12).whileTrue(
+        m_elevatorManualDown
+      );
+      
 
 
       
