@@ -25,8 +25,7 @@ public class ElevatorManualUp extends Command {
   public void execute() {
     if(m_elevatorSubsystem.isAtTopLimit() == false){
       m_elevatorSubsystem.elevatorUp();
-    }else
-    {
+    }else{
       m_elevatorSubsystem.elevatorStop();
     }
     

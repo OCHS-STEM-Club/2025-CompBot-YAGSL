@@ -41,7 +41,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Elevator Position Request
   private MotionMagicVoltage elevatorPositionRequest;
   // Last Desired Position
-  private Distance lastDesiredPosition;
+  private double lastDesiredPosition;
   // Top Limit
   private DigitalInput elevatorTopLimit;
   // Bottom Limit
@@ -56,7 +56,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorFollower = new Follower(ElevatorConstants.kElevatorLeftMotorID, false);
     elevatorRightFollowerMotor.setControl(elevatorFollower);
     // Last Desired Position
-    lastDesiredPosition = Units.Inches.of(0);
+    lastDesiredPosition = 0;
 
     // Set Elevator Top Limit
     elevatorTopLimit = new DigitalInput(ElevatorConstants.kTopElevatorLimitPort);
@@ -70,14 +70,14 @@ public class ElevatorSubsystem extends SubsystemBase {
                                         .withKP(ElevatorConstants.kElevatorPIDValueP)
                                         .withKI(ElevatorConstants.kElevatorPIDValueI)
                                         .withKD(ElevatorConstants.kElevatorPIDValueD)
-                                        // .withKS(ElevatorConstants.kElevatorPIDValueS)
-                                        // .withKV(ElevatorConstants.kElevatorPIDValueV)
-                                        // .withKA(ElevatorConstants.kElevatorPIDValueA)
-                                        // .withKG(ElevatorConstants.kElevatorPIDValueG)
+                                        .withKS(ElevatorConstants.kElevatorPIDValueS)
+                                        .withKV(ElevatorConstants.kElevatorPIDValueV)
+                                        .withKA(ElevatorConstants.kElevatorPIDValueA)
+                                        .withKG(ElevatorConstants.kElevatorPIDValueG)
                                         // .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
                                         .withGravityType(GravityTypeValue.Elevator_Static))
-                          .withFeedback(new FeedbackConfigs()
-                                            .withSensorToMechanismRatio(ElevatorConstants.kElevatorSensorToMechRatio))//Need to get sensor to mechanism ratio
+                          // .withFeedback(new FeedbackConfigs()
+                          //                   .withSensorToMechanismRatio(ElevatorConstants.kElevatorSensorToMechRatio))//Need to get sensor to mechanism ratio
                           .withMotorOutput(new MotorOutputConfigs()
                                               .withInverted(InvertedValue.Clockwise_Positive)
                                               .withNeutralMode(NeutralModeValue.Brake))
@@ -93,7 +93,11 @@ public class ElevatorSubsystem extends SubsystemBase {
 
 
     // Elevator Position Request
-    elevatorPositionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(0.025574);
+    elevatorPositionRequest = new MotionMagicVoltage(0).withSlot(0);
+
+    if(isAtBottomLimit()){
+      elevatorLeftLeaderMotor.setPosition(0);
+    }
 
     }
 
@@ -114,8 +118,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   // set Elevator Position
-  public void setElevatorPosition(Distance height) {
-    elevatorLeftLeaderMotor.setControl(elevatorPositionRequest.withPosition(height.in(Units.Inches))
+  public void setElevatorPosition(double height) {
+    elevatorLeftLeaderMotor.setControl(elevatorPositionRequest.withPosition(height)
                                       .withLimitForwardMotion(isAtTopLimit())
                                       .withLimitReverseMotion(isAtBottomLimit()));
     elevatorRightFollowerMotor.setControl(elevatorFollower);
@@ -124,16 +128,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
 
-  // get Elevator Position
-  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorPositionInInches")
-  public Distance getElevatorPositionDistance() {
-    return Units.Inches.of(elevatorLeftLeaderMotor.getPosition().getValueAsDouble());
-  }
   
   // get Elevator Position
-  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorPositionDouble")
+  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorPositionInches")
   public double getElevatorPositionDouble() {
-    return elevatorLeftLeaderMotor.getPosition().getValueAsDouble();
+    return elevatorLeftLeaderMotor.getRotorPosition().getValueAsDouble() * 4.75;
   }
 
   // get Elevator Left Motor Velocity
@@ -148,28 +147,48 @@ public class ElevatorSubsystem extends SubsystemBase {
     return elevatorRightFollowerMotor.get();
   }
 
+  // get Elevator Current
+  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorCurrent")
+  public double getElevatorCurrent(){
+    return elevatorLeftLeaderMotor.getStatorCurrent().getValueAsDouble();
+  }
+
+  // get Elevator Voltage
+  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorVoltage")
+  public double getElevatorVoltage(){
+    return elevatorLeftLeaderMotor.getMotorVoltage().getValueAsDouble();
+  }
+
   // get Elevator last Desired Position
   @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorLastDesiredPosition")
-  public Distance getLastDesiredPosition() {
+  public double  getLastDesiredPosition() {
     return lastDesiredPosition;
   }
 
   // is at Setpoint?
-  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtSetpoint?")
-  public boolean isAtSetpoint() {
-    return (getElevatorPositionDistance().compareTo(getLastDesiredPosition().minus(Units.Inches.of(ElevatorConstants.kElevatorSetpointThreshold))) > 0) &&
-            getElevatorPositionDistance().compareTo(getLastDesiredPosition().plus(Units.Inches.of(ElevatorConstants.kElevatorSetpointThreshold))) < 0;
-  }
+  // @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtSetpoint?")
+  // public boolean isAtSetpoint() {
+  //   return ((getElevatorPositionDouble() == (getLastDesiredPosition() - (ElevatorConstants.kElevatorSetpointThreshold))) > 0 )&&(
+  //         (getElevatorPositionDouble() == (getLastDesiredPosition() + (ElevatorConstants.kElevatorSetpointThreshold))) < 0);
+  // }
   
   // is at Bottom Limit?
   @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtTopLimit?")
   public boolean isAtTopLimit() {
-    return elevatorTopLimit.get();
+    if(elevatorTopLimit.get()){
+      return false;
+    }else{
+      return true;
+    }
   }
 
   @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtBottomLimit?")
   public boolean isAtBottomLimit(){
-    return elevatorBottonLimit.get();
+    if(elevatorBottonLimit.get()){
+      return false;
+    }else{
+      return true;
+    }
   }
 
   @Override

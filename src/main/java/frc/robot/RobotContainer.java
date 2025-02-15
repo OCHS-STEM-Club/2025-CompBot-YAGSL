@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import java.io.File;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -154,13 +156,13 @@ public class RobotContainer
         Commands.runOnce(m_swerveSubsystem :: zeroGyro)
       );
 
-      // DRIVER_POV_UP.whileTrue(
-      //   m_elevatorManualUp
-      // );
+      DRIVER_RIGHT_BUMPER.whileTrue(
+        m_elevatorManualUp
+      );
 
-      // DRIVER_POV_DOWN.whileTrue(
-      //   m_elevatorManualDown
-      // );
+      DRIVER_LEFT_BUMPER.whileTrue(
+        m_elevatorManualDown
+      );
 
       // DRIVER_POV_RIGHT.whileTrue(
       //   m_endEffectorManualPivotUp
@@ -199,11 +201,22 @@ public class RobotContainer
       DRIVER_POV_RIGHT.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.3)));
       DRIVER_POV_RIGHT.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
 
-      DRIVER_POV_UP.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.5)));
-      DRIVER_POV_UP.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
+      DRIVER_POV_UP.onTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.5)));
 
-      DRIVER_POV_DOWN.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.75)));
+      DRIVER_POV_LEFT.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.75)));
+      DRIVER_POV_LEFT.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
+      
       DRIVER_POV_DOWN.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
+
+      DRIVER_B_BUTTON.whileTrue(Commands.runOnce(() -> m_elevatorSubsystem.setElevatorPosition(10)));
+      DRIVER_B_BUTTON.whileFalse(Commands.runOnce(m_elevatorSubsystem :: elevatorStop));
+
+      DRIVER_Y_BUTTON.whileTrue(Commands.runOnce(() -> m_elevatorSubsystem.setElevatorPosition(20)));
+      DRIVER_Y_BUTTON.whileFalse(Commands.runOnce(m_elevatorSubsystem :: elevatorStop));
+      
+      DRIVER_X_BUTTON.whileTrue(Commands.runOnce(() -> m_elevatorSubsystem.setElevatorPosition(30)));
+      DRIVER_X_BUTTON.whileFalse(Commands.runOnce(m_elevatorSubsystem :: elevatorStop));
+      
 
       
 
