@@ -60,13 +60,13 @@ public final class Constants
     // End Effector Current Spike
     public static final double kEndEffectorCurrentSpike = 110;
     // End Effector PID Values
-    public static final double kEndEffectorPivotPIDValueP = 4.8171;
+    public static final double kEndEffectorPivotPIDValueP = 38.029;
     public static final double kEndEffectorPivotPIDValueI = 0;
     public static final double kEndEffectorPivotPIDValueD = 0;
     public static final double kEndEffectorPivotPIDValueS = 0;
-    public static final double kEndEffectorPivotPIDValueV = 3.4698;
-    public static final double kEndEffectorPivotPIDValueA = 0.93125;
-    public static final double kEndEffectorPivotPIDValueG = 2.2252;
+    public static final double kEndEffectorPivotPIDValueV = 3.7822;
+    public static final double kEndEffectorPivotPIDValueA = 1.3466;
+    public static final double kEndEffectorPivotPIDValueG = 2.4047;
     // End Effector Beam Break ID
     public static final int kEndEffectorBeamBreakPort = 3;
     // CANdi ID
@@ -76,6 +76,10 @@ public final class Constants
     public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 1;
     // Pivot Current Limits
     public static final double kEndEffectorPivotCurrentLimit = 40;
+
+    public static final double kEndEffectorPivotMotionMagicCruiseVelocity = 2185;
+    public static final double kEndEffectorPivotMotionMagicCruiseAcceleration = 1000;
+    public static final double kEndEffectorPivotMotionMagicCruiseJerk = 1700;
 
   }
 
@@ -110,15 +114,15 @@ public final class Constants
     public static final double kElevatorPIDValueA = 0;
     public static final double kElevatorPIDValueG = 0;
     // Sensor To Mechanism Ratio
-    public static final double kElevatorSensorToMechRatio = 0;
+    public static final double kElevatorSensorToMechRatio = 5;
     // Motion Magic Configs
     public static final double kElevatorMotionMagicAcceleration = 0;
     public static final double kElevatorMotionMagicCruiseVelocity = 0;
     // Elevator Speed
     public static final double kElevatorSpeed = 0.15;
     // Elevator Limits
-    public static final int kTopElevatorLimitPort = 0;
-    public static final int kBottomElevatorLimitPort = 1;
+    public static final int kTopElevatorLimitPort = 6;
+    public static final int kBottomElevatorLimitPort = 7;
     // ElevatorSetpointThreshold
     public static final double kElevatorSetpointThreshold = 0.5;
 

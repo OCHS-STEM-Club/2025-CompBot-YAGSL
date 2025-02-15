@@ -196,8 +196,16 @@ public class RobotContainer
 
       
 
-      DRIVER_Y_BUTTON.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.8)));
-      DRIVER_Y_BUTTON.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
+      DRIVER_POV_RIGHT.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.3)));
+      DRIVER_POV_RIGHT.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
+
+      DRIVER_POV_UP.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.5)));
+      DRIVER_POV_UP.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
+
+      DRIVER_POV_DOWN.whileTrue(Commands.runOnce(() -> m_endEffectorSubsystem.setPivotPosition(0.75)));
+      DRIVER_POV_DOWN.whileFalse(Commands.runOnce(m_endEffectorSubsystem :: EndEffectorPivotStop));
+
+      
 
       // DRIVER_LEFT_BUMPER.onTrue(Commands.runOnce(SignalLogger::start));
       // DRIVER_RIGHT_BUMPER.onTrue(Commands.runOnce(SignalLogger::stop));

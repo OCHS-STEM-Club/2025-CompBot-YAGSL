@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -14,9 +15,12 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
+import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.units.Units;
@@ -43,6 +47,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Bottom Limit
   private DigitalInput elevatorBottonLimit;
 
+
   public ElevatorSubsystem() {
     // Elevator Motors
     elevatorLeftLeaderMotor = new TalonFX(ElevatorConstants.kElevatorLeftMotorID);
@@ -53,17 +58,23 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Last Desired Position
     lastDesiredPosition = Units.Inches.of(0);
 
+    // Set Elevator Top Limit
+    elevatorTopLimit = new DigitalInput(ElevatorConstants.kTopElevatorLimitPort);
+    // Set Elevator Bottom Limit
+    elevatorBottonLimit = new DigitalInput(ElevatorConstants.kBottomElevatorLimitPort);
+    
+
     // elevatorConfigs
     elevatorConfigs = new TalonFXConfiguration()
                           .withSlot0(new Slot0Configs()
                                         .withKP(ElevatorConstants.kElevatorPIDValueP)
                                         .withKI(ElevatorConstants.kElevatorPIDValueI)
                                         .withKD(ElevatorConstants.kElevatorPIDValueD)
-                                        .withKS(ElevatorConstants.kElevatorPIDValueS)
-                                        .withKV(ElevatorConstants.kElevatorPIDValueV)
-                                        .withKA(ElevatorConstants.kElevatorPIDValueA)
-                                        .withKG(ElevatorConstants.kElevatorPIDValueG)
-                                        .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
+                                        // .withKS(ElevatorConstants.kElevatorPIDValueS)
+                                        // .withKV(ElevatorConstants.kElevatorPIDValueV)
+                                        // .withKA(ElevatorConstants.kElevatorPIDValueA)
+                                        // .withKG(ElevatorConstants.kElevatorPIDValueG)
+                                        // .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
                                         .withGravityType(GravityTypeValue.Elevator_Static))
                           .withFeedback(new FeedbackConfigs()
                                             .withSensorToMechanismRatio(ElevatorConstants.kElevatorSensorToMechRatio))//Need to get sensor to mechanism ratio
@@ -72,15 +83,13 @@ public class ElevatorSubsystem extends SubsystemBase {
                                               .withNeutralMode(NeutralModeValue.Brake))
                           .withMotionMagic(new MotionMagicConfigs()
                                               .withMotionMagicCruiseVelocity(ElevatorConstants.kElevatorMotionMagicCruiseVelocity)
-                                              .withMotionMagicAcceleration(ElevatorConstants.kElevatorMotionMagicAcceleration)); 
+                                              .withMotionMagicAcceleration(ElevatorConstants.kElevatorMotionMagicAcceleration));
+                                              
     // Apply elevatorConfigs
     elevatorLeftLeaderMotor.getConfigurator().apply(elevatorConfigs);
     elevatorRightFollowerMotor.getConfigurator().apply(elevatorConfigs);
 
-    // Set Elevator Top Limit
-    elevatorTopLimit = new DigitalInput(ElevatorConstants.kTopElevatorLimitPort);
-    // Set Elevator Bottom Limit
-    elevatorBottonLimit = new DigitalInput(ElevatorConstants.kBottomElevatorLimitPort);
+    
 
 
     // Elevator Position Request
@@ -106,7 +115,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // set Elevator Position
   public void setElevatorPosition(Distance height) {
-    elevatorLeftLeaderMotor.setControl(elevatorPositionRequest.withPosition(height.in(Units.Inches)));
+    elevatorLeftLeaderMotor.setControl(elevatorPositionRequest.withPosition(height.in(Units.Inches))
+                                      .withLimitForwardMotion(isAtTopLimit())
+                                      .withLimitReverseMotion(isAtBottomLimit()));
     elevatorRightFollowerMotor.setControl(elevatorFollower);
     lastDesiredPosition = height;
 

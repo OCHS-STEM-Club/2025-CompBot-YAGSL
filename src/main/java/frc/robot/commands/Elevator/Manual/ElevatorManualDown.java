@@ -23,7 +23,12 @@ public class ElevatorManualDown extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.elevatorDown();
+    if(m_elevatorSubsystem.isAtBottomLimit() == false){
+      m_elevatorSubsystem.elevatorDown();
+    }else
+    {
+      m_elevatorSubsystem.elevatorStop();
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -35,6 +40,7 @@ public class ElevatorManualDown extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+
     return false;
   }
 }

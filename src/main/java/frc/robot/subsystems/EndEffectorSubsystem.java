@@ -14,11 +14,14 @@ import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CommutationConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.PWM1Configs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANdi;
@@ -61,7 +64,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   // Voltage Request
   private VoltageOut m_voltageRequest;
 
-  private PositionVoltage m_positionRequest;
+  private MotionMagicVoltage m_motionRequest;
 
   public EndEffectorSubsystem() {
     // End Effector Intake
@@ -103,15 +106,20 @@ public class EndEffectorSubsystem extends SubsystemBase {
                         .withSlot0(new Slot0Configs()
                                         .withKP(EndEffectorConstants.kEndEffectorPivotPIDValueP)
                                         .withKI(EndEffectorConstants.kEndEffectorPivotPIDValueI)
-                                        .withKD(EndEffectorConstants.kEndEffectorPivotPIDValueD)
-                                        .withKS(EndEffectorConstants.kEndEffectorPivotPIDValueS)
-                                        .withKV(EndEffectorConstants.kEndEffectorPivotPIDValueV)
-                                        .withKA(EndEffectorConstants.kEndEffectorPivotPIDValueA)
-                                        .withKG(EndEffectorConstants.kEndEffectorPivotPIDValueG)
-                                        .withGravityType(GravityTypeValue.Arm_Cosine))
+                                        .withKD(EndEffectorConstants.kEndEffectorPivotPIDValueD))
+                        .withMotionMagic(new MotionMagicConfigs()
+                                            .withMotionMagicCruiseVelocity(EndEffectorConstants.kEndEffectorPivotMotionMagicCruiseVelocity)
+                                            .withMotionMagicAcceleration(EndEffectorConstants.kEndEffectorPivotMotionMagicCruiseAcceleration)
+                                            .withMotionMagicJerk(EndEffectorConstants.kEndEffectorPivotMotionMagicCruiseJerk))
+                        .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+                                                  .withForwardSoftLimitEnable(true)
+                                                  .withReverseSoftLimitEnable(true)
+                                                  .withForwardSoftLimitThreshold(0.8)
+                                                  .withReverseSoftLimitThreshold(0.15))
                         .withFeedback(new FeedbackConfigs()
                                             .withFeedbackRemoteSensorID(EndEffectorConstants.kCANdiID)
-                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANdiPWM1))
+                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANdiPWM1)
+                                            .withSensorToMechanismRatio(1))
                         .withCurrentLimits(new CurrentLimitsConfigs()
                                             .withStatorCurrentLimit(Units.Amps.of(EndEffectorConstants.kEndEffectorPivotCurrentLimit)));
     // Apply Pivot Configs
@@ -119,8 +127,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
   
     // SysID voltage request
     m_voltageRequest = new VoltageOut(0);
-    // Pivot Control Request
-    m_positionRequest = new PositionVoltage(0).withSlot(0);
+    // Motion Magic motion request
+    m_motionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(0.280975);
+
     
     
 
@@ -195,8 +204,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
     new SysIdRoutine(
         new SysIdRoutine.Config(
           null,            // Use default ramp rate (1 V/s)
-          Volts.of(2),    // Reduce dynamic step voltage to 4 to prevent brownout
-          Seconds.of(8),  // Use default timeout (10 s)
+          Volts.of(4),    // Reduce dynamic step voltage to 4 to prevent brownout
+          Seconds.of(10),  // Use default timeout (10 s)
           // Log state with Phoenix SignalLogger class
           (state) -> SignalLogger.writeString("End Effector State", state.toString())
         ),
@@ -218,7 +227,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
   // Set Pivot Postion
   public void setPivotPosition(double position){
-    endEffectorPivot.setControl(m_positionRequest.withPosition(position));
+    endEffectorPivot.setControl(m_motionRequest.withPosition(position));
   }
 
   // Get Pivot Position
@@ -236,7 +245,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   // Get Pivot Position Request
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotSetpoint")
   public double getPivotSetpoint(){
-    return m_positionRequest.Position;
+    return m_motionRequest.Position;
   }
 
   // Get Pivot Current

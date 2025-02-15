@@ -23,7 +23,13 @@ public class ElevatorManualUp extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_elevatorSubsystem.elevatorUp();
+    if(m_elevatorSubsystem.isAtTopLimit() == false){
+      m_elevatorSubsystem.elevatorUp();
+    }else
+    {
+      m_elevatorSubsystem.elevatorStop();
+    }
+    
   }
 
   // Called once the command ends or is interrupted.
