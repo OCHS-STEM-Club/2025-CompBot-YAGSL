@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.io.File;
+import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -141,6 +142,14 @@ public class RobotContainer
                                                                                              m_driverController::getRightY)
                                                            .headingWhile(true);
 
+  SwerveInputStream driveRobotOriented = SwerveInputStream.of(m_swerveSubsystem.getSwerveDrive(),
+                                                            getYAxisPOV(),
+                                                            getXAxisPOV())
+                                                            .withControllerRotationAxis(() -> m_driverController.getRightX() * 1)
+                                                            .scaleTranslation(0.2)
+                                                            .allianceRelativeControl(false)
+                                                            .robotRelative(true); 
+                                                      
 
   enum RobotState
   {
@@ -180,12 +189,30 @@ public class RobotContainer
     SmartDashboard.putString("Robot_State", m_robotState.toString());
   }
 
+  private DoubleSupplier getXAxisPOV(){
+    return () -> {
+      if(DRIVER_POV_LEFT.getAsBoolean()) return -1;
+      if(DRIVER_POV_RIGHT.getAsBoolean()) return 1;
+      return 0;
+    };
+  }
+
+  private DoubleSupplier getYAxisPOV(){
+    return () -> {
+      if(DRIVER_POV_DOWN.getAsBoolean()) return -1;
+      if(DRIVER_POV_UP.getAsBoolean()) return 1;
+      return 0;
+    };
+  }
+
   // Method to configure bindings
   private void configureBindings()
   {
 
     Command driveFieldOrientedDirectAngle      = m_swerveSubsystem.driveFieldOriented(driveDirectAngle);
-    Command driveFieldOrientedAnglularVelocity = m_swerveSubsystem.driveFieldOriented(driveAngularVelocity);  
+    Command driveFieldOrientedAnglularVelocity = m_swerveSubsystem.driveFieldOriented(driveAngularVelocity); 
+    Command driveRobotOrientedNudge  = m_swerveSubsystem.driveFieldOriented(driveRobotOriented);
+
 
     if (RobotBase.isSimulation())
     {
@@ -273,6 +300,26 @@ public class RobotContainer
       Commands.runOnce(() -> {
         m_endEffectorStow.cancel();
         updateRobotState(RobotState.STOW);
+      })
+    );
+
+    DRIVER_POV_RIGHT.whileTrue(
+      Commands.runOnce(() -> {
+        driveRobotOrientedNudge.schedule();
+    })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        driveRobotOrientedNudge.cancel();
+      })
+    );
+
+    DRIVER_POV_LEFT.whileTrue(
+      Commands.runOnce(() -> {
+        driveRobotOrientedNudge.schedule();
+    })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        driveRobotOrientedNudge.cancel();
       })
     );
 
