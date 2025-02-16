@@ -44,9 +44,10 @@ public final class Constants
 
     // Joystick Deadband
     public static final double DEADBAND        = 0.1;
-    public static final double LEFT_Y_DEADBAND = 0.2;
-    public static final double RIGHT_X_DEADBAND = 0.2;
-    public static final double TURN_CONSTANT    = 6;
+    // Robot Speed
+    public static final double ROBOT_SPEED     = 0.4;
+
+
   }
 
   public static class EndEffectorConstants 
@@ -126,7 +127,7 @@ public final class Constants
     public static final int kTopElevatorLimitPort = 5;
     public static final int kBottomElevatorLimitPort = 7;
     // ElevatorSetpointThreshold
-    public static final double kElevatorSetpointThreshold = 0.5;
+    public static final double kElevatorSetpointThreshold = 1;
 
   }
 

@@ -9,9 +9,6 @@ import static edu.wpi.first.units.Units.*;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.FeedbackConfigs;
-import com.ctre.phoenix6.configs.HardwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -20,16 +17,9 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
-import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
-import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
-
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -53,7 +43,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private DigitalInput elevatorTopLimit;
   // Bottom Limit
   private DigitalInput elevatorBottonLimit;
-
+  // Voltage Request
   private VoltageOut m_voltageRequest;
 
 
@@ -72,7 +62,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Set Elevator Bottom Limit
     elevatorBottonLimit = new DigitalInput(ElevatorConstants.kBottomElevatorLimitPort);
     
-
     // elevatorConfigs
     elevatorConfigs = new TalonFXConfiguration()
                           .withSlot0(new Slot0Configs()
@@ -102,150 +91,131 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorLeftLeaderMotor.getConfigurator().apply(elevatorConfigs);
     elevatorRightFollowerMotor.getConfigurator().apply(elevatorConfigs);
 
-    
-
-
     // Elevator Position Request
     elevatorPositionRequest = new MotionMagicVoltage(0).withSlot(0);
-
+    // Voltage Request
     m_voltageRequest = new VoltageOut(0.0);
 
-    
 
     }
 
-  // Elevator Up
-  public void elevatorUp() {  
-    elevatorLeftLeaderMotor.setVoltage(1.2);;
-    elevatorRightFollowerMotor.setControl(elevatorFollower);
-  }
-  // Elevator Down
-  public void elevatorDown() {
+    // Elevator Up
+    public void elevatorUp() {
+      elevatorLeftLeaderMotor.setVoltage(1.2);
+      ;
+      elevatorRightFollowerMotor.setControl(elevatorFollower);
+    }
+
+    // Elevator Down
+    public void elevatorDown() {
       elevatorLeftLeaderMotor.setVoltage(-1.2);
       elevatorRightFollowerMotor.setControl(elevatorFollower);
-    
-  }
-  // Elevator Stop
-  public void elevatorStop() {
-    elevatorLeftLeaderMotor.set(0);;;
-    elevatorRightFollowerMotor.setControl(elevatorFollower);
-  }
 
-  // set Elevator Position
-  public void setElevatorPosition(double height) {
-    elevatorLeftLeaderMotor.setControl(elevatorPositionRequest.withPosition(height)
-                                      .withLimitForwardMotion(isAtTopLimit())
-                                      .withLimitReverseMotion(isAtBottomLimit()));
-    // elevatorRightFollowerMotor.setControl(elevatorFollower);
-    lastDesiredPosition = height;
-
-  }
-
-  public boolean isBelow10Inches(){
-    return this.getElevatorPositionInches() < 10;
-  }
-
-  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorRequestPosition")
-  public double getElevatorRequestPosition(){
-    return elevatorPositionRequest.Position;
-  }
-
-
-
-
-private final SysIdRoutine m_sysIdRoutine =
-   new SysIdRoutine(
-      new SysIdRoutine.Config(
-         Volts.of(0.5).per(Second),        // Use default ramp rate (1 V/s)
-         Volts.of(1.2), // Reduce dynamic step voltage to 4 to prevent brownout
-         Seconds.of(5.3),        // Use default timeout (10 s)
-                      // Log state with Phoenix SignalLogger class
-         (state) -> SignalLogger.writeString("state", state.toString())
-      ),
-      new SysIdRoutine.Mechanism(
-         (volts) -> elevatorLeftLeaderMotor.setControl(m_voltageRequest.withOutput(volts.in(Volts))),
-         null,
-         this
-      )
-   );
-
-public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-  return m_sysIdRoutine.quasistatic(direction);
-}
-
-public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-  return m_sysIdRoutine.dynamic(direction);
-}
-  
-  // get Elevator Position
-  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorPositionRotations")
-  public double getElevatorPositionInches() {
-    return elevatorLeftLeaderMotor.getRotorPosition().getValueAsDouble();
-  }
-
-  // get Elevator Left Motor Velocity
-  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorLeftMotorVelocity")
-  public double getElevatorLeftMotorVelocity() {
-    return elevatorLeftLeaderMotor.get();
-  }
-
-  // get Elevator Right Motor Velocity
-  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorRightMotorVelocity")
-  public double getElevatorRightMotorVelocity() {
-    return elevatorRightFollowerMotor.get();
-  }
-
-  // get Elevator Current
-  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorCurrent")
-  public double getElevatorCurrent(){
-    return elevatorLeftLeaderMotor.getStatorCurrent().getValueAsDouble();
-  }
-
-  // get Elevator Voltage
-  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorVoltage")
-  public double getElevatorVoltage(){
-    return elevatorLeftLeaderMotor.getMotorVoltage().getValueAsDouble();
-  }
-
-  // get Elevator last Desired Position
-  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorLastDesiredPosition")
-  public double  getLastDesiredPosition() {
-    return lastDesiredPosition;
-  }
-
-  // is at Setpoint?
-  // @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtSetpoint?")
-  // public boolean isAtSetpoint() {
-  //   return ((getElevatorPositionDouble() == (getLastDesiredPosition() - (ElevatorConstants.kElevatorSetpointThreshold))) > 0 )&&(
-  //         (getElevatorPositionDouble() == (getLastDesiredPosition() + (ElevatorConstants.kElevatorSetpointThreshold))) < 0);
-  // }
-  
-  // is at Bottom Limit?
-  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtTopLimit?")
-  public boolean isAtTopLimit() {
-    if(elevatorTopLimit.get()){
-      return false;
-    }else{
-      return true;
     }
-  }
 
-  @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtBottomLimit?")
-  public boolean isAtBottomLimit(){
-    if(elevatorBottonLimit.get()){
-      return false;
-    }else{
-      return true;
+    // Elevator Stop
+    public void elevatorStop() {
+      elevatorLeftLeaderMotor.set(0);
+      ;
+      ;
+      elevatorRightFollowerMotor.setControl(elevatorFollower);
     }
-  }
 
-  @Override
-  public void periodic() {
+    // set Elevator Position
+    public void setElevatorPosition(double height) {
+      elevatorLeftLeaderMotor.setControl(elevatorPositionRequest.withPosition(height)
+          .withLimitForwardMotion(isAtTopLimit())
+          .withLimitReverseMotion(isAtBottomLimit()));
+      // elevatorRightFollowerMotor.setControl(elevatorFollower);
+      lastDesiredPosition = height;
 
-    if(isAtBottomLimit()){
-      elevatorLeftLeaderMotor.setPosition(0);
     }
-   
-  }
+
+    public boolean isBelow10Inches() {
+      return this.getElevatorPositionRotations() < 10;
+    }
+
+    private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(
+            Volts.of(0.5).per(Second), // Use default ramp rate (1 V/s)
+            Volts.of(1.2), // Reduce dynamic step voltage to 4 to prevent brownout
+            Seconds.of(5.3), // Use default timeout (10 s)
+            // Log state with Phoenix SignalLogger class
+            (state) -> SignalLogger.writeString("state", state.toString())),
+        new SysIdRoutine.Mechanism(
+            (volts) -> elevatorLeftLeaderMotor.setControl(m_voltageRequest.withOutput(volts.in(Volts))),
+            null,
+            this));
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+      return m_sysIdRoutine.quasistatic(direction);
+    }
+
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+      return m_sysIdRoutine.dynamic(direction);
+    }
+
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorSetpointInRotations")
+    public double getElevatorPositionSetpoint() {
+      return elevatorPositionRequest.Position;
+    }
+
+    // get Elevator Position
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorPositionInRotations")
+    public double getElevatorPositionRotations() {
+      return elevatorLeftLeaderMotor.getRotorPosition().getValueAsDouble();
+    }
+
+    // get Elevator Left Motor Velocity
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorVelocity")
+    public double getElevatorVelocity() {
+      return elevatorLeftLeaderMotor.get();
+    }
+
+    // get Elevator Current
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorCurrent")
+    public double getElevatorCurrent() {
+      return elevatorLeftLeaderMotor.getStatorCurrent().getValueAsDouble();
+    }
+
+    // get Elevator Voltage
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorVoltage")
+    public double getElevatorVoltage() {
+      return elevatorLeftLeaderMotor.getMotorVoltage().getValueAsDouble();
+    }
+
+    // is at Setpoint?
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtSetpoint?")
+    public boolean isAtSetpoint(){
+      return Math.abs(getElevatorPositionRotations() - getElevatorPositionSetpoint()) < ElevatorConstants.kElevatorSetpointThreshold;
+    }
+
+    // is at Bottom Limit?
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtTopLimit?")
+    public boolean isAtTopLimit() {
+      if (elevatorTopLimit.get()) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtBottomLimit?")
+    public boolean isAtBottomLimit() {
+      if (elevatorBottonLimit.get()) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    @Override
+    public void periodic() {
+
+      if (isAtBottomLimit()) {
+        elevatorLeftLeaderMotor.setPosition(0);
+      }
+
+    }
 
 }

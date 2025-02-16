@@ -89,22 +89,6 @@ public class RobotContainer
   private final Trigger DRIVER_RIGHT_BUMPER = new Trigger(m_driverController.rightBumper());
 
 
-
-  // private final Trigger OPERATOR_A_BUTTON = new Trigger(() -> m_operatorController.getHID().getAButton());
-  // private final Trigger OPERATOR_B_BUTTON = new Trigger(() -> m_operatorController.getHID().getBButton());
-  // private final Trigger OPERATOR_X_BUTTON = new Trigger(() -> m_operatorController.getHID().getXButton());
-  // private final Trigger OPERATOR_Y_BUTTON = new Trigger(() -> m_operatorController.getHID().getYButton());
-
-  // private final Trigger OPERATOR_POV_UP = new Trigger(m_operatorController.povUp());
-  // private final Trigger OPERATOR_POV_DOWN = new Trigger(m_operatorController.povDown());
-  // private final Trigger OPERATOR_POV_LEFT = new Trigger(m_operatorController.povLeft());
-  // private final Trigger OPERATOR_POV_RIGHT = new Trigger(m_operatorController.povRight());
-
-  // private final Trigger OPERATOR_LEFT_TRIGGER = new Trigger(m_operatorController.leftTrigger());
-  // private final Trigger OPERATOR_RIGHT_TRIGGER = new Trigger(m_operatorController.rightTrigger());
-  // private final Trigger OPERATOR_LEFT_BUMPER = new Trigger(m_operatorController.leftBumper());
-  // private final Trigger OPERATOR_RIGHT_BUMPER = new Trigger(m_operatorController.rightBumper());
-
   // Subsystem definitions
   SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
   EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem();
@@ -157,7 +141,7 @@ public class RobotContainer
                                                                 () -> m_driverController.getLeftX() * -1)
                                                             .withControllerRotationAxis(() -> m_driverController.getRightX() * 1)
                                                             .deadband(OperatorConstants.DEADBAND)
-                                                            .scaleTranslation(0.4)
+                                                            .scaleTranslation(OperatorConstants.ROBOT_SPEED)
                                                             .allianceRelativeControl(true);
 
   /**
@@ -179,6 +163,7 @@ public class RobotContainer
     DriverStation.silenceJoystickConnectionWarning(true);
 
     autoChooser = AutoBuilder.buildAutoChooser();
+    
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     m_swerveSubsystem.replaceSwerveModuleFeedforward(0.22234, 2.0995, 0.17259);

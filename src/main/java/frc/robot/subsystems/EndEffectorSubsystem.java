@@ -10,7 +10,6 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
-import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 import com.ctre.phoenix6.configs.CommutationConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -22,17 +21,14 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -244,22 +240,22 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return endEffectorPivot.get();
   }
 
+  // Get Pivot Current
+    @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotCurrent")
+    public double getPivotCurrent() {
+      return endEffectorPivot.getStatorCurrent().getValueAsDouble();
+    }
+
+  // Get Pivot Voltage
+    @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotMotorVoltage")
+    public double getPivotMotorVoltage(){
+      return endEffectorPivot.getMotorVoltage().getValueAsDouble();
+    }
+
   // Get Pivot Position Request
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotSetpoint")
   public double getPivotSetpoint(){
     return m_motionRequest.Position;
-  }
-
-  // Get Pivot Current
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotCurrent")
-  public double getPivotCurrent() {
-    return endEffectorPivot.getStatorCurrent().getValueAsDouble();
-  }
-
-  // Get Pivot Voltage
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotMotorVoltage")
-  public double getPivotMotorVoltage(){
-    return endEffectorPivot.getMotorVoltage().getValueAsDouble();
   }
 
   // Get Intake Velocity
@@ -275,7 +271,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
   }
 
   // Get Intake Voltage
-  
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeMotorVoltage")
   public double getIntakeVoltage() {
     return endEffectorIntake.getMotorVoltage().getValueAsDouble();
