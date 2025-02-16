@@ -145,8 +145,8 @@ public class RobotContainer
   SwerveInputStream driveRobotOriented = SwerveInputStream.of(m_swerveSubsystem.getSwerveDrive(),
                                                             getYAxisPOV(),
                                                             getXAxisPOV())
-                                                            .withControllerRotationAxis(() -> m_driverController.getRightX() * 1)
-                                                            .scaleTranslation(0.2)
+                                                            .withControllerRotationAxis(getRotAxis())
+                                                            .scaleTranslation(0.05)
                                                             .allianceRelativeControl(false)
                                                             .robotRelative(true); 
                                                       
@@ -199,8 +199,16 @@ public class RobotContainer
 
   private DoubleSupplier getYAxisPOV(){
     return () -> {
-      if(DRIVER_POV_DOWN.getAsBoolean()) return -1;
-      if(DRIVER_POV_UP.getAsBoolean()) return 1;
+      if(DRIVER_POV_DOWN.getAsBoolean()) return 0;
+      if(DRIVER_POV_UP.getAsBoolean()) return 0;
+      return 0;
+    };
+  }
+
+  private DoubleSupplier getRotAxis(){
+    return () -> {
+      if(DRIVER_POV_DOWN.getAsBoolean()) return 0;
+      if(DRIVER_POV_UP.getAsBoolean()) return 0;
       return 0;
     };
   }
