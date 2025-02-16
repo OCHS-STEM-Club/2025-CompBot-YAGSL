@@ -290,6 +290,7 @@ public class RobotContainer
       })
     );
 
+
     // Driver Elevator Stow
     DRIVER_B_BUTTON.whileTrue(
       Commands.run(() -> {
@@ -336,6 +337,11 @@ public class RobotContainer
       })
     );
 
+    m_operatorController1.button(2).whileFalse(
+        m_endEffectorStow
+      );
+
+
     // Operator L2
     m_operatorController1.button(1).whileTrue(
       Commands.run(() -> {
@@ -349,6 +355,11 @@ public class RobotContainer
       })
     );
 
+    m_operatorController1.button(2).whileFalse(
+        m_endEffectorStow
+    );
+
+
     // Operator L3
     m_operatorController1.button(3).whileTrue(
       Commands.run(() -> {
@@ -360,6 +371,10 @@ public class RobotContainer
         m_L3_CMD.cancel();
         updateRobotState(RobotState.STOW);
       })
+    );
+
+    m_operatorController1.button(3).whileFalse(
+      m_endEffectorStow
     );
 
     // Operator Coral Station
@@ -375,6 +390,10 @@ public class RobotContainer
       })
     );
 
+    m_operatorController2.button(11).whileFalse(
+      m_endEffectorStow
+    );
+
     // Operator Coral Station
     m_operatorController2.button(10).whileTrue(
       Commands.run(() -> {
@@ -387,6 +406,11 @@ public class RobotContainer
         updateRobotState(RobotState.STOW);
       })
     );
+
+    m_operatorController2.button(10).whileFalse(
+        m_endEffectorStow
+      );
+
 
     // Operator Elevator Manual Up
     m_operatorController2.button(12).whileTrue(
