@@ -34,7 +34,9 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.EndEffectorConstants;
+import frc.robot.Constants.SetpointConstants;
 
 public class EndEffectorSubsystem extends SubsystemBase {
   /** Creates a new EndEffector. */
@@ -129,7 +131,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
     m_motionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(0.280975);
 
     
-    
+
 
 
 
@@ -179,6 +181,21 @@ public class EndEffectorSubsystem extends SubsystemBase {
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/HasAlgae?")
   public boolean hasAlgae(){
     return intakeBeamBreak.get();
+  }
+
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtSetpoint?")
+  public boolean isAtSetpoint(){
+    return Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
+  }
+
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtTopLimit?")
+  public boolean isAtTopLimit() {
+    return getPivotPosition() > 0.8;
+  }
+
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtBottomLimit?")
+  public boolean isAtBottomLimit() {
+    return getPivotPosition() < 0.15;
   }
 
 
