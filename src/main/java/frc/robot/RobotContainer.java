@@ -128,12 +128,12 @@ public class RobotContainer
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_swerveSubsystem.getSwerveDrive(),
-                                                                () -> m_driverController.getLeftY() * -1,
-                                                                () -> m_driverController.getLeftX() * -1)
+                                                                () -> m_driverController.getLeftY() * 1,
+                                                                () -> m_driverController.getLeftX() * 1)
                                                             .withControllerRotationAxis(() -> m_driverController.getRightX() * 1)
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(OperatorConstants.ROBOT_SPEED)
-                                                            .allianceRelativeControl(true);
+                                                            .allianceRelativeControl(false);
 
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
@@ -146,7 +146,7 @@ public class RobotContainer
                                                             getYAxisPOV(),
                                                             getXAxisPOV())
                                                             .withControllerRotationAxis(getRotAxis())
-                                                            .scaleTranslation(0.05)
+                                                            .scaleTranslation(0.25)
                                                             .allianceRelativeControl(false)
                                                             .robotRelative(true); 
                                                       
@@ -336,88 +336,98 @@ public class RobotContainer
     m_operatorController1.button(2).whileTrue(
       Commands.run(() -> {
         m_L1_CMD.schedule();
+        m_endEffectorStow.cancel();
         updateRobotState(RobotState.L1);
       })
     ).whileFalse(
       Commands.runOnce(() -> {
         m_L1_CMD.cancel();
+        m_endEffectorStow.schedule();
         updateRobotState(RobotState.STOW);
       })
     );
 
-    m_operatorController1.button(2).whileFalse(
-        m_endEffectorStow
-      );
+    // m_operatorController1.button(2).whileFalse(
+    //     m_endEffectorStow
+    //   );
 
 
     // Operator L2
     m_operatorController1.button(1).whileTrue(
       Commands.run(() -> {
         m_L2_CMD.schedule();
+        m_endEffectorStow.cancel();
         updateRobotState(RobotState.L2);
       })
     ).whileFalse(
       Commands.runOnce(() -> {
         m_L2_CMD.cancel();
+        m_endEffectorStow.schedule();
         updateRobotState(RobotState.STOW);
       })
     );
 
-    m_operatorController1.button(2).whileFalse(
-        m_endEffectorStow
-    );
+    // m_operatorController1.button(2).whileFalse(
+    //     m_endEffectorStow
+    // );
 
 
     // Operator L3
     m_operatorController1.button(3).whileTrue(
       Commands.run(() -> {
         m_L3_CMD.schedule();
+        m_endEffectorStow.cancel();
         updateRobotState(RobotState.L3);
       })
     ).whileFalse(
       Commands.runOnce(() -> {
         m_L3_CMD.cancel();
+        m_endEffectorStow.schedule();
         updateRobotState(RobotState.STOW);
       })
     );
 
-    m_operatorController1.button(3).whileFalse(
-      m_endEffectorStow
-    );
+    // m_operatorController1.button(3).whileFalse(
+    //   m_endEffectorStow
+    // );
 
     // Operator Coral Station
     m_operatorController2.button(11).whileTrue(
       Commands.run(() -> {
         m_CS_CMD.schedule();
+        m_endEffectorStow.cancel();
         updateRobotState(RobotState.CORAL_STATION);
       })
     ).whileFalse(
       Commands.runOnce(() -> {
         m_CS_CMD.cancel();
+        m_endEffectorStow.schedule();
         updateRobotState(RobotState.STOW);
       })
     );
 
-    m_operatorController2.button(11).whileFalse(
-      m_endEffectorStow
-    );
+    // m_operatorController2.button(11).whileFalse(
+    //   m_endEffectorStow
+    // );
 
     // Operator Coral Station
     m_operatorController2.button(10).whileTrue(
       Commands.run(() -> {
         m_CS_CMD.schedule();
+        m_endEffectorStow.cancel();
         updateRobotState(RobotState.CORAL_STATION);
       })
     ).whileFalse(
       Commands.runOnce(() -> {
         m_CS_CMD.cancel();
+        m_endEffectorStow.schedule();
         updateRobotState(RobotState.STOW);
       })
     );
 
-    m_operatorController2.button(10).whileFalse(
-        m_endEffectorStow
-      );
+    // m_operatorController2.button(10).whileFalse(
+    //     m_endEffectorStow
+    //   );
 
 
     // Operator Elevator Manual Up

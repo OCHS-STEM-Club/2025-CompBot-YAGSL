@@ -143,7 +143,7 @@ public final class Constants
     public static final double kL4ElevatorSetpoint = 0;
     public static final double kL4EndEffectorSetpoint = 0;
 
-    public static final double kCSElevatorSetpoint = 4;
+    public static final double kCSElevatorSetpoint = 5.6; // Used to be 4 rotations. Increased to 5.6 for better intaking from coral station
     public static final double kCSEndEffectorSetpoint = 0.643;
 
     public static final double kStowElevatorSetpoint = 0;

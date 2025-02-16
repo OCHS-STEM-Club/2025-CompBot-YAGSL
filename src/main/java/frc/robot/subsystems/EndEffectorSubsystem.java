@@ -281,11 +281,17 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return endEffectorIntake.get();
   }
 
-  // Get Intake Current
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeCurrent")
-  public double getIntakeCurrent() {
-    return endEffectorIntake.getTorqueCurrent().getValueAsDouble();
-  }
+ // Get Intake Current
+ @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeSupplyCurrent")
+ public double getIntakeSupplyCurrent() {
+   return endEffectorIntake.getSupplyCurrent().getValueAsDouble();
+ }
+
+ // Get Intake Current
+ @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeStatorCurrent")
+ public double getIntakeStatorCurrent() {
+   return endEffectorIntake.getStatorCurrent().getValueAsDouble();
+ }
 
   // Get Intake Voltage
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeMotorVoltage")
