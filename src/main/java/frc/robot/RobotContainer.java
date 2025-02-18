@@ -4,18 +4,16 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Inches;
-
 import java.io.File;
+import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix6.SignalLogger;
+import org.littletonrobotics.junction.AutoLogOutput;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.event.EventLoop;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,13 +21,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.OperatorConstants;
 
-import frc.robot.commands.CoralGroundIntake.Intake.Manual.CoralGroundManualIntake;
-import frc.robot.commands.CoralGroundIntake.Intake.Manual.CoralGroundManualOuttake;
-import frc.robot.commands.CoralGroundIntake.Pivot.Manual.CoralGroundManualPivotDown;
-import frc.robot.commands.CoralGroundIntake.Pivot.Manual.CoralGroundManualPivotUp;
 import frc.robot.commands.Elevator.Manual.ElevatorManualDown;
 import frc.robot.commands.Elevator.Manual.ElevatorManualUp;
 import frc.robot.commands.EndEffector.Intake.Manual.EndEffectorManualIntake;
@@ -40,7 +33,6 @@ import frc.robot.commands.Sequential.CS_CMD;
 import frc.robot.commands.Sequential.L1_CMD;
 import frc.robot.commands.Sequential.L2_CMD;
 import frc.robot.commands.Sequential.L3_CMD;
-import frc.robot.commands.Sequential.L4_CMD;
 import frc.robot.commands.Sequential.STOW_CMD;
 import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L1;
 import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L2;
@@ -52,7 +44,6 @@ import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_L2;
 import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_L3;
 import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_L4;
 import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_Stow;
-import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -151,6 +142,30 @@ public class RobotContainer
                                                                                              m_driverController::getRightY)
                                                            .headingWhile(true);
 
+  SwerveInputStream driveRobotOriented = SwerveInputStream.of(m_swerveSubsystem.getSwerveDrive(),
+                                                            getYAxisPOV(),
+                                                            getXAxisPOV())
+                                                            .withControllerRotationAxis(getRotAxis())
+                                                            .scaleTranslation(0.05)
+                                                            .allianceRelativeControl(false)
+                                                            .robotRelative(true); 
+                                                      
+
+  enum RobotState
+  {
+    L1,L2,L3,
+    CORAL_STATION,
+    STOW,
+    MANUAL_END_EFFECTOR_UP,
+    MANUAL_END_EFFECTOR_DOWN,
+    MANUAL_ELEVATOR_UP,
+    MANUAL_ELEVATOR_DOWN,
+    INTAKING_CORAL,
+    EJECTING_CORAL
+  }
+
+  @AutoLogOutput(key = "RobotState")
+  private RobotState m_robotState = RobotState.STOW;
   
  
   /**
@@ -169,12 +184,43 @@ public class RobotContainer
     m_swerveSubsystem.replaceSwerveModuleFeedforward(0.22234, 2.0995, 0.17259);
   }
 
+  private void updateRobotState(RobotState newState) {
+    m_robotState = newState;
+    SmartDashboard.putString("Robot_State", m_robotState.toString());
+  }
+
+  private DoubleSupplier getXAxisPOV(){
+    return () -> {
+      if(DRIVER_POV_LEFT.getAsBoolean()) return -1;
+      if(DRIVER_POV_RIGHT.getAsBoolean()) return 1;
+      return 0;
+    };
+  }
+
+  private DoubleSupplier getYAxisPOV(){
+    return () -> {
+      if(DRIVER_POV_DOWN.getAsBoolean()) return 0;
+      if(DRIVER_POV_UP.getAsBoolean()) return 0;
+      return 0;
+    };
+  }
+
+  private DoubleSupplier getRotAxis(){
+    return () -> {
+      if(DRIVER_POV_DOWN.getAsBoolean()) return 0;
+      if(DRIVER_POV_UP.getAsBoolean()) return 0;
+      return 0;
+    };
+  }
+
   // Method to configure bindings
   private void configureBindings()
   {
 
     Command driveFieldOrientedDirectAngle      = m_swerveSubsystem.driveFieldOriented(driveDirectAngle);
-    Command driveFieldOrientedAnglularVelocity = m_swerveSubsystem.driveFieldOriented(driveAngularVelocity);  
+    Command driveFieldOrientedAnglularVelocity = m_swerveSubsystem.driveFieldOriented(driveAngularVelocity); 
+    Command driveRobotOrientedNudge  = m_swerveSubsystem.driveFieldOriented(driveRobotOriented);
+
 
     if (RobotBase.isSimulation())
     {
@@ -201,91 +247,219 @@ public class RobotContainer
       );
       
       // Driver End Effector Manual Intake
-      DRIVER_LEFT_TRIGGER.whileTrue(
-        m_endEffectorManualIntake
-      );
-      // Driver End Effector Manual Outtake
-      DRIVER_RIGHT_TRIGGER.whileTrue(
-        m_endEffectorManualOuttake
-      );
-      
-      // Driver End Effector Manual Pivot Up
-      DRIVER_RIGHT_BUMPER.whileTrue(
-        m_endEffectorManualPivotUp
-      );
-      // Driver End Effector Manual Pivot Down
-      DRIVER_LEFT_BUMPER.whileTrue(
-        m_endEffectorManualPivotDown
-      );
-      // Driver Elevator Stow
-      DRIVER_B_BUTTON.whileTrue(
+    DRIVER_LEFT_TRIGGER.whileTrue(
+      Commands.run(() -> {
+        m_endEffectorManualIntake.schedule();
+        updateRobotState(RobotState.INTAKING_CORAL);
+      })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        m_endEffectorManualIntake.cancel();
+        updateRobotState(RobotState.STOW);
+      })
+    );
+
+    // Driver End Effector Manual Outtake
+    DRIVER_RIGHT_TRIGGER.whileTrue(
+      Commands.run(() -> {
+        m_endEffectorManualOuttake.schedule();
+        updateRobotState(RobotState.EJECTING_CORAL);
+      })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        m_endEffectorManualOuttake.cancel();
+        updateRobotState(RobotState.STOW);
+      })
+    );
+
+    // Driver End Effector Manual Pivot Up
+    DRIVER_RIGHT_BUMPER.whileTrue(
+      Commands.run(() -> {
+        m_endEffectorManualPivotUp.schedule();
+        updateRobotState(RobotState.MANUAL_END_EFFECTOR_UP);
+      })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        m_endEffectorManualPivotUp.cancel();
+        updateRobotState(RobotState.STOW);
+      })
+    );
+
+    // Driver End Effector Manual Pivot Down
+    DRIVER_LEFT_BUMPER.whileTrue(
+      Commands.run(() -> {
+        m_endEffectorManualPivotDown.schedule();
+        updateRobotState(RobotState.MANUAL_END_EFFECTOR_DOWN);
+      })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        m_endEffectorManualPivotDown.cancel();
+        updateRobotState(RobotState.STOW);
+      })
+    );
+
+
+    // Driver Elevator Stow
+    DRIVER_B_BUTTON.whileTrue(
+      Commands.run(() -> {
+        m_endEffectorStow.schedule();
+        updateRobotState(RobotState.STOW);
+      })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        m_endEffectorStow.cancel();
+        updateRobotState(RobotState.STOW);
+      })
+    );
+
+    DRIVER_POV_RIGHT.whileTrue(
+      Commands.runOnce(() -> {
+        driveRobotOrientedNudge.schedule();
+    })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        driveRobotOrientedNudge.cancel();
+      })
+    );
+
+    DRIVER_POV_LEFT.whileTrue(
+      Commands.runOnce(() -> {
+        driveRobotOrientedNudge.schedule();
+    })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        driveRobotOrientedNudge.cancel();
+      })
+    );
+
+    // Operator L1
+    m_operatorController1.button(2).whileTrue(
+      Commands.run(() -> {
+        m_L1_CMD.schedule();
+        updateRobotState(RobotState.L1);
+      })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        m_L1_CMD.cancel();
+        updateRobotState(RobotState.STOW);
+      })
+    );
+
+    m_operatorController1.button(2).whileFalse(
         m_endEffectorStow
       );
 
-      // Operator L1
-      m_operatorController1.button(2).whileTrue(
-        m_L1_CMD
-      );
-      m_operatorController1.button(2).whileFalse(
+
+    // Operator L2
+    m_operatorController1.button(1).whileTrue(
+      Commands.run(() -> {
+        m_L2_CMD.schedule();
+        updateRobotState(RobotState.L2);
+      })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        m_L2_CMD.cancel();
+        updateRobotState(RobotState.STOW);
+      })
+    );
+
+    m_operatorController1.button(2).whileFalse(
         m_endEffectorStow
-      );
-      // Operator L2
-      m_operatorController1.button(1).whileTrue(
-        m_L2_CMD
-      );
-      m_operatorController1.button(1).whileFalse(
-        m_endEffectorStow
-      );
-      
-      // Operator L3
-      m_operatorController1.button(3).whileTrue(
-        m_L3_CMD
-      );
-      m_operatorController1.button(3).whileFalse(
-        m_endEffectorStow
-      );
-      // Operator Coral Station
-      m_operatorController2.button(11).whileTrue(
-        m_CS_CMD
-      );
-      m_operatorController2.button(11).whileFalse(
-        m_endEffectorStow
-      );
-      // Operator Coral Station
-      m_operatorController2.button(10).whileTrue(
-        m_CS_CMD
-      );
-      m_operatorController2.button(10).whileFalse(
+    );
+
+
+    // Operator L3
+    m_operatorController1.button(3).whileTrue(
+      Commands.run(() -> {
+        m_L3_CMD.schedule();
+        updateRobotState(RobotState.L3);
+      })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        m_L3_CMD.cancel();
+        updateRobotState(RobotState.STOW);
+      })
+    );
+
+    m_operatorController1.button(3).whileFalse(
+      m_endEffectorStow
+    );
+
+    // Operator Coral Station
+    m_operatorController2.button(11).whileTrue(
+      Commands.run(() -> {
+        m_CS_CMD.schedule();
+        updateRobotState(RobotState.CORAL_STATION);
+      })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        m_CS_CMD.cancel();
+        updateRobotState(RobotState.STOW);
+      })
+    );
+
+    m_operatorController2.button(11).whileFalse(
+      m_endEffectorStow
+    );
+
+    // Operator Coral Station
+    m_operatorController2.button(10).whileTrue(
+      Commands.run(() -> {
+        m_CS_CMD.schedule();
+        updateRobotState(RobotState.CORAL_STATION);
+      })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        m_CS_CMD.cancel();
+        updateRobotState(RobotState.STOW);
+      })
+    );
+
+    m_operatorController2.button(10).whileFalse(
         m_endEffectorStow
       );
 
 
+    // Operator Elevator Manual Up
+    m_operatorController2.button(12).whileTrue(
+      Commands.run(() -> {
+        m_elevatorManualUp.schedule();
+        updateRobotState(RobotState.MANUAL_ELEVATOR_UP);
+      })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        m_elevatorManualUp.cancel();
+        updateRobotState(RobotState.STOW);
+      })
+    );
 
-      // Operator Elevator Manual Up
-      m_operatorController2.button(12).whileTrue(
-        m_elevatorManualUp
-      );
-      // Operator Elevator Manual Down
-      m_operatorController1.button(12).whileTrue(
-        m_elevatorManualDown
-      );
-      
-
-
-      
+    // Operator Elevator Manual Down
+    m_operatorController1.button(12).whileTrue(
+      Commands.run(() -> {
+        m_elevatorManualDown.schedule();
+        updateRobotState(RobotState.MANUAL_ELEVATOR_DOWN);
+      })
+    ).whileFalse(
+      Commands.runOnce(() -> {
+        m_elevatorManualDown.cancel();
+        updateRobotState(RobotState.STOW);
+      })
+    );
+  }
+ 
       
       
   }
-}
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
-   * @return the command to run in autonomous
+   * @return the command to runOnce in autonomous
    */
   public Command getAutonomousCommand()
   {
-    // An example command will be run in autonomous
+    // An example command will be runOnce in autonomous
     return autoChooser.getSelected();
   }
 

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.SetpointConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new ElevatorSubsystem. */
@@ -187,7 +188,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // is at Setpoint?
     @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtSetpoint?")
     public boolean isAtSetpoint(){
-      return Math.abs(getElevatorPositionRotations() - getElevatorPositionSetpoint()) < ElevatorConstants.kElevatorSetpointThreshold;
+      return Math.abs(getElevatorPositionRotations() - getElevatorPositionSetpoint()) < SetpointConstants.kSetpointThreshold;
     }
 
     // is at Bottom Limit?
