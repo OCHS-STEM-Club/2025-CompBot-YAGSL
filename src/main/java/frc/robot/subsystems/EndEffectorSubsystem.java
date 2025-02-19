@@ -102,7 +102,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
     pivotConfigs = new TalonFXConfiguration()
                         .withMotorOutput(new MotorOutputConfigs()
                                             .withInverted(InvertedValue.CounterClockwise_Positive)
-                                            .withNeutralMode(NeutralModeValue.Brake))
+                                            .withNeutralMode(NeutralModeValue.Brake)
+                                            .withPeakForwardDutyCycle(1)
+                                            .withPeakReverseDutyCycle(0))
                         .withSlot0(new Slot0Configs()
                                         .withKP(EndEffectorConstants.kEndEffectorPivotPIDValueP)
                                         .withKI(EndEffectorConstants.kEndEffectorPivotPIDValueI)
@@ -299,8 +301,18 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return endEffectorIntake.getMotorVoltage().getValueAsDouble();
   }
 
+  public double getIntakeMotorTemperature(){
+    return endEffectorIntake.getExternalMotorTemp().getValueAsDouble();
+  }
+
+
   public CANdi getCANdi(){
     return canDi;
+  }
+
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorCANDI PWM1 Postion")
+  public double getCANDIPWM1(){
+    return canDi.getPWM1Position().getValueAsDouble();
   }
 
   

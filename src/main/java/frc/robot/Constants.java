@@ -131,23 +131,23 @@ public final class Constants
   }
 
   public static class SetpointConstants{
-    public static final double kL1ElevatorSetpoint = 0;
-    public static final double kL1EndEffectorSetpoint = 0.4;
+    public static final double kL1ElevatorSetpoint = 0; //0
+    public static final double kL1EndEffectorSetpoint = 0.4; //0.4
 
-    public static final double kL2ElevatorSetpoint = 10.5;
-    public static final double kL2EndEffectorSetpoint = 0.19;
+    public static final double kL2ElevatorSetpoint = 9.25; //10.5
+    public static final double kL2EndEffectorSetpoint = 0.19; //0.19
 
-    public static final double kL3ElevatorSetpoint = 14.8;
-    public static final double kL3EndEffectorSetpoint = 0.2;
+    public static final double kL3ElevatorSetpoint = 13.55; //14.8
+    public static final double kL3EndEffectorSetpoint = 0.2; //0.2
 
-    public static final double kL4ElevatorSetpoint = 0;
-    public static final double kL4EndEffectorSetpoint = 0;
+    public static final double kL4ElevatorSetpoint = 0; //0
+    public static final double kL4EndEffectorSetpoint = 0; //0
 
-    public static final double kCSElevatorSetpoint = 5.6; // Used to be 4 rotations. Increased to 5.6 for better intaking from coral station
-    public static final double kCSEndEffectorSetpoint = 0.643;
+    public static final double kCSElevatorSetpoint = 3.05; // Used to be 4 rotations. Increased to 5.6 for better intaking from coral station. Dropped to 4.3 rotations. last values was too high.
+    public static final double kCSEndEffectorSetpoint = 0.643; //0.643
 
-    public static final double kStowElevatorSetpoint = 0;
-    public static final double kStowEndEffectorSetpoint = 0.5;
+    public static final double kStowElevatorSetpoint = 0; //0
+    public static final double kStowEndEffectorSetpoint = 0.5; //0.5
 
     public static final double kSetpointThreshold = 0.75;
 

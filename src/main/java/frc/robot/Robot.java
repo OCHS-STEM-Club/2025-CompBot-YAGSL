@@ -35,6 +35,8 @@ public class Robot extends LoggedRobot
 
   private RobotContainer m_robotContainer;
 
+  private CANdle m_caNdle;
+
   
   // private Timer disabledTimer;
 
@@ -66,6 +68,10 @@ public class Robot extends LoggedRobot
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    m_caNdle = new CANdle(25);
+
+    m_caNdle.setLEDs(0, 57, 162);
     
 
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
