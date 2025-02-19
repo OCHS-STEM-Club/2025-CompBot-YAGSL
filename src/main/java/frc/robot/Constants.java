@@ -43,10 +43,11 @@ public final class Constants
   {
 
     // Joystick Deadband
-    public static final double DEADBAND        = 0.2;
-    public static final double LEFT_Y_DEADBAND = 0.2;
-    public static final double RIGHT_X_DEADBAND = 0.2;
-    public static final double TURN_CONSTANT    = 6;
+    public static final double DEADBAND        = 0.1;
+    // Robot Speed
+    public static final double ROBOT_SPEED     = 0.4;
+
+
   }
 
   public static class EndEffectorConstants 
@@ -55,21 +56,31 @@ public final class Constants
     public static final int kEndEffectorIntakeID = 23;
     public static final int kEndEffectorPivotID = 22;
     // End Effector Speeds
-    public static final double kEndEffectorSpeed = 0.75;
+    public static final double kEndEffectorSpeed = 0.95;
     public static final double kPivotSpeed = 0.15;
     // End Effector Current Spike
     public static final double kEndEffectorCurrentSpike = 110;
     // End Effector PID Values
-    public static final double kEndEffectorPivotPIDValueP = 0;
+    public static final double kEndEffectorPivotPIDValueP = 38.029;
     public static final double kEndEffectorPivotPIDValueI = 0;
     public static final double kEndEffectorPivotPIDValueD = 0;
+    // public static final double kEndEffectorPivotPIDValueS = 0;
+    // public static final double kEndEffectorPivotPIDValueV = 3.7822;
+    // public static final double kEndEffectorPivotPIDValueA = 1.3466;
+    // public static final double kEndEffectorPivotPIDValueG = 2.4047;
     // End Effector Beam Break ID
     public static final int kEndEffectorBeamBreakPort = 3;
     // CANdi ID
     public static final int kCANdiID = 26;
     // CANdi Cofigs
-    public static final double kPWM1AbsoluteEncoderOffset = -0.2553;
-    public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 0.5;
+    public static final double kPWM1AbsoluteEncoderOffset = -0.74511;
+    public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 1;
+    // Pivot Current Limits
+    public static final double kEndEffectorPivotCurrentLimit = 40;
+
+    public static final double kEndEffectorPivotMotionMagicCruiseVelocity = 2185;
+    public static final double kEndEffectorPivotMotionMagicCruiseAcceleration = 1000;
+    public static final double kEndEffectorPivotMotionMagicCruiseJerk = 1700;
 
   }
 
@@ -96,23 +107,50 @@ public final class Constants
     public static final int kElevatorLeftMotorID = 19;
 
     // Elevator PID Values
-    public static final double kElevatorPIDValueP = 0;
+    public static final double kElevatorPIDValueP = 3.596;
     public static final double kElevatorPIDValueI = 0;
     public static final double kElevatorPIDValueD = 0;
     public static final double kElevatorPIDValueS = 0;
-    public static final double kElevatorPIDValueV = 0;
+    public static final double kElevatorPIDValueV = 0.21303;
     public static final double kElevatorPIDValueA = 0;
-    public static final double kElevatorPIDValueG = 0;
+    public static final double kElevatorPIDValueG = 1.2061;
     // Sensor To Mechanism Ratio
-    public static final double kElevatorSensorToMechRatio = 0;
+    public static final double kElevatorSensorToMechRatio = 0.875;
     // Motion Magic Configs
-    public static final double kElevatorMotionMagicAcceleration = 0;
-    public static final double kElevatorMotionMagicCruiseVelocity = 0;
+    public static final double kElevatorMotionMagicAcceleration = 30633;
+    public static final double kElevatorMotionMagicCruiseVelocity = 35633;
+    public static final double kElevatorMotionMagicJerk = 45000;
+
     // Elevator Speed
     public static final double kElevatorSpeed = 0.15;
     // Elevator Limits
-    public static final int kTopElevatorLimitPort = 0;
-    public static final int kBottomElevatorLimitPort = 1;
+    public static final int kTopElevatorLimitPort = 5;
+    public static final int kBottomElevatorLimitPort = 7;
 
+
+  }
+
+  public static class SetpointConstants{
+    public static final double kL1ElevatorSetpoint = 0; //0
+    public static final double kL1EndEffectorSetpoint = 0.4; //0.4
+
+    public static final double kL2ElevatorSetpoint = 9.25; //10.5
+    public static final double kL2EndEffectorSetpoint = 0.19; //0.19
+
+    public static final double kL3ElevatorSetpoint = 13.55; //14.8
+    public static final double kL3EndEffectorSetpoint = 0.2; //0.2
+
+    public static final double kL4ElevatorSetpoint = 0; //0
+    public static final double kL4EndEffectorSetpoint = 0; //0
+
+    public static final double kCSElevatorSetpoint = 3.05; // Used to be 4 rotations. Increased to 5.6 for better intaking from coral station. Dropped to 4.3 rotations. last values was too high.
+    public static final double kCSEndEffectorSetpoint = 0.643; //0.643
+
+    public static final double kStowElevatorSetpoint = 0; //0
+    public static final double kStowEndEffectorSetpoint = 0.5; //0.5
+
+    public static final double kSetpointThreshold = 0.75;
+
+    
   }
 }

@@ -11,12 +11,16 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.CommutationConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.PWM1Configs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
-import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -25,16 +29,14 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.EndEffectorConstants;
+import frc.robot.Constants.SetpointConstants;
 
 public class EndEffectorSubsystem extends SubsystemBase {
   /** Creates a new EndEffector. */
@@ -44,25 +46,23 @@ public class EndEffectorSubsystem extends SubsystemBase {
   // End Effector Pivot
   private TalonFX endEffectorPivot;
 
+  // CANdi
+  private CANdi canDi;
+
   // End Effector Configs
   private TalonFXSConfiguration intakeConfigs;
   // Pivot Configs
   private TalonFXConfiguration pivotConfigs;
+  // CANdi Configs
+  private CANdiConfiguration canDiConfigs;
 
   // Intake Beam Break
   private DigitalInput intakeBeamBreak;
 
-  // Pivot PID Controller
-  private PIDController pivotPIDController;
-
   // Voltage Request
   private VoltageOut m_voltageRequest;
 
-  private CANdi canDi;
-
-  private CANdiConfiguration canDiConfigs;
-
-  private PositionVoltage m_positionRequest;
+  private MotionMagicVoltage m_motionRequest;
 
   public EndEffectorSubsystem() {
     // End Effector Intake
@@ -82,6 +82,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                       .withAbsoluteSensorOffset(EndEffectorConstants.kPWM1AbsoluteEncoderOffset)
                                       .withAbsoluteSensorDiscontinuityPoint(EndEffectorConstants.kPWM1AbsoluteEncoderDiscontinuityPoint));
 
+    // Apply CANdi Configs
     canDi.getConfigurator().apply(canDiConfigs);
 
     // Intake Configs
@@ -91,6 +92,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                               .withNeutralMode(NeutralModeValue.Brake))
                         .withCommutation(new CommutationConfigs()
                                               .withMotorArrangement(MotorArrangementValue.Minion_JST));
+                        // .withCurrentLimits(new CurrentLimitsConfigs()
+                        //                       .withStatorCurrentLimit(40));
 
     // Apply Intake Configs
     endEffectorIntake.getConfigurator().apply(intakeConfigs);
@@ -98,18 +101,39 @@ public class EndEffectorSubsystem extends SubsystemBase {
     // Pivot Configs
     pivotConfigs = new TalonFXConfiguration()
                         .withMotorOutput(new MotorOutputConfigs()
-                                            .withInverted(InvertedValue.Clockwise_Positive)
-                                            .withNeutralMode(NeutralModeValue.Brake))
+                                            .withInverted(InvertedValue.CounterClockwise_Positive)
+                                            .withNeutralMode(NeutralModeValue.Brake)
+                                            .withPeakForwardDutyCycle(1)
+                                            .withPeakReverseDutyCycle(0))
+                        .withSlot0(new Slot0Configs()
+                                        .withKP(EndEffectorConstants.kEndEffectorPivotPIDValueP)
+                                        .withKI(EndEffectorConstants.kEndEffectorPivotPIDValueI)
+                                        .withKD(EndEffectorConstants.kEndEffectorPivotPIDValueD))
+                        .withMotionMagic(new MotionMagicConfigs()
+                                            .withMotionMagicCruiseVelocity(EndEffectorConstants.kEndEffectorPivotMotionMagicCruiseVelocity)
+                                            .withMotionMagicAcceleration(EndEffectorConstants.kEndEffectorPivotMotionMagicCruiseAcceleration)
+                                            .withMotionMagicJerk(EndEffectorConstants.kEndEffectorPivotMotionMagicCruiseJerk))
+                        .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+                                                  .withForwardSoftLimitEnable(true)
+                                                  .withReverseSoftLimitEnable(true)
+                                                  .withForwardSoftLimitThreshold(0.8)
+                                                  .withReverseSoftLimitThreshold(0.15))
                         .withFeedback(new FeedbackConfigs()
                                             .withFeedbackRemoteSensorID(EndEffectorConstants.kCANdiID)
-                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANdiPWM1));
+                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANdiPWM1)
+                                            .withSensorToMechanismRatio(1))
+                        .withCurrentLimits(new CurrentLimitsConfigs()
+                                            .withStatorCurrentLimit(Units.Amps.of(EndEffectorConstants.kEndEffectorPivotCurrentLimit)));
     // Apply Pivot Configs
     endEffectorPivot.getConfigurator().apply(pivotConfigs);
   
     // SysID voltage request
     m_voltageRequest = new VoltageOut(0);
+    // Motion Magic motion request
+    m_motionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(0.280975);
 
-    m_positionRequest = new PositionVoltage(0).withSlot(0);
+    
+
 
 
 
@@ -161,6 +185,21 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return intakeBeamBreak.get();
   }
 
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtSetpoint?")
+  public boolean isAtSetpoint(){
+    return Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
+  }
+
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtTopLimit?")
+  public boolean isAtTopLimit() {
+    return getPivotPosition() > 0.8;
+  }
+
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtBottomLimit?")
+  public boolean isAtBottomLimit() {
+    return getPivotPosition() < 0.15;
+  }
+
 
   // End Effector Pivot Up
   public void EndEffectorPivotUp() {
@@ -177,14 +216,14 @@ public class EndEffectorSubsystem extends SubsystemBase {
     endEffectorPivot.set(0);
   } 
 
-
+// SysID definition
   private final SysIdRoutine m_sysIdRoutine =
     new SysIdRoutine(
         new SysIdRoutine.Config(
-          null,         // Use default ramp rate (1 V/s)
-          Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
-          Seconds.of(4),           // Use default timeout (10 s)
-                                          // Log state with Phoenix SignalLogger class
+          null,            // Use default ramp rate (1 V/s)
+          Volts.of(4),    // Reduce dynamic step voltage to 4 to prevent brownout
+          Seconds.of(10),  // Use default timeout (10 s)
+          // Log state with Phoenix SignalLogger class
           (state) -> SignalLogger.writeString("End Effector State", state.toString())
         ),
         new SysIdRoutine.Mechanism(
@@ -194,6 +233,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
         )
     );
 
+    // SysID Methods
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.quasistatic(direction);
   }
@@ -202,8 +242,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return m_sysIdRoutine.dynamic(direction);
   }
 
-  public void setPivotPosition(){
-    // endEffectorPivot.setControl(voltageRequest.withpo)
+  // Set Pivot Postion
+  public void setPivotPosition(double position){
+    endEffectorPivot.setControl(m_motionRequest.withPosition(position));
   }
 
   // Get Pivot Position
@@ -219,9 +260,21 @@ public class EndEffectorSubsystem extends SubsystemBase {
   }
 
   // Get Pivot Current
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotCurrent")
-  public double getPivotCurrent() {
-    return endEffectorPivot.getStatorCurrent().getValueAsDouble();
+    @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotCurrent")
+    public double getPivotCurrent() {
+      return endEffectorPivot.getStatorCurrent().getValueAsDouble();
+    }
+
+  // Get Pivot Voltage
+    @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotMotorVoltage")
+    public double getPivotMotorVoltage(){
+      return endEffectorPivot.getMotorVoltage().getValueAsDouble();
+    }
+
+  // Get Pivot Position Request
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotSetpoint")
+  public double getPivotSetpoint(){
+    return m_motionRequest.Position;
   }
 
   // Get Intake Velocity
@@ -230,23 +283,39 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return endEffectorIntake.get();
   }
 
-  // Get Intake Current
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeCurrent")
-  public double getIntakeCurrent() {
-    return endEffectorIntake.getTorqueCurrent().getValueAsDouble();
+ // Get Intake Current
+ @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeSupplyCurrent")
+ public double getIntakeSupplyCurrent() {
+   return endEffectorIntake.getSupplyCurrent().getValueAsDouble();
+ }
+
+ // Get Intake Current
+ @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeStatorCurrent")
+ public double getIntakeStatorCurrent() {
+   return endEffectorIntake.getStatorCurrent().getValueAsDouble();
+ }
+
+  // Get Intake Voltage
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeMotorVoltage")
+  public double getIntakeVoltage() {
+    return endEffectorIntake.getMotorVoltage().getValueAsDouble();
   }
 
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorCANdiPWM1Position")
-  public double getCANdiPosition(){
-    return canDi.getPWM1Position().getValueAsDouble();
+  public double getIntakeMotorTemperature(){
+    return endEffectorIntake.getExternalMotorTemp().getValueAsDouble();
   }
+
 
   public CANdi getCANdi(){
     return canDi;
   }
 
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorCANDI PWM1 Postion")
+  public double getCANDIPWM1(){
+    return canDi.getPWM1Position().getValueAsDouble();
+  }
 
-
+  
 
   @Override
   public void periodic() {

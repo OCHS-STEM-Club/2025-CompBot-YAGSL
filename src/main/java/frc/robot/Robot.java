@@ -11,6 +11,9 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.RainbowAnimation;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -32,6 +35,9 @@ public class Robot extends LoggedRobot
 
   private RobotContainer m_robotContainer;
 
+  private CANdle m_caNdle;
+
+  
   // private Timer disabledTimer;
 
   public Robot()
@@ -62,6 +68,11 @@ public class Robot extends LoggedRobot
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    m_caNdle = new CANdle(25);
+
+    m_caNdle.setLEDs(0, 57, 162);
+    
 
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
