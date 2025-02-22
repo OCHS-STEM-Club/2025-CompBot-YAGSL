@@ -140,7 +140,7 @@ public class RobotContainer
                                                             getYAxisPOV(),
                                                             getXAxisPOV())
                                                             .withControllerRotationAxis(getRotAxis())
-                                                            .scaleTranslation(0.25)
+                                                            .scaleTranslation(0.15)
                                                             .allianceRelativeControl(false)
                                                             .robotRelative(true); 
                                                       

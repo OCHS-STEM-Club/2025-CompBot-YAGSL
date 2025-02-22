@@ -10,6 +10,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.CommutationConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -102,9 +103,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
     pivotConfigs = new TalonFXConfiguration()
                         .withMotorOutput(new MotorOutputConfigs()
                                             .withInverted(InvertedValue.CounterClockwise_Positive)
-                                            .withNeutralMode(NeutralModeValue.Brake)
-                                            .withPeakForwardDutyCycle(1)
-                                            .withPeakReverseDutyCycle(0))
+                                            .withNeutralMode(NeutralModeValue.Brake))
                         .withSlot0(new Slot0Configs()
                                         .withKP(EndEffectorConstants.kEndEffectorPivotPIDValueP)
                                         .withKI(EndEffectorConstants.kEndEffectorPivotPIDValueI)
@@ -120,10 +119,15 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                                   .withReverseSoftLimitThreshold(0.15))
                         .withFeedback(new FeedbackConfigs()
                                             .withFeedbackRemoteSensorID(EndEffectorConstants.kCANdiID)
-                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANdiPWM1)
-                                            .withSensorToMechanismRatio(1))
+                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANdiPWM1)
+                                            .withSensorToMechanismRatio(1)
+                                            .withRotorToSensorRatio(32))
                         .withCurrentLimits(new CurrentLimitsConfigs()
-                                            .withStatorCurrentLimit(Units.Amps.of(EndEffectorConstants.kEndEffectorPivotCurrentLimit)));
+                                            .withStatorCurrentLimit(Units.Amps.of(EndEffectorConstants.kEndEffectorPivotCurrentLimit)))
+                        .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
+                                                  .withContinuousWrap(true));
+                        
+                        
     // Apply Pivot Configs
     endEffectorPivot.getConfigurator().apply(pivotConfigs);
   

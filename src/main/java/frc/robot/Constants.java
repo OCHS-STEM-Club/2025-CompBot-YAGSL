@@ -4,7 +4,17 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
 
@@ -73,8 +83,8 @@ public final class Constants
     // CANdi ID
     public static final int kCANdiID = 26;
     // CANdi Cofigs
-    public static final double kPWM1AbsoluteEncoderOffset = -0.74511;
-    public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 1;
+    public static final double kPWM1AbsoluteEncoderOffset = -0.74511;//-0.74511 // 0.245
+    public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 0.98; // 0.98
     // Pivot Current Limits
     public static final double kEndEffectorPivotCurrentLimit = 40;
 
@@ -152,5 +162,30 @@ public final class Constants
     public static final double kSetpointThreshold = 0.75;
 
     
+  }
+
+  public static class VisionConstants {
+        public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+
+        // The standard deviations of our vision estimated poses, which affect correction rate
+        // (Fake values. Experiment and determine estimation noise on an actual robot.)
+        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+
+
+        public static final String FL_Module_Camera_Name = "FL-Module";
+        public static final Transform3d FL_Module_Camera_Transformed =
+                        new Transform3d(new Translation3d(23622, -0.24638, 0), 
+                        new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(15)));
+
+
+        public static final String FR_Module_Camera_Name = "FR-Module";
+
+        public static final Transform3d FR_Module_Camera_Transformed =
+                        new Transform3d(new Translation3d(0.23622, 0.24638, 0.5), 
+                        new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(345)));
+
+
+
   }
 }

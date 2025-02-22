@@ -31,14 +31,17 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-import frc.robot.subsystems.Vision.Cameras;
+import frc.robot.VisionCamera;
+import frc.robot.Constants.VisionConstants;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -57,18 +60,20 @@ public class SwerveSubsystem extends SubsystemBase
    * Swerve drive object.
    */
   private final SwerveDrive swerveDrive;
-  /**
-   * AprilTag field layout.
-   */
-  private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
-  /**
-   * Enable vision odometry updates while driving.
-   */
-  private final boolean visionDriveTest = false;
-  /**
-   * PhotonVision class to keep an accurate odometry.
-   */
-  private Vision vision;
+  
+
+  VisionCamera FL_Module_Camera = new VisionCamera(VisionConstants.FL_Module_Camera_Name, VisionConstants.FL_Module_Camera_Transformed);
+
+  VisionCamera FR_Module_Camera = new VisionCamera(VisionConstants.FR_Module_Camera_Name, VisionConstants.FR_Module_Camera_Transformed);
+
+  VisionCamera[] camerasArray = new VisionCamera[2];
+
+  
+
+
+
+
+
 
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
@@ -77,6 +82,10 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(File directory)
   {
+
+    camerasArray[0] = new VisionCamera(VisionConstants.FL_Module_Camera_Name, VisionConstants.FL_Module_Camera_Transformed);
+    camerasArray[1] = new VisionCamera(VisionConstants.FR_Module_Camera_Name, VisionConstants.FR_Module_Camera_Transformed);
+    
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
@@ -99,12 +108,6 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setModuleEncoderAutoSynchronize(false,
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
 //    swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
-    if (visionDriveTest)
-    {
-      setupPhotonVision();
-      // Stop the odometry thread if we are using vision that way we can synchronize updates better.
-      swerveDrive.stopOdometryThread();
-    }
     setupPathPlanner();
   }
 
@@ -126,20 +129,12 @@ public class SwerveSubsystem extends SubsystemBase
   /**
    * Setup the photon vision class.
    */
-  public void setupPhotonVision()
-  {
-    vision = new Vision(swerveDrive::getPose, swerveDrive.field);
-  }
 
   @Override
   public void periodic()
   {
-    // When vision is enabled we must manually update odometry in SwerveDrive
-    if (visionDriveTest)
-    {
-      swerveDrive.updateOdometry();
-      vision.updatePoseEstimation(swerveDrive);
-    }
+    setupPhotonCameras();
+
   }
 
   @Override
@@ -218,30 +213,56 @@ public class SwerveSubsystem extends SubsystemBase
     PathfindingCommand.warmupCommand().schedule();
   }
 
-  /**
-   * Aim the robot at the target returned by PhotonVision.
-   *
-   * @return A {@link Command} which will run the alignment.
-   */
-  public Command aimAtTarget(Cameras camera)
-  {
 
-    return run(() -> {
-      Optional<PhotonPipelineResult> resultO = camera.getBestResult();
-      if (resultO.isPresent())
-      {
-        var result = resultO.get();
-        if (result.hasTargets())
-        {
-          drive(getTargetSpeeds(0,
-                                0,
-                                Rotation2d.fromDegrees(result.getBestTarget()
-                                                             .getYaw()))); // Not sure if this will work, more math may be required.
-        }
-      }
-    });
+
+  public void setupPhotonCameras(){
+
+    // var FL_VisionEst = FL_Module_Camera.getEstimatedGlobalPose();
+    // FL_VisionEst.ifPresent(
+    //             FL_est -> {
+    //                 // Change our trust in the measurement based on the tags we can see
+    //                 var FL_estDevs = FL_Module_Camera.getEstimationStdDevs();
+
+    //                 swerveDrive.addVisionMeasurement(FL_est.estimatedPose.toPose2d(), FL_est.timestampSeconds, FL_estDevs);
+    //             });
+    
+    // var FR_VisionEst = FR_Module_Camera.getEstimatedGlobalPose();
+    // FR_VisionEst.ifPresent(
+    //             FR_est -> {
+    //                   // Change our trust in the measurement based on the tags we can see
+    //                   var FR_estDevs = FR_Module_Camera.getEstimationStdDevs();
+            
+    //                   swerveDrive.addVisionMeasurement(FR_est.estimatedPose.toPose2d(), FR_est.timestampSeconds, FR_estDevs);
+    //               });
+
+    // for(VisionCamera c : camerasArray){
+
+    //   Optional<EstimatedRobotPose> poseEst = c.getEstimatedGlobalPose();
+    //   System.out.println(poseEst.isPresent());
+    //   if(poseEst.isPresent()){
+    //     var pose = poseEst.get();
+    //     var stdDevs = c.getEstimationStdDevs();
+    //     swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
+    //     pose.timestampSeconds
+    //     );
+
+    //     // swerveDrive.addVisionMeasurement(getPose(), 0);
+
+    //   }
+    // }
+                  
+
+
+
   }
+    
 
+
+
+
+
+
+  
   /**
    * Get the path follower with events.
    *
