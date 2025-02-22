@@ -83,17 +83,11 @@ public class RobotContainer
   // Subsystem definitions
   SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
   EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem();
-  // CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem = new CoralGroundIntakeSubsystem();
   ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
 
   // Commands Definitions
 
-  //Coral Ground Intake Commands
-  // CoralGroundManualIntake m_coralGroundManualIntake = new CoralGroundManualIntake(m_coralGroundIntakeSubsystem);
-  // CoralGroundManualOuttake m_coralGroundManualOuttake = new CoralGroundManualOuttake(m_coralGroundIntakeSubsystem);
-  // CoralGroundManualPivotDown m_coralGroundManualPivotDown = new CoralGroundManualPivotDown(m_coralGroundIntakeSubsystem);
-  // CoralGroundManualPivotUp m_coralGroundManualPivotUp = new CoralGroundManualPivotUp(m_coralGroundIntakeSubsystem);
-
+ 
   //Elevator Commands
   ElevatorManualDown m_elevatorManualDown = new ElevatorManualDown(m_elevatorSubsystem);
   ElevatorManualUp m_elevatorManualUp = new ElevatorManualUp(m_elevatorSubsystem);
