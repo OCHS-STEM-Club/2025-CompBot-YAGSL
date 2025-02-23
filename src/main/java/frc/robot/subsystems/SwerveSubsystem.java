@@ -56,30 +56,13 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class SwerveSubsystem extends SubsystemBase
 {
 
-  /**
-   * Swerve drive object.
-   */
   private final SwerveDrive swerveDrive;
   
+  private VisionCamera[] camerasArray = new VisionCamera[2];
 
-  // VisionCamera FL_Module_Camera = new VisionCamera(VisionConstants.FL_Module_Camera_Name, VisionConstants.FL_Module_Camera_Transformed);
-
-  // VisionCamera FR_Module_Camera = new VisionCamera(VisionConstants.FR_Module_Camera_Name, VisionConstants.FR_Module_Camera_Transformed);
-
-  VisionCamera[] camerasArray = new VisionCamera[2];
-
-  
+  private boolean enableVision = false;
 
 
-
-
-
-
-  /**
-   * Initialize {@link SwerveDrive} with the directory provided.
-   *
-   * @param directory Directory of swerve drive config files.
-   */
   public SwerveSubsystem(File directory)
   {
 
@@ -139,8 +122,11 @@ public class SwerveSubsystem extends SubsystemBase
 
   @Override
   public void periodic()
-  {
-    setupPhotonCameras();
+  { 
+    if(enableVision){
+      setupPhotonCameras();
+    }
+    
 
   }
 
