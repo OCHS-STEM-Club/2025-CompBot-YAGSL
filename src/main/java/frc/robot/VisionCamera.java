@@ -32,9 +32,15 @@ public class VisionCamera {
     private PhotonPoseEstimator photonPoseEstimator;
     private Matrix<N3, N1> curStdDevs;
 
+    private Matrix<N3, N1> m_SingleTagStdDevs;
+    private Matrix<N3, N1> m_MultiTagStdDevs;
 
 
-    public VisionCamera(String kCameraName, Transform3d kCameraToRobot) {
+
+    public VisionCamera(String kCameraName, Transform3d kCameraToRobot, Matrix<N3, N1> kSingleTagStdDevs, Matrix<N3, N1> kMultiTagStdDevs) {
+
+        m_SingleTagStdDevs = kSingleTagStdDevs;
+        m_MultiTagStdDevs = kMultiTagStdDevs;
         // Create a new PhotonCamera object
         camera = new PhotonCamera(kCameraName);
 
@@ -64,11 +70,11 @@ public class VisionCamera {
             Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets) {
         if (estimatedPose.isEmpty()) {
             // No pose input. Default to single-tag std devs
-            curStdDevs = VisionConstants.kSingleTagStdDevs;
+            curStdDevs = m_SingleTagStdDevs;
 
         } else {
             // Pose present. Start running Heuristic
-            var estStdDevs = VisionConstants.kSingleTagStdDevs;
+            var estStdDevs = m_SingleTagStdDevs;
             int numTags = 0;
             double avgDist = 0;
 
@@ -87,12 +93,12 @@ public class VisionCamera {
 
             if (numTags == 0) {
                 // No tags visible. Default to single-tag std devs
-                curStdDevs = VisionConstants.kSingleTagStdDevs;
+                curStdDevs = m_SingleTagStdDevs;
             } else {
                 // One or more tags visible, run the full heuristic.
                 avgDist /= numTags;
                 // Decrease std devs if multiple targets are visible
-                if (numTags > 1) estStdDevs = VisionConstants.kMultiTagStdDevs;
+                if (numTags > 1) estStdDevs = m_MultiTagStdDevs;
                 // Increase std devs based on (average) distance
                 if (numTags == 1 && avgDist > 4)
                     estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
