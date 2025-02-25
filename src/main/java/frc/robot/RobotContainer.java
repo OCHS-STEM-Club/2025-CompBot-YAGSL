@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.io.File;
+import java.lang.management.OperatingSystemMXBean;
 import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -22,28 +23,20 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-
-import frc.robot.commands.Elevator.Manual.ElevatorManualDown;
-import frc.robot.commands.Elevator.Manual.ElevatorManualUp;
-import frc.robot.commands.EndEffector.Intake.Manual.EndEffectorManualIntake;
-import frc.robot.commands.EndEffector.Intake.Manual.EndEffectorManualOuttake;
-import frc.robot.commands.EndEffector.Pivot.Manual.EndEffectorManualPivotDown;
-import frc.robot.commands.EndEffector.Pivot.Manual.EndEffectorManualPivotUp;
+import frc.robot.Constants.SetpointConstants;
+import frc.robot.commands.Manual.Elevator.ElevatorManualDown;
+import frc.robot.commands.Manual.Elevator.ElevatorManualUp;
+import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualIntake;
+import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualOuttake;
+import frc.robot.commands.Manual.EndEffector.Pivot.EndEffectorManualPivotDown;
+import frc.robot.commands.Manual.EndEffector.Pivot.EndEffectorManualPivotUp;
 import frc.robot.commands.Sequential.CS_CMD;
 import frc.robot.commands.Sequential.L1_CMD;
 import frc.robot.commands.Sequential.L2_CMD;
 import frc.robot.commands.Sequential.L3_CMD;
 import frc.robot.commands.Sequential.STOW_CMD;
-import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L1;
-import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L2;
-import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L3;
-import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L4;
-import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_Stow;
-import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_L1;
-import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_L2;
-import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_L3;
-import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_L4;
-import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_Stow;
+import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
+import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -98,17 +91,20 @@ public class RobotContainer
   EndEffectorManualPivotDown m_endEffectorManualPivotDown = new EndEffectorManualPivotDown(m_endEffectorSubsystem);
   EndEffectorManualPivotUp m_endEffectorManualPivotUp = new EndEffectorManualPivotUp(m_endEffectorSubsystem);
 
-  Elevator_L1 m_elevatorL1 = new Elevator_L1(m_elevatorSubsystem);
-  Elevator_L2 m_elevatorL2 = new Elevator_L2(m_elevatorSubsystem);
-  Elevator_L3 m_elevatorL3 = new Elevator_L3(m_elevatorSubsystem);
-  Elevator_L4 m_elevatorL4 = new Elevator_L4(m_elevatorSubsystem);
-  Elevator_Stow m_elevatorStow = new Elevator_Stow(m_elevatorSubsystem);
 
-  EndEffector_L1 m_endEffectorL1 = new EndEffector_L1(m_endEffectorSubsystem);
-  EndEffector_L2 m_endEffectorL2 = new EndEffector_L2(m_endEffectorSubsystem);
-  EndEffector_L3 m_endEffectorL3 = new EndEffector_L3(m_endEffectorSubsystem);
-  EndEffector_L4 m_endEffectorL4 = new EndEffector_L4(m_endEffectorSubsystem);
-  EndEffector_Stow m_endEffectorStow = new EndEffector_Stow(m_endEffectorSubsystem);
+  Elevator_Setpoint_CMD m_elevatorL1 = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL1ElevatorSetpoint);
+  Elevator_Setpoint_CMD m_elevatorL2 = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL2ElevatorSetpoint);
+  Elevator_Setpoint_CMD m_elevatorL3 = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL3ElevatorSetpoint);
+  Elevator_Setpoint_CMD m_elevatorL4 = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL4ElevatorSetpoint);
+  Elevator_Setpoint_CMD m_elevatorStow = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kStowElevatorSetpoint);
+  Elevator_Setpoint_CMD m_elevatorCS = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kCSElevatorSetpoint);
+
+  EndEffector_Setpoint_CMD m_endEffectorL1 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL1EndEffectorSetpoint);
+  EndEffector_Setpoint_CMD m_endEffectorL2 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL2EndEffectorSetpoint);
+  EndEffector_Setpoint_CMD m_endEffectorL3 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL3EndEffectorSetpoint);
+  EndEffector_Setpoint_CMD m_endEffectorL4 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL4EndEffectorSetpoint);
+  EndEffector_Setpoint_CMD m_endEffectorStow = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint);
+  EndEffector_Setpoint_CMD m_endEffectorCS = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kCSEndEffectorSetpoint);
 
   // Sequence Commands
   CS_CMD m_CS_CMD = new CS_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
@@ -125,8 +121,8 @@ public class RobotContainer
                                                                 () -> m_driverController.getLeftY() * 1,
                                                                 () -> m_driverController.getLeftX() * 1)
                                                             .withControllerRotationAxis(() -> m_driverController.getRightX() * 1)
-                                                            .deadband(OperatorConstants.DEADBAND)
-                                                            .scaleTranslation(OperatorConstants.ROBOT_SPEED)
+                                                            .deadband(OperatorConstants.kDeadband)
+                                                            .scaleTranslation(OperatorConstants.kRobotSpeed)
                                                             .allianceRelativeControl(false);
 
   /**
@@ -140,7 +136,7 @@ public class RobotContainer
                                                             getYAxisPOV(),
                                                             getXAxisPOV())
                                                             .withControllerRotationAxis(getRotAxis())
-                                                            .scaleTranslation(0.25)
+                                                            .scaleTranslation(OperatorConstants.kRobotNudgeSpeed)
                                                             .allianceRelativeControl(false)
                                                             .robotRelative(true); 
                                                       
@@ -175,7 +171,7 @@ public class RobotContainer
     
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
-    m_swerveSubsystem.replaceSwerveModuleFeedforward(0.22234, 2.0995, 0.17259);
+    m_swerveSubsystem.replaceSwerveModuleFeedforward(OperatorConstants.kSSwerveFeedforward, OperatorConstants.kVSwerveFeedforward, OperatorConstants.kASwerveFeedforward);
   }
 
   private void updateRobotState(RobotState newState) {

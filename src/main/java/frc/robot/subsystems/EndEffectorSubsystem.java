@@ -10,6 +10,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.CommutationConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -34,7 +35,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.EndEffectorConstants;
 import frc.robot.Constants.SetpointConstants;
 
@@ -62,6 +62,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   // Voltage Request
   private VoltageOut m_voltageRequest;
 
+  //MotionMagic Voltage Request
   private MotionMagicVoltage m_motionRequest;
 
   public EndEffectorSubsystem() {
@@ -102,9 +103,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
     pivotConfigs = new TalonFXConfiguration()
                         .withMotorOutput(new MotorOutputConfigs()
                                             .withInverted(InvertedValue.CounterClockwise_Positive)
-                                            .withNeutralMode(NeutralModeValue.Brake)
-                                            .withPeakForwardDutyCycle(1)
-                                            .withPeakReverseDutyCycle(0))
+                                            .withNeutralMode(NeutralModeValue.Brake))
                         .withSlot0(new Slot0Configs()
                                         .withKP(EndEffectorConstants.kEndEffectorPivotPIDValueP)
                                         .withKI(EndEffectorConstants.kEndEffectorPivotPIDValueI)
@@ -116,21 +115,26 @@ public class EndEffectorSubsystem extends SubsystemBase {
                         .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                                                   .withForwardSoftLimitEnable(true)
                                                   .withReverseSoftLimitEnable(true)
-                                                  .withForwardSoftLimitThreshold(0.8)
-                                                  .withReverseSoftLimitThreshold(0.15))
+                                                  .withForwardSoftLimitThreshold(EndEffectorConstants.kEndEffectorFowardSoftLimit)
+                                                  .withReverseSoftLimitThreshold(EndEffectorConstants.kEndEffectorReverseSoftLimit))
                         .withFeedback(new FeedbackConfigs()
                                             .withFeedbackRemoteSensorID(EndEffectorConstants.kCANdiID)
-                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANdiPWM1)
-                                            .withSensorToMechanismRatio(1))
+                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANdiPWM1)
+                                            .withSensorToMechanismRatio(EndEffectorConstants.kSensorToMechanismRatio)
+                                            .withRotorToSensorRatio(EndEffectorConstants.kRotorToSensorRatio))
                         .withCurrentLimits(new CurrentLimitsConfigs()
-                                            .withStatorCurrentLimit(Units.Amps.of(EndEffectorConstants.kEndEffectorPivotCurrentLimit)));
+                                            .withStatorCurrentLimit(Units.Amps.of(EndEffectorConstants.kEndEffectorPivotCurrentLimit)))
+                        .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
+                                                  .withContinuousWrap(true));
+                        
+                        
     // Apply Pivot Configs
     endEffectorPivot.getConfigurator().apply(pivotConfigs);
   
     // SysID voltage request
     m_voltageRequest = new VoltageOut(0);
     // Motion Magic motion request
-    m_motionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(0.280975);
+    m_motionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(EndEffectorConstants.kEndEffectorFeedForward);
 
     
 
@@ -184,20 +188,20 @@ public class EndEffectorSubsystem extends SubsystemBase {
   public boolean hasAlgae(){
     return intakeBeamBreak.get();
   }
-
+  //Is At Set Point?
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtSetpoint?")
   public boolean isAtSetpoint(){
     return Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
   }
-
+  //Is At Top Limit
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtTopLimit?")
   public boolean isAtTopLimit() {
-    return getPivotPosition() > 0.8;
+    return getPivotPosition() > EndEffectorConstants.kEndEffectorFowardSoftLimit;
   }
-
+  //Is At Bottom Limit
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtBottomLimit?")
   public boolean isAtBottomLimit() {
-    return getPivotPosition() < 0.15;
+    return getPivotPosition() < EndEffectorConstants.kEndEffectorReverseSoftLimit;
   }
 
 
@@ -233,7 +237,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
         )
     );
 
-    // SysID Methods
+  // SysID Methods
   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
     return m_sysIdRoutine.quasistatic(direction);
   }
@@ -301,15 +305,17 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return endEffectorIntake.getMotorVoltage().getValueAsDouble();
   }
 
+  //Gets Intake Motor Temperature
   public double getIntakeMotorTemperature(){
     return endEffectorIntake.getExternalMotorTemp().getValueAsDouble();
   }
 
-
+  //Get CANdi
   public CANdi getCANdi(){
     return canDi;
   }
 
+  //Get CANdi End Effector Position
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorCANDI PWM1 Postion")
   public double getCANDIPWM1(){
     return canDi.getPWM1Position().getValueAsDouble();

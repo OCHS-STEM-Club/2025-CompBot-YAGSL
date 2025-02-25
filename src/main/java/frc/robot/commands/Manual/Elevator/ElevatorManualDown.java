@@ -2,19 +2,18 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Setpoints.EndEffectorSetpoints;
+package frc.robot.commands.Manual.Elevator;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.SetpointConstants;
-import frc.robot.subsystems.EndEffectorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class EndEffector_L3 extends Command {
-  /** Creates a new EndEffector_L1. */
-  EndEffectorSubsystem m_endEffectorSubsystem;
-  public EndEffector_L3(EndEffectorSubsystem endEffectorSubsystem) {
+public class ElevatorManualDown extends Command {
+  /** Creates a new ElevatorManualUp. */
+  private ElevatorSubsystem m_elevatorSubsystem;
+  public ElevatorManualDown(ElevatorSubsystem elevatorSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_endEffectorSubsystem = endEffectorSubsystem;
+    m_elevatorSubsystem = elevatorSubsystem;
   }
 
   // Called when the command is initially scheduled.
@@ -24,18 +23,24 @@ public class EndEffector_L3 extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_endEffectorSubsystem.setPivotPosition(SetpointConstants.kL3EndEffectorSetpoint);
+    if(m_elevatorSubsystem.isAtBottomLimit() == false){
+      m_elevatorSubsystem.elevatorDown();
+    }else
+    {
+      m_elevatorSubsystem.elevatorStop();
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_endEffectorSubsystem.EndEffectorPivotStop();
+    m_elevatorSubsystem.elevatorStop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+
     return false;
   }
 }
