@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.io.File;
+import java.lang.management.OperatingSystemMXBean;
 import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -120,8 +121,8 @@ public class RobotContainer
                                                                 () -> m_driverController.getLeftY() * 1,
                                                                 () -> m_driverController.getLeftX() * 1)
                                                             .withControllerRotationAxis(() -> m_driverController.getRightX() * 1)
-                                                            .deadband(OperatorConstants.DEADBAND)
-                                                            .scaleTranslation(OperatorConstants.ROBOT_SPEED)
+                                                            .deadband(OperatorConstants.kDeadband)
+                                                            .scaleTranslation(OperatorConstants.kRobotSpeed)
                                                             .allianceRelativeControl(false);
 
   /**
@@ -135,7 +136,7 @@ public class RobotContainer
                                                             getYAxisPOV(),
                                                             getXAxisPOV())
                                                             .withControllerRotationAxis(getRotAxis())
-                                                            .scaleTranslation(0.15)
+                                                            .scaleTranslation(OperatorConstants.kRobotNudgeSpeed)
                                                             .allianceRelativeControl(false)
                                                             .robotRelative(true); 
                                                       
@@ -170,7 +171,7 @@ public class RobotContainer
     
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
-    m_swerveSubsystem.replaceSwerveModuleFeedforward(0.22234, 2.0995, 0.17259);
+    m_swerveSubsystem.replaceSwerveModuleFeedforward(OperatorConstants.kSSwerveFeedforward, OperatorConstants.kVSwerveFeedforward, OperatorConstants.kASwerveFeedforward);
   }
 
   private void updateRobotState(RobotState newState) {
