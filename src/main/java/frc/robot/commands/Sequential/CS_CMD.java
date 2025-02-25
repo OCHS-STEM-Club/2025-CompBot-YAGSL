@@ -7,11 +7,9 @@ package frc.robot.commands.Sequential;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_Coral_Station;
-import frc.robot.commands.Setpoints.ElevatorSetpoints.Elevator_L1;
-import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_Stow;
-import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_Coral_Station;
-import frc.robot.commands.Setpoints.EndEffectorSetpoints.EndEffector_L1;
+import frc.robot.Constants.SetpointConstants;
+import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
+import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 
@@ -31,7 +29,7 @@ public class CS_CMD extends SequentialCommandGroup {
 
     addCommands(
     new ParallelCommandGroup(
-                 new Elevator_Coral_Station(m_elevatorSubsystem), 
-                 new EndEffector_Coral_Station(m_endEffectorSubsystem)));
+                 new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kCSElevatorSetpoint), 
+                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kCSEndEffectorSetpoint)));
   }
 }

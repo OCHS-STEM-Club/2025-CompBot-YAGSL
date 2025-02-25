@@ -56,35 +56,25 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 public class SwerveSubsystem extends SubsystemBase
 {
 
-  /**
-   * Swerve drive object.
-   */
   private final SwerveDrive swerveDrive;
   
+  private VisionCamera[] camerasArray = new VisionCamera[2];
 
-  VisionCamera FL_Module_Camera = new VisionCamera(VisionConstants.FL_Module_Camera_Name, VisionConstants.FL_Module_Camera_Transformed);
-
-  VisionCamera FR_Module_Camera = new VisionCamera(VisionConstants.FR_Module_Camera_Name, VisionConstants.FR_Module_Camera_Transformed);
-
-  VisionCamera[] camerasArray = new VisionCamera[2];
-
-  
+  private boolean enableVision = false;
 
 
-
-
-
-
-  /**
-   * Initialize {@link SwerveDrive} with the directory provided.
-   *
-   * @param directory Directory of swerve drive config files.
-   */
   public SwerveSubsystem(File directory)
   {
 
-    camerasArray[0] = new VisionCamera(VisionConstants.FL_Module_Camera_Name, VisionConstants.FL_Module_Camera_Transformed);
-    camerasArray[1] = new VisionCamera(VisionConstants.FR_Module_Camera_Name, VisionConstants.FR_Module_Camera_Transformed);
+    camerasArray[0] = new VisionCamera(VisionConstants.FL_Module_Camera_Name,
+                                       VisionConstants.FL_Module_Camera_Transformed,
+                                       VisionConstants.FL_SingleTagStdDevs,
+                                       VisionConstants.FL_MultiTagStdDevs);
+                                       
+    camerasArray[1] = new VisionCamera(VisionConstants.FR_Module_Camera_Name,
+                                       VisionConstants.FR_Module_Camera_Transformed,
+                                       VisionConstants.FR_SingleTagStdDevs,
+                                       VisionConstants.FR_MultiTagStdDevs);
     
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
@@ -132,8 +122,11 @@ public class SwerveSubsystem extends SubsystemBase
 
   @Override
   public void periodic()
-  {
-    setupPhotonCameras();
+  { 
+    if(enableVision){
+      setupPhotonCameras();
+    }
+    
 
   }
 
@@ -235,21 +228,22 @@ public class SwerveSubsystem extends SubsystemBase
     //                   swerveDrive.addVisionMeasurement(FR_est.estimatedPose.toPose2d(), FR_est.timestampSeconds, FR_estDevs);
     //               });
 
-    // for(VisionCamera c : camerasArray){
+    for(VisionCamera camera : camerasArray){
 
-    //   Optional<EstimatedRobotPose> poseEst = c.getEstimatedGlobalPose();
-    //   System.out.println(poseEst.isPresent());
-    //   if(poseEst.isPresent()){
-    //     var pose = poseEst.get();
-    //     var stdDevs = c.getEstimationStdDevs();
-    //     swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
-    //     pose.timestampSeconds
-    //     );
+      Optional<EstimatedRobotPose> poseEst = camera.getEstimatedGlobalPose();
 
-    //     // swerveDrive.addVisionMeasurement(getPose(), 0);
+      if(poseEst.isPresent()){
 
-    //   }
-    // }
+        var pose = poseEst.get();
+
+        var stdDevs = camera.getEstimationStdDevs();
+
+        swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
+                                         pose.timestampSeconds,
+                                         stdDevs
+                                        );
+      }
+    }
                   
 
 

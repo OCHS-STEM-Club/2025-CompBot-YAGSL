@@ -169,14 +169,16 @@ public final class Constants
 
         // The standard deviations of our vision estimated poses, which affect correction rate
         // (Fake values. Experiment and determine estimation noise on an actual robot.)
-        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+        // public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+        // public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
 
 
         public static final String FL_Module_Camera_Name = "FL-Module";
         public static final Transform3d FL_Module_Camera_Transformed =
                         new Transform3d(new Translation3d(23622, -0.24638, 0), 
                         new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(15)));
+        public static final Matrix<N3, N1> FL_SingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+        public static final Matrix<N3, N1> FL_MultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
 
 
         public static final String FR_Module_Camera_Name = "FR-Module";
@@ -184,6 +186,8 @@ public final class Constants
         public static final Transform3d FR_Module_Camera_Transformed =
                         new Transform3d(new Translation3d(0.23622, 0.24638, 0.5), 
                         new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(345)));
+        public static final Matrix<N3, N1> FR_SingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+        public static final Matrix<N3, N1> FR_MultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
 
 
 
