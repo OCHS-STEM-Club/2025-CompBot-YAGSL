@@ -97,22 +97,24 @@ public final class Constants
 
   }
 
-  public static class CoralGroundIntakeConstants 
-  {
-    // Coral Ground Intake IDs
-    public static final int kCoralGroundIntakeID = 21;
-    public static final int kCoralGroundPivotID = 20;
-    // Coral Ground Intake Speeds
-    public static final double kCoralGroundIntakeSpeed = 0.25;
-    public static final double kCoralGroundPivotSpeed = 0.25;
-    // Coral Ground Intake PID Values
-    public static final double kCoralGroundPivotPIDValueP = 0;
-    public static final double kCoralGroundPivotPIDValueI = 0;
-    public static final double kCoralGroundPivotPIDValueD = 0;
-    // Coral Ground Beam Break ID
-    public static final int kCoralGroundBeamBreakPort = 2;
+  // public static class CoralGroundIntakeConstants 
+  // {
+  //   // Coral Ground Intake IDs
+  //   public static final int kCoralGroundIntakeID = 21;
+  //   public static final int kCoralGroundPivotID = 20;
+  //   // Coral Ground Intake Speeds
+  //   public static final double kCoralGroundIntakeSpeed = 0.25;
+  //   public static final double kCoralGroundPivotSpeed = 0.25;
+  //   // Coral Ground Intake PID Values
+  //   public static final double kCoralGroundPivotPIDValueP = 0;
+  //   public static final double kCoralGroundPivotPIDValueI = 0;
+  //   public static final double kCoralGroundPivotPIDValueD = 0;
+  //   // Coral Ground Beam Break ID
+  //   public static final int kCoralGroundBeamBreakPort = 2;
 
-  }
+  // }
+
+
 
   public static class ElevatorConstants{
     // Elevator Motor IDs
@@ -196,4 +198,28 @@ public final class Constants
 
 
   }
+  public static class GroundIntakeConstants {
+    public static final int kGroundIntakeMotorID = 21;
+    public static final int kGroundIntakePivotID = 20;
+    
+    public static final double kGroundIntakeSpeed = 0.1;
+    public static final double kGroundOuttakeSpeed = -0.1;
+    public static final double kGroundIntakeOffSpeed = 0;
+    public static final double kGroundIntakePivotSpeed = 0.1;
+
+    public static final double kGroundPivotPIDValueP = 0;
+    public static final double kGroundPivotPIDValueI = 0;
+    public static final double kGroundPivotPIDValueD = 0;
+    
+    public static final double kGroundIntakePivotMotionMagicCruiseVelocity = 2000;
+    public static final double kGroundIntakePivotMotionMagicCruiseAcceleration = 2000;
+    public static final double kGroundIntakePivotMotionMagicCruiseJerk = 2000;
+
+    public static final double kGroundIntakeEncoderOffset = 0;
+    public static final double kGroundIntakeDiscontinuityPoint = 0;
+
+    public static final double kSensorToMechanismRatio = 1;
+    public static final double kRotorToSensorRatio = 80;
+  }
+
 }

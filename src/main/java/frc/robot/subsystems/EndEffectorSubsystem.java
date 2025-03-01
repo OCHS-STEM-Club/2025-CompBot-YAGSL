@@ -17,6 +17,7 @@ import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.PWM1Configs;
+import com.ctre.phoenix6.configs.PWM2Configs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -36,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.EndEffectorConstants;
+import frc.robot.Constants.GroundIntakeConstants;
 import frc.robot.Constants.SetpointConstants;
 
 public class EndEffectorSubsystem extends SubsystemBase {
@@ -81,7 +83,10 @@ public class EndEffectorSubsystem extends SubsystemBase {
     canDiConfigs = new CANdiConfiguration()
                         .withPWM1(new PWM1Configs()
                                       .withAbsoluteSensorOffset(EndEffectorConstants.kPWM1AbsoluteEncoderOffset)
-                                      .withAbsoluteSensorDiscontinuityPoint(EndEffectorConstants.kPWM1AbsoluteEncoderDiscontinuityPoint));
+                                      .withAbsoluteSensorDiscontinuityPoint(EndEffectorConstants.kPWM1AbsoluteEncoderDiscontinuityPoint))
+                        .withPWM2(new PWM2Configs()
+                                      .withAbsoluteSensorOffset(GroundIntakeConstants.kGroundIntakeEncoderOffset)
+                                      .withAbsoluteSensorDiscontinuityPoint(GroundIntakeConstants.kGroundIntakeDiscontinuityPoint));
 
     // Apply CANdi Configs
     canDi.getConfigurator().apply(canDiConfigs);
