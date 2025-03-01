@@ -92,13 +92,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Elevator Up
     public void elevatorUp() {
-      elevatorLeftLeaderMotor.setVoltage(ElevatorConstants.kElevatorVoltage);
+      elevatorLeftLeaderMotor.set(ElevatorConstants.kElevatorSpeed);
       elevatorRightFollowerMotor.setControl(elevatorFollower);
     }
 
     // Elevator Down
     public void elevatorDown() {
-      elevatorLeftLeaderMotor.setVoltage(-ElevatorConstants.kElevatorVoltage);
+      elevatorLeftLeaderMotor.set(-ElevatorConstants.kElevatorSpeed);
       elevatorRightFollowerMotor.setControl(elevatorFollower);
     }
 

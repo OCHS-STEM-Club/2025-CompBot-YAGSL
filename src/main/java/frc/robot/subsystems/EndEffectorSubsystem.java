@@ -84,6 +84,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                         .withPWM1(new PWM1Configs()
                                       .withAbsoluteSensorOffset(EndEffectorConstants.kPWM1AbsoluteEncoderOffset)
                                       .withAbsoluteSensorDiscontinuityPoint(EndEffectorConstants.kPWM1AbsoluteEncoderDiscontinuityPoint))
+                                      // .withSensorDirection(true))
                         .withPWM2(new PWM2Configs()
                                       .withAbsoluteSensorOffset(GroundIntakeConstants.kGroundIntakeEncoderOffset)
                                       .withAbsoluteSensorDiscontinuityPoint(GroundIntakeConstants.kGroundIntakeDiscontinuityPoint));
@@ -118,8 +119,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                             .withMotionMagicAcceleration(EndEffectorConstants.kEndEffectorPivotMotionMagicCruiseAcceleration)
                                             .withMotionMagicJerk(EndEffectorConstants.kEndEffectorPivotMotionMagicCruiseJerk))
                         .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-                                                  .withForwardSoftLimitEnable(true)
-                                                  .withReverseSoftLimitEnable(true)
+                                                  .withForwardSoftLimitEnable(false)
+                                                  .withReverseSoftLimitEnable(false)
                                                   .withForwardSoftLimitThreshold(EndEffectorConstants.kEndEffectorFowardSoftLimit)
                                                   .withReverseSoftLimitThreshold(EndEffectorConstants.kEndEffectorReverseSoftLimit))
                         .withFeedback(new FeedbackConfigs()
@@ -128,9 +129,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                             .withSensorToMechanismRatio(EndEffectorConstants.kSensorToMechanismRatio)
                                             .withRotorToSensorRatio(EndEffectorConstants.kRotorToSensorRatio))
                         .withCurrentLimits(new CurrentLimitsConfigs()
-                                            .withStatorCurrentLimit(Units.Amps.of(EndEffectorConstants.kEndEffectorPivotCurrentLimit)))
-                        .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
-                                                  .withContinuousWrap(true));
+                                            .withStatorCurrentLimit(Units.Amps.of(EndEffectorConstants.kEndEffectorPivotCurrentLimit)));
                         
                         
     // Apply Pivot Configs

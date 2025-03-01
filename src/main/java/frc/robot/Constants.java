@@ -52,9 +52,9 @@ public final class Constants
     public static final double kRobotSpeed = 0.4;
     public static final double kRobotNudgeSpeed = 0.15;
     // Swerve Feedforward Values
-    public static final double kSSwerveFeedforward = 0.22234;
-    public static final double kVSwerveFeedforward = 2.0995;
-    public static final double kASwerveFeedforward = 0.17259;
+    public static final double kSSwerveFeedforward = 0.2612;
+    public static final double kVSwerveFeedforward = 2.1245;
+    public static final double kASwerveFeedforward = 0.28492;
 
 
   }
@@ -79,11 +79,11 @@ public final class Constants
     // CANdi ID
     public static final int kCANdiID = 26;
     // CANdi Cofigs
-    public static final double kPWM1AbsoluteEncoderOffset = -0.74511;//-0.74511 // 0.245
-    public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 0.98; // 0.98
+    public static final double kPWM1AbsoluteEncoderOffset = -0.13; //-0.276; //0.176 //0.4333//-0.74511 // 0.245
+    public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 1; // 0.98
     // Sensor Configs
     public static final double kSensorToMechanismRatio = 1;
-    public static final double kRotorToSensorRatio = 32;
+    public static final double kRotorToSensorRatio = 24.9;
     // Pivot Current Limits
     public static final double kEndEffectorPivotCurrentLimit = 40;
     //End Effector Motion Magic Values
@@ -148,16 +148,16 @@ public final class Constants
 
   public static class SetpointConstants{
     public static final double kL1ElevatorSetpoint = 0; //0
-    public static final double kL1EndEffectorSetpoint = 0.4; //0.4
+    public static final double kL1EndEffectorSetpoint = 0.296875; //0.4
 
-    public static final double kL2ElevatorSetpoint = 9.25; //10.5
-    public static final double kL2EndEffectorSetpoint = 0.19; //0.19
+    public static final double kL2ElevatorSetpoint = 8.066; //10.5
+    public static final double kL2EndEffectorSetpoint = 0.14746; //0.19
 
-    public static final double kL3ElevatorSetpoint = 13.55; //14.8
-    public static final double kL3EndEffectorSetpoint = 0.2; //0.2
+    public static final double kL3ElevatorSetpoint = 13.218; //14.8
+    public static final double kL3EndEffectorSetpoint = 0.1503; //0.2
 
-    public static final double kL4ElevatorSetpoint = 0; //0
-    public static final double kL4EndEffectorSetpoint = 0; //0
+    public static final double kL4ElevatorSetpoint = 20.370; //0
+    public static final double kL4EndEffectorSetpoint = 0.1445; //0
 
     public static final double kCSElevatorSetpoint = 3.05; // Used to be 4 rotations. Increased to 5.6 for better intaking from coral station. Dropped to 4.3 rotations. last values was too high.
     public static final double kCSEndEffectorSetpoint = 0.643; //0.643
@@ -202,10 +202,9 @@ public final class Constants
     public static final int kGroundIntakeMotorID = 21;
     public static final int kGroundIntakePivotID = 20;
     
-    public static final double kGroundIntakeSpeed = 0.1;
-    public static final double kGroundOuttakeSpeed = -0.1;
+    public static final double kGroundSpeed = 0.5;
     public static final double kGroundIntakeOffSpeed = 0;
-    public static final double kGroundIntakePivotSpeed = 0.1;
+    public static final double kGroundIntakePivotSpeed = 0.3;
 
     public static final double kGroundPivotPIDValueP = 0;
     public static final double kGroundPivotPIDValueI = 0;

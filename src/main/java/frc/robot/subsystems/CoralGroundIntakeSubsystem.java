@@ -61,7 +61,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   }
 
   public void groundIntakeRollers() {
-    groundIntakeRollers.set(GroundIntakeConstants.kGroundIntakeSpeed);
+    groundIntakeRollers.set(GroundIntakeConstants.kGroundSpeed);
   }
 
   public void groundIntakeRollersOff() {
@@ -69,7 +69,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   }
 
   public void groundOuttakeRollers() {
-    groundIntakeRollers.set(GroundIntakeConstants.kGroundOuttakeSpeed);
+    groundIntakeRollers.set(-GroundIntakeConstants.kGroundSpeed);
   }
 
   public void groundIntakePivotUp() {
