@@ -38,8 +38,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private Follower elevatorFollower;
   // Elevator Position Request
   private MotionMagicVoltage elevatorPositionRequest;
-  // Last Desired Position
-  private double lastDesiredPosition;
   // Top Limit
   private DigitalInput elevatorTopLimit;
   // Bottom Limit
@@ -55,8 +53,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Elevator Follower
     elevatorFollower = new Follower(ElevatorConstants.kElevatorLeftMotorID, false);
     elevatorRightFollowerMotor.setControl(elevatorFollower);
-    // Last Desired Position
-    lastDesiredPosition = 0;
 
     // Set Elevator Top Limit
     elevatorTopLimit = new DigitalInput(ElevatorConstants.kTopElevatorLimitPort);
@@ -73,10 +69,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                                         .withKV(ElevatorConstants.kElevatorPIDValueV)
                                         .withKA(ElevatorConstants.kElevatorPIDValueA)
                                         .withKG(ElevatorConstants.kElevatorPIDValueG)
-                                        // .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign)
                                         .withGravityType(GravityTypeValue.Elevator_Static))
-                          // .withFeedback(new FeedbackConfigs()
-                          //                   .withSensorToMechanismRatio(ElevatorConstants.kElevatorSensorToMechRatio))//Need to get sensor to mechanism ratio
                           .withMotorOutput(new MotorOutputConfigs()
                                               .withInverted(InvertedValue.Clockwise_Positive)
                                               .withNeutralMode(NeutralModeValue.Brake))
@@ -85,9 +78,6 @@ public class ElevatorSubsystem extends SubsystemBase {
                                               .withMotionMagicAcceleration(ElevatorConstants.kElevatorMotionMagicAcceleration)
                                               .withMotionMagicJerk(ElevatorConstants.kElevatorMotionMagicJerk));
 
-                          // .withCurrentLimits(new CurrentLimitsConfigs()
-                          //                     .withStatorCurrentLimit(40));
-                                              
     // Apply elevatorConfigs
     elevatorLeftLeaderMotor.getConfigurator().apply(elevatorConfigs);
     elevatorRightFollowerMotor.getConfigurator().apply(elevatorConfigs);
@@ -102,23 +92,19 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Elevator Up
     public void elevatorUp() {
-      elevatorLeftLeaderMotor.setVoltage(1.2);
-      ;
+      elevatorLeftLeaderMotor.set(ElevatorConstants.kElevatorSpeed);
       elevatorRightFollowerMotor.setControl(elevatorFollower);
     }
 
     // Elevator Down
     public void elevatorDown() {
-      elevatorLeftLeaderMotor.setVoltage(-1.2);
+      elevatorLeftLeaderMotor.set(-ElevatorConstants.kElevatorSpeed);
       elevatorRightFollowerMotor.setControl(elevatorFollower);
-
     }
 
     // Elevator Stop
     public void elevatorStop() {
       elevatorLeftLeaderMotor.set(0);
-      ;
-      ;
       elevatorRightFollowerMotor.setControl(elevatorFollower);
     }
 
@@ -127,15 +113,9 @@ public class ElevatorSubsystem extends SubsystemBase {
       elevatorLeftLeaderMotor.setControl(elevatorPositionRequest.withPosition(height)
           .withLimitForwardMotion(isAtTopLimit())
           .withLimitReverseMotion(isAtBottomLimit()));
-      // elevatorRightFollowerMotor.setControl(elevatorFollower);
-      lastDesiredPosition = height;
-
+      elevatorRightFollowerMotor.setControl(elevatorFollower);
     }
-
-    public boolean isBelow10Inches() {
-      return this.getElevatorPositionRotations() < 10;
-    }
-
+    // Defines SysID Configs
     private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
         new SysIdRoutine.Config(
             Volts.of(0.5).per(Second), // Use default ramp rate (1 V/s)
@@ -147,15 +127,18 @@ public class ElevatorSubsystem extends SubsystemBase {
             (volts) -> elevatorLeftLeaderMotor.setControl(m_voltageRequest.withOutput(volts.in(Volts))),
             null,
             this));
-
+    
+    // SysID Quasistatic Command
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
       return m_sysIdRoutine.quasistatic(direction);
     }
 
+    // SysID Dynamic Command
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
       return m_sysIdRoutine.dynamic(direction);
     }
 
+    // get Elevator Setpoint
     @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorSetpointInRotations")
     public double getElevatorPositionSetpoint() {
       return elevatorPositionRequest.Position;
@@ -191,7 +174,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       return Math.abs(getElevatorPositionRotations() - getElevatorPositionSetpoint()) < SetpointConstants.kSetpointThreshold;
     }
 
-    // is at Bottom Limit?
+    // is at Top Limit?
     @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtTopLimit?")
     public boolean isAtTopLimit() {
       if (elevatorTopLimit.get()) {
@@ -201,6 +184,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       }
     }
 
+    // is at Bottom Limit?
     @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtBottomLimit?")
     public boolean isAtBottomLimit() {
       if (elevatorBottonLimit.get()) {
@@ -212,7 +196,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-
+      // set Elevator Zero Position
       if (isAtBottomLimit()) {
         elevatorLeftLeaderMotor.setPosition(0);
       }
