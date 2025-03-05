@@ -5,6 +5,9 @@
 package frc.robot.commands.Manual.GroundIntake.Rollers;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -23,7 +26,14 @@ public class GroundIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if(m_groundIntakeSubsystem.getIntakeSensor()){
+      // Commands.waitSeconds(0.001).andThen(()->m_groundIntakeSubsystem.groundIntakeRollersOff());
+      m_groundIntakeSubsystem.groundIntakeRollersOff();
+
+      // new SequentialCommandGroup(new WaitCommand(0.001),Commands.run(() ->m_groundIntakeSubsystem.groundIntakeRollersOff() ));
+    }else
     m_groundIntakeSubsystem.groundIntakeRollers();
+    
   }
   // Called once the command ends or is interrupted.
   @Override

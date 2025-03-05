@@ -125,7 +125,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                                   .withReverseSoftLimitThreshold(EndEffectorConstants.kEndEffectorReverseSoftLimit))
                         .withFeedback(new FeedbackConfigs()
                                             .withFeedbackRemoteSensorID(EndEffectorConstants.kCANdiID)
-                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.SyncCANdiPWM1)
+                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANdiPWM1)
                                             .withSensorToMechanismRatio(EndEffectorConstants.kSensorToMechanismRatio)
                                             .withRotorToSensorRatio(EndEffectorConstants.kRotorToSensorRatio))
                         .withCurrentLimits(new CurrentLimitsConfigs()

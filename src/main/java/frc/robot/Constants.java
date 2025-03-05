@@ -163,7 +163,10 @@ public final class Constants
     public static final double kCSEndEffectorSetpoint = 0.643; //0.643
 
     public static final double kStowElevatorSetpoint = 0; //0
-    public static final double kStowEndEffectorSetpoint = 0.5; //0.5
+    public static final double kStowEndEffectorSetpoint = 0.55; //0.5
+
+    public static final double kHandoffElevatorSetpoint = 5; //0
+    public static final double kHandoffEndEffectorSetpoint = 0.97; //0.5
 
     public static final double kSetpointThreshold = 0.75;
 
@@ -202,7 +205,7 @@ public final class Constants
     public static final int kGroundIntakeMotorID = 21;
     public static final int kGroundIntakePivotID = 20;
     
-    public static final double kGroundSpeed = 0.5;
+    public static final double kGroundSpeed = 0.6;
     public static final double kGroundIntakeOffSpeed = 0;
     public static final double kGroundIntakePivotSpeed = 0.3;
 
