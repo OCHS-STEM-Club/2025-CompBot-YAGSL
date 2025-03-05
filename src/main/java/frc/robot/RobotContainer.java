@@ -25,16 +25,18 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SetpointConstants;
+import frc.robot.Constants.SpeedConstants;
+import frc.robot.commands.Functions.GroundIntake.Coral_Intake_CMD;
 import frc.robot.commands.Manual.Elevator.ElevatorManualDown;
 import frc.robot.commands.Manual.Elevator.ElevatorManualUp;
 import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualIntake;
 import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualOuttake;
 import frc.robot.commands.Manual.EndEffector.Pivot.EndEffectorManualPivotDown;
 import frc.robot.commands.Manual.EndEffector.Pivot.EndEffectorManualPivotUp;
-import frc.robot.commands.Manual.GroundIntake.Pivot.GroundIntakePivotDown;
-import frc.robot.commands.Manual.GroundIntake.Pivot.GroundIntakePivotUp;
-import frc.robot.commands.Manual.GroundIntake.Rollers.GroundIntake;
-import frc.robot.commands.Manual.GroundIntake.Rollers.GroundOuttake;
+import frc.robot.commands.Manual.GroundIntake.Pivot.GroundIntakeManualPivotDown;
+import frc.robot.commands.Manual.GroundIntake.Pivot.GroundIntakeManualPivotUp;
+import frc.robot.commands.Manual.GroundIntake.Rollers.GroundManualRollersIntake;
+import frc.robot.commands.Manual.GroundIntake.Rollers.GroundManualRollersOuttake;
 import frc.robot.commands.Sequential.CS_CMD;
 import frc.robot.commands.Sequential.HANDOFF_CMD;
 import frc.robot.commands.Sequential.L1_CMD;
@@ -91,22 +93,23 @@ public class RobotContainer
 
   // Commands Definitions
 
- 
-  //Elevator Commands
+  //Elevator Manual Commands
   ElevatorManualDown m_elevatorManualDown = new ElevatorManualDown(m_elevatorSubsystem);
   ElevatorManualUp m_elevatorManualUp = new ElevatorManualUp(m_elevatorSubsystem);
 
-  //End Effector Commands
+  //End Effector Manual Commands
   EndEffectorManualIntake m_endEffectorManualIntake = new EndEffectorManualIntake(m_endEffectorSubsystem);
   EndEffectorManualOuttake m_endEffectorManualOuttake = new EndEffectorManualOuttake(m_endEffectorSubsystem);
   EndEffectorManualPivotDown m_endEffectorManualPivotDown = new EndEffectorManualPivotDown(m_endEffectorSubsystem);
   EndEffectorManualPivotUp m_endEffectorManualPivotUp = new EndEffectorManualPivotUp(m_endEffectorSubsystem);
 
-  GroundIntakePivotUp m_groundIntakePivotUp = new GroundIntakePivotUp(m_coralGroundIntakeSubsystem);
-  GroundIntakePivotDown m_groundIntakePivotDown = new GroundIntakePivotDown(m_coralGroundIntakeSubsystem);
-  GroundIntake m_groundIntakeRollers = new GroundIntake(m_coralGroundIntakeSubsystem);
-  GroundOuttake m_groundOuttakeRollers = new GroundOuttake(m_coralGroundIntakeSubsystem);
+  // Ground Intake Manual Commands
+  GroundIntakeManualPivotUp m_groundManualIntakePivotUp = new GroundIntakeManualPivotUp(m_coralGroundIntakeSubsystem);
+  GroundIntakeManualPivotDown m_groundManualIntakePivotDown = new GroundIntakeManualPivotDown(m_coralGroundIntakeSubsystem);
+  GroundManualRollersIntake m_groundManualRollersIntake = new GroundManualRollersIntake(m_coralGroundIntakeSubsystem);
+  GroundManualRollersOuttake m_groundManualRollersOuttake = new GroundManualRollersOuttake(m_coralGroundIntakeSubsystem);
 
+  // Elevator Setpoint Commands
   Elevator_Setpoint_CMD m_elevatorL1 = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL1ElevatorSetpoint);
   Elevator_Setpoint_CMD m_elevatorL2 = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL2ElevatorSetpoint);
   Elevator_Setpoint_CMD m_elevatorL3 = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL3ElevatorSetpoint);
@@ -114,6 +117,7 @@ public class RobotContainer
   Elevator_Setpoint_CMD m_elevatorStow = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kStowElevatorSetpoint);
   Elevator_Setpoint_CMD m_elevatorCS = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kCSElevatorSetpoint);
 
+  // End Effector Setpoint Commands
   EndEffector_Setpoint_CMD m_endEffectorL1 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL1EndEffectorSetpoint);
   EndEffector_Setpoint_CMD m_endEffectorL2 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL2EndEffectorSetpoint);
   EndEffector_Setpoint_CMD m_endEffectorL3 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL3EndEffectorSetpoint);
@@ -121,6 +125,8 @@ public class RobotContainer
   EndEffector_Setpoint_CMD m_endEffectorStow = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint);
   EndEffector_Setpoint_CMD m_endEffectorCS = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kCSEndEffectorSetpoint);
 
+  // Coral Ground Setpoint Commands
+  EndEffector_Setpoint_CMD m_GI_Setpoint_Test = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, 0.4);
   // Sequence Commands
   CS_CMD m_CS_CMD = new CS_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   STOW_CMD m_STOW_CMD = new STOW_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
@@ -129,6 +135,9 @@ public class RobotContainer
   L3_CMD m_L3_CMD = new L3_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   L4_CMD m_L4_CMD = new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   HANDOFF_CMD m_HANDOFF_CMD = new HANDOFF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
+
+  // Ground Intake Commands
+  Coral_Intake_CMD m_Coral_Intake_CMD = new Coral_Intake_CMD(m_coralGroundIntakeSubsystem);
 
 
 
@@ -140,7 +149,7 @@ public class RobotContainer
                                                                 () -> m_driverController.getLeftX() * 1)
                                                             .withControllerRotationAxis(() -> m_driverController.getRightX() * 1)
                                                             .deadband(OperatorConstants.kDeadband)
-                                                            .scaleTranslation(OperatorConstants.kRobotSpeed)
+                                                            .scaleTranslation(SpeedConstants.kRobotSpeed)
                                                             .allianceRelativeControl(false);
 
   /**
@@ -154,7 +163,7 @@ public class RobotContainer
                                                             getYAxisPOV(),
                                                             getXAxisPOV())
                                                             .withControllerRotationAxis(getRotAxis())
-                                                            .scaleTranslation(OperatorConstants.kRobotNudgeSpeed)
+                                                            .scaleTranslation(SpeedConstants.kRobotNudgeSpeed)
                                                             .allianceRelativeControl(false)
                                                             .robotRelative(true); 
                                                       
@@ -169,7 +178,8 @@ public class RobotContainer
     MANUAL_ELEVATOR_UP,
     MANUAL_ELEVATOR_DOWN,
     INTAKING_CORAL,
-    EJECTING_CORAL
+    EJECTING_CORAL,
+    HANDING_OFF_CORAL
   }
 
   @AutoLogOutput(key = "RobotState")
@@ -343,24 +353,21 @@ public class RobotContainer
       );
 
 
-      DRIVER_X_BUTTON.whileTrue(m_groundIntakePivotDown);
-      DRIVER_Y_BUTTON.whileTrue(m_groundIntakePivotUp);
-      DRIVER_LEFT_TRIGGER.whileTrue(m_groundIntakeRollers);
-      DRIVER_RIGHT_TRIGGER.whileTrue(m_groundOuttakeRollers);
+      DRIVER_X_BUTTON.whileTrue(m_groundManualIntakePivotDown);
+      DRIVER_Y_BUTTON.whileTrue(m_groundManualIntakePivotUp);
 
-      DRIVER_RIGHT_BUMPER.whileTrue(
-        Commands.runOnce(() -> m_coralGroundIntakeSubsystem.setPivotPosition(0.4)))
-      .whileFalse(Commands.runOnce(()-> m_coralGroundIntakeSubsystem.groundIntakePivotStop()));
+      DRIVER_LEFT_TRIGGER.whileTrue(m_Coral_Intake_CMD);
+      DRIVER_RIGHT_TRIGGER.whileTrue(m_groundManualRollersOuttake);
 
-      DRIVER_LEFT_BUMPER.whileTrue(
-        Commands.runOnce(() -> m_coralGroundIntakeSubsystem.groundIntakeRollers()))
-      .whileFalse(Commands.runOnce(()-> m_coralGroundIntakeSubsystem.groundIntakeRollersOff()));
+      DRIVER_RIGHT_BUMPER.whileTrue(m_GI_Setpoint_Test);
+
+      DRIVER_LEFT_BUMPER.whileTrue(m_groundManualRollersIntake);
 
 
     // Operator controls
 
         // Operator L1
-        m_operatorController1.button(2).whileTrue(
+        m_operatorController1.button(OperatorConstants.kButtonBox_L1_Button_Port1).whileTrue(
           Commands.run(() -> {
             m_L1_CMD.schedule();
             m_endEffectorStow.cancel();
@@ -375,7 +382,7 @@ public class RobotContainer
         );
 
         // Operator L2
-        m_operatorController1.button(1).whileTrue(
+        m_operatorController1.button(OperatorConstants.kButtonBox_L2_Button_Port1).whileTrue(
           Commands.run(() -> {
             m_L2_CMD.schedule();
             m_endEffectorStow.cancel();
@@ -390,7 +397,7 @@ public class RobotContainer
         );
 
         // Operator L3
-        m_operatorController1.button(3).whileTrue(
+        m_operatorController1.button(OperatorConstants.kButtonBox_L3_Button_Port1).whileTrue(
           Commands.run(() -> {
             m_L3_CMD.schedule();
             m_endEffectorStow.cancel();
@@ -406,7 +413,7 @@ public class RobotContainer
 
 
         // Operator L4
-        m_operatorController2.button(2).whileTrue(
+        m_operatorController2.button(OperatorConstants.kButtonBox_L4_Button_Port2).whileTrue(
           Commands.run(() -> {
             m_L4_CMD.schedule();
             m_endEffectorStow.cancel();
@@ -421,7 +428,7 @@ public class RobotContainer
         );
 
         // Operator Coral Station
-        m_operatorController2.button(11).whileTrue(
+        m_operatorController2.button(OperatorConstants.kButtonBox_CS_Button_Port2).whileTrue(
           Commands.run(() -> {
             m_CS_CMD.schedule();
             m_endEffectorStow.cancel();
@@ -435,11 +442,12 @@ public class RobotContainer
           })
         );
 
-        m_operatorController2.button(10).whileTrue(
+        // Handoff CMD
+        m_operatorController2.button(OperatorConstants.kButtonBox_HANDOFF_Button_Port2).whileTrue(
           Commands.run(() -> {
             m_HANDOFF_CMD.schedule();
             m_endEffectorStow.cancel();
-            updateRobotState(RobotState.L1);
+            updateRobotState(RobotState.HANDING_OFF_CORAL);
           })
         ).whileFalse(
           Commands.runOnce(() -> {
@@ -451,7 +459,7 @@ public class RobotContainer
 
 
     // Operator Elevator Manual Up
-    m_operatorController2.button(12).whileTrue(
+    m_operatorController2.button(OperatorConstants.kButtonBox_ELEVATOR_MANUAL_UP_Button_Port2).whileTrue(
       Commands.run(() -> {
         m_elevatorManualUp.schedule();
         updateRobotState(RobotState.MANUAL_ELEVATOR_UP);
@@ -464,7 +472,7 @@ public class RobotContainer
     );
 
     // Operator Elevator Manual Down
-    m_operatorController1.button(12).whileTrue(
+    m_operatorController1.button(OperatorConstants.kButtonBox_ELEVATOR_MANUAL_DOWN_Button_Port1).whileTrue(
       Commands.run(() -> {
         m_elevatorManualDown.schedule();
         updateRobotState(RobotState.MANUAL_ELEVATOR_DOWN);

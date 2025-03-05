@@ -8,10 +8,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class GroundIntakePivotDown extends Command {
+public class GroundIntakeManualPivotDown extends Command {
   /** Creates a new GroundIntakePivotDown. */
   private CoralGroundIntakeSubsystem m_groundIntakeSubsystem;
-  public GroundIntakePivotDown(CoralGroundIntakeSubsystem groundIntakeSubsystem) {
+  public GroundIntakeManualPivotDown(CoralGroundIntakeSubsystem groundIntakeSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_groundIntakeSubsystem = groundIntakeSubsystem;
   }

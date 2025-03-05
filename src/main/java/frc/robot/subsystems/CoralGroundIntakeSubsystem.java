@@ -11,17 +11,14 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 
-import edu.wpi.first.networktables.NetworkTableInstance.NetworkMode;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.EndEffectorConstants;
@@ -36,6 +33,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   private TalonFX groundIntakePivot;
 
   private MotionMagicVoltage m_motionRequest;
+
   private DigitalInput m_intakeBeamBreak;
   private DigitalInput m_hopperBeamBreak;
 
@@ -44,8 +42,8 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     groundIntakeRollers = new TalonFX(GroundIntakeConstants.kGroundIntakeMotorID);
     groundIntakePivot = new TalonFX(GroundIntakeConstants.kGroundIntakePivotID);
 
-    m_intakeBeamBreak = new DigitalInput(8);
-    m_hopperBeamBreak = new DigitalInput(9);
+    m_intakeBeamBreak = new DigitalInput(GroundIntakeConstants.kGroundIntakeBeamBreakPort);
+    m_hopperBeamBreak = new DigitalInput(GroundIntakeConstants.kHopperBeamBreakPort);
 
 
       groundIntakeRollersConfig = new TalonFXConfiguration()
@@ -58,48 +56,45 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
                             .withMotorOutput(new MotorOutputConfigs()
                                           .withInverted(InvertedValue.Clockwise_Positive)
                                           .withNeutralMode(NeutralModeValue.Brake))
-                            .withMotionMagic(new MotionMagicConfigs()
-                                          .withMotionMagicCruiseVelocity(GroundIntakeConstants.kGroundIntakePivotMotionMagicCruiseVelocity)
-                                          .withMotionMagicAcceleration(GroundIntakeConstants.kGroundIntakePivotMotionMagicCruiseAcceleration)
-                                          .withMotionMagicJerk(GroundIntakeConstants.kGroundIntakePivotMotionMagicCruiseJerk))
                             .withFeedback(new FeedbackConfigs()
                                             .withFeedbackRemoteSensorID(EndEffectorConstants.kCANdiID)
                                             .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANdiPWM2))
-                            .withSlot0(new Slot0Configs()
-                                            .withKP(0.11239)
-                                            .withKI(0)
-                                            .withKD(0)
-                                            .withGravityType(GravityTypeValue.Arm_Cosine))
                             .withMotionMagic(new MotionMagicConfigs()
-                                                .withMotionMagicAcceleration(6425)
-                                                .withMotionMagicCruiseVelocity(5461)
-                                                .withMotionMagicJerk(0));
+                                            .withMotionMagicCruiseVelocity(GroundIntakeConstants.kGroundIntakePivotMotionMagicCruiseVelocity)
+                                            .withMotionMagicAcceleration(GroundIntakeConstants.kGroundIntakePivotMotionMagicAcceleration)
+                                            .withMotionMagicJerk(GroundIntakeConstants.kGroundIntakePivotMotionMagicJerk))
+                            .withSlot0(new Slot0Configs()
+                                            .withKP(GroundIntakeConstants.kGroundPivotPIDValueP)
+                                            .withKI(GroundIntakeConstants.kGroundPivotPIDValueI)
+                                            .withKD(GroundIntakeConstants.kGroundPivotPIDValueD)
+                                            .withGravityType(GravityTypeValue.Arm_Cosine));
+
 
       groundIntakePivot.getConfigurator().apply(groundIntakePivotConfig);
 
-      m_motionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(0.022094);
+      m_motionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(GroundIntakeConstants.kGroundIntakePivotFeedForward);
 
       
   }
 
-  public void groundIntakeRollers() {
-    groundIntakeRollers.set(GroundIntakeConstants.kGroundSpeed);
+  public void groundRollersIntake() {
+    groundIntakeRollers.set(GroundIntakeConstants.kGroundRollersSpeed);
   }
 
-  public void groundIntakeRollersOff() {
+  public void groundRollersStop() {
     groundIntakeRollers.set(0);
   }
 
-  public void groundOuttakeRollers() {
-    groundIntakeRollers.set(-GroundIntakeConstants.kGroundSpeed);
+  public void groundRollersOuttake() {
+    groundIntakeRollers.set(-GroundIntakeConstants.kGroundRollersSpeed);
   }
 
   public void groundIntakePivotUp() {
-    groundIntakePivot.set(GroundIntakeConstants.kGroundIntakePivotSpeed);
+    groundIntakePivot.set(GroundIntakeConstants.kGroundPivotSpeed);
   }
 
   public void groundIntakePivotDown() {
-    groundIntakePivot.set(-GroundIntakeConstants.kGroundIntakePivotSpeed);
+    groundIntakePivot.set(-GroundIntakeConstants.kGroundPivotSpeed);
   }
 
   public void groundIntakePivotStop() {
@@ -126,8 +121,13 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   }
 
   @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Pivot/PivotPosition")
-  public double getIntakePosition(){
+  public double getPivotPosition(){
     return groundIntakePivot.getPosition().getValueAsDouble();
+  }
+
+  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Pivot/PivotSetpoint")
+  public double getPivotSetpoint(){
+    return m_motionRequest.Position;
   }
 
   @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Pivot/PivotVoltage")
