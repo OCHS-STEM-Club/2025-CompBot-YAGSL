@@ -36,25 +36,32 @@ public final class Constants
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED  = Units.feetToMeters(19.5);
 
-  public static final class DrivebaseConstants
-  {
 
-    // Hold time on motor brakes when disabled
-    public static final double WHEEL_LOCK_TIME = 10; // seconds
-  }
-
-  public static class OperatorConstants
-  {
-
-    // Joystick Deadband
-    public static final double kDeadband = 0.1;
+  public static class SpeedConstants{
     // Robot Speed
     public static final double kRobotSpeed = 0.4;
     public static final double kRobotNudgeSpeed = 0.15;
+  }
+  public static class OperatorConstants
+  {
+    // Joystick Deadband
+    public static final double kDeadband = 0.1;
+  
     // Swerve Feedforward Values
     public static final double kSSwerveFeedforward = 0.2612;
     public static final double kVSwerveFeedforward = 2.1245;
     public static final double kASwerveFeedforward = 0.28492;
+
+    // ButtonBox Button IDs
+    public static final int kButtonBox_L1_Button_Port1 = 2;
+    public static final int kButtonBox_L2_Button_Port1 = 1;
+    public static final int kButtonBox_L3_Button_Port1 = 3;
+    public static final int kButtonBox_L4_Button_Port2 = 2;
+    public static final int kButtonBox_CS_Button_Port2 = 11;
+    public static final int kButtonBox_HANDOFF_Button_Port2 = 10;
+    public static final int kButtonBox_ELEVATOR_MANUAL_UP_Button_Port2 = 12;
+    public static final int kButtonBox_ELEVATOR_MANUAL_DOWN_Button_Port1 = 12;
+
 
 
   }
@@ -64,6 +71,7 @@ public final class Constants
     // End Effector IDs
     public static final int kEndEffectorIntakeID = 23;
     public static final int kEndEffectorPivotID = 22;
+    public static final int kEndEffectorSensorID = 0;
     // End Effector Speeds
     public static final double kEndEffectorSpeed = 0.95;
     public static final double kPivotSpeed = 0.15;
@@ -79,8 +87,8 @@ public final class Constants
     // CANdi ID
     public static final int kCANdiID = 26;
     // CANdi Cofigs
-    public static final double kPWM1AbsoluteEncoderOffset = -0.13; //-0.276; //0.176 //0.4333//-0.74511 // 0.245
-    public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 1; // 0.98
+    public static final double kPWM1AbsoluteEncoderOffset = -0.13; 
+    public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 1; 
     // Sensor Configs
     public static final double kSensorToMechanismRatio = 1;
     public static final double kRotorToSensorRatio = 24.9;
@@ -88,33 +96,14 @@ public final class Constants
     public static final double kEndEffectorPivotCurrentLimit = 40;
     //End Effector Motion Magic Values
     public static final double kEndEffectorPivotMotionMagicCruiseVelocity = 2185;
-    public static final double kEndEffectorPivotMotionMagicCruiseAcceleration = 1000;
-    public static final double kEndEffectorPivotMotionMagicCruiseJerk = 1700;
+    public static final double kEndEffectorPivotMotionMagicAcceleration = 1000;
+    public static final double kEndEffectorPivotMotionMagicJerk = 1700;
     // Soft Limit Values
     public static final double kEndEffectorFowardSoftLimit = 0.8;
     public static final double kEndEffectorReverseSoftLimit = 0.15;
 
 
   }
-
-  // public static class CoralGroundIntakeConstants 
-  // {
-  //   // Coral Ground Intake IDs
-  //   public static final int kCoralGroundIntakeID = 21;
-  //   public static final int kCoralGroundPivotID = 20;
-  //   // Coral Ground Intake Speeds
-  //   public static final double kCoralGroundIntakeSpeed = 0.25;
-  //   public static final double kCoralGroundPivotSpeed = 0.25;
-  //   // Coral Ground Intake PID Values
-  //   public static final double kCoralGroundPivotPIDValueP = 0;
-  //   public static final double kCoralGroundPivotPIDValueI = 0;
-  //   public static final double kCoralGroundPivotPIDValueD = 0;
-  //   // Coral Ground Beam Break ID
-  //   public static final int kCoralGroundBeamBreakPort = 2;
-
-  // }
-
-
 
   public static class ElevatorConstants{
     // Elevator Motor IDs
@@ -135,7 +124,6 @@ public final class Constants
     public static final double kElevatorMotionMagicAcceleration = 30633;
     public static final double kElevatorMotionMagicCruiseVelocity = 35633;
     public static final double kElevatorMotionMagicJerk = 45000;
-
     // Elevator Speed
     public static final double kElevatorSpeed = 0.15;
     public static final double kElevatorVoltage = 1.2;
@@ -146,27 +134,56 @@ public final class Constants
 
   }
 
+  public static class GroundIntakeConstants {
+
+    public static final int kGroundIntakeMotorID = 21;
+    public static final int kGroundIntakePivotID = 20;
+
+    public static final int kGroundIntakeBeamBreakPort = 8;
+    public static final int kHopperBeamBreakPort = 9;
+    
+    public static final double kGroundRollersSpeed = 0.6;
+    public static final double kGroundPivotSpeed = 0.3;
+
+    public static final double kGroundPivotPIDValueP = 0.11239;
+    public static final double kGroundPivotPIDValueI = 0;
+    public static final double kGroundPivotPIDValueD = 0;
+
+    public static final double kGroundIntakePivotFeedForward = 0.022094;
+    
+    public static final double kGroundIntakePivotMotionMagicCruiseVelocity = 5461;
+    public static final double kGroundIntakePivotMotionMagicAcceleration = 6425;
+    public static final double kGroundIntakePivotMotionMagicJerk = 0;
+
+    public static final double kGroundIntakeEncoderOffset = 0;
+    public static final double kGroundIntakeDiscontinuityPoint = 0;
+
+    public static final double kSensorToMechanismRatio = 1;
+    public static final double kRotorToSensorRatio = 80;
+  }
+
   public static class SetpointConstants{
-    public static final double kL1ElevatorSetpoint = 0; //0
-    public static final double kL1EndEffectorSetpoint = 0.296875; //0.4
 
-    public static final double kL2ElevatorSetpoint = 8.066; //10.5
-    public static final double kL2EndEffectorSetpoint = 0.18; //0.19
+    public static final double kL1ElevatorSetpoint = 0; 
+    public static final double kL1EndEffectorSetpoint = 0.296875; 
 
-    public static final double kL3ElevatorSetpoint = 13.218; //14.8
-    public static final double kL3EndEffectorSetpoint = 0.1503; //0.2
+    public static final double kL2ElevatorSetpoint = 8.066; 
+    public static final double kL2EndEffectorSetpoint = 0.18; 
 
-    public static final double kL4ElevatorSetpoint = 20.370; //0
-    public static final double kL4EndEffectorSetpoint = 0.1445; //0
+    public static final double kL3ElevatorSetpoint = 13.218; 
+    public static final double kL3EndEffectorSetpoint = 0.1503;
 
-    public static final double kCSElevatorSetpoint = 3.05; // Used to be 4 rotations. Increased to 5.6 for better intaking from coral station. Dropped to 4.3 rotations. last values was too high.
-    public static final double kCSEndEffectorSetpoint = 0.643; //0.643
+    public static final double kL4ElevatorSetpoint = 20.370; 
+    public static final double kL4EndEffectorSetpoint = 0.1445; 
 
-    public static final double kStowElevatorSetpoint = 0; //0
-    public static final double kStowEndEffectorSetpoint = 0.55; //0.5
+    public static final double kCSElevatorSetpoint = 3.05; 
+    public static final double kCSEndEffectorSetpoint = 0.643; 
 
-    public static final double kHandoffElevatorSetpoint = 5; //0
-    public static final double kHandoffEndEffectorSetpoint = 0.97; //0.5
+    public static final double kStowElevatorSetpoint = 0; 
+    public static final double kStowEndEffectorSetpoint = 0.55; 
+
+    public static final double kHandoffElevatorSetpoint = 5; 
+    public static final double kHandoffEndEffectorSetpoint = 0.97; 
 
     public static final double kSetpointThreshold = 0.75;
 
@@ -175,12 +192,6 @@ public final class Constants
 
   public static class VisionConstants {
         public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
-
-        // The standard deviations of our vision estimated poses, which affect correction rate
-        // (Fake values. Experiment and determine estimation noise on an actual robot.)
-        // public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-        // public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
-
 
         public static final String FL_Module_Camera_Name = "FL-Module";
         public static final Transform3d FL_Module_Camera_Transformed =
@@ -198,30 +209,7 @@ public final class Constants
         public static final Matrix<N3, N1> FR_SingleTagStdDevs = VecBuilder.fill(4, 4, 8);
         public static final Matrix<N3, N1> FR_MultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
 
-
-
   }
-  public static class GroundIntakeConstants {
-    public static final int kGroundIntakeMotorID = 21;
-    public static final int kGroundIntakePivotID = 20;
-    
-    public static final double kGroundSpeed = 0.6;
-    public static final double kGroundIntakeOffSpeed = 0;
-    public static final double kGroundIntakePivotSpeed = 0.3;
-
-    public static final double kGroundPivotPIDValueP = 0;
-    public static final double kGroundPivotPIDValueI = 0;
-    public static final double kGroundPivotPIDValueD = 0;
-    
-    public static final double kGroundIntakePivotMotionMagicCruiseVelocity = 2000;
-    public static final double kGroundIntakePivotMotionMagicCruiseAcceleration = 2000;
-    public static final double kGroundIntakePivotMotionMagicCruiseJerk = 2000;
-
-    public static final double kGroundIntakeEncoderOffset = 0;
-    public static final double kGroundIntakeDiscontinuityPoint = 0;
-
-    public static final double kSensorToMechanismRatio = 1;
-    public static final double kRotorToSensorRatio = 80;
-  }
+  
 
 }

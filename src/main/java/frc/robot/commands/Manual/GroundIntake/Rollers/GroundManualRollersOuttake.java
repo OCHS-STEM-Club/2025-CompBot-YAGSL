@@ -8,10 +8,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class GroundOuttake extends Command {
+public class GroundManualRollersOuttake extends Command {
   /** Creates a new GroundOuttake. */
   private CoralGroundIntakeSubsystem m_groundIntakeSubsystem;
-  public GroundOuttake(CoralGroundIntakeSubsystem groundIntakeSubsystem) {
+  public GroundManualRollersOuttake(CoralGroundIntakeSubsystem groundIntakeSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_groundIntakeSubsystem = groundIntakeSubsystem;
   }
@@ -23,13 +23,13 @@ public class GroundOuttake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_groundIntakeSubsystem.groundOuttakeRollers();
+    m_groundIntakeSubsystem.groundRollersOuttake();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_groundIntakeSubsystem.groundIntakeRollersOff();
+    m_groundIntakeSubsystem.groundRollersStop();
   }
 
   // Returns true when the command should end.

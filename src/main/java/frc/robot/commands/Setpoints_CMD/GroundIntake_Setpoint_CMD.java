@@ -2,21 +2,22 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Manual.GroundIntake.Rollers;
+package frc.robot.commands.Setpoints_CMD;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.SetpointConstants;
 import frc.robot.subsystems.CoralGroundIntakeSubsystem;
+import frc.robot.subsystems.EndEffectorSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class GroundIntake extends Command {
-  /** Creates a new GroundIntake. */
-  private CoralGroundIntakeSubsystem m_groundIntakeSubsystem;
-  public GroundIntake(CoralGroundIntakeSubsystem groundIntakeSubsystem) {
+public class GroundIntake_Setpoint_CMD extends Command {
+  /** Creates a new EndEffector_L1. */
+  CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem;
+  double m_coralGroundIntakeSetpoint;
+  public GroundIntake_Setpoint_CMD(CoralGroundIntakeSubsystem coralGroundIntakeSubsystem, double coralGroundIntakeSetpoint) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_groundIntakeSubsystem = groundIntakeSubsystem;
+    m_coralGroundIntakeSubsystem = coralGroundIntakeSubsystem;
+    m_coralGroundIntakeSetpoint = coralGroundIntakeSetpoint;
   }
 
   // Called when the command is initially scheduled.
@@ -26,19 +27,13 @@ public class GroundIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_groundIntakeSubsystem.getIntakeSensor()){
-      // Commands.waitSeconds(0.001).andThen(()->m_groundIntakeSubsystem.groundIntakeRollersOff());
-      m_groundIntakeSubsystem.groundIntakeRollersOff();
-
-      // new SequentialCommandGroup(new WaitCommand(0.001),Commands.run(() ->m_groundIntakeSubsystem.groundIntakeRollersOff() ));
-    }else
-    m_groundIntakeSubsystem.groundIntakeRollers();
-    
+    m_coralGroundIntakeSubsystem.setPivotPosition(m_coralGroundIntakeSetpoint);
   }
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_groundIntakeSubsystem.groundIntakeRollersOff();
+    m_coralGroundIntakeSubsystem.groundIntakePivotStop();
   }
 
   // Returns true when the command should end.
