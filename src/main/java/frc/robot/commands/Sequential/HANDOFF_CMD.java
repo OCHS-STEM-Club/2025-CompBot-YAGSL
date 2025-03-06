@@ -35,7 +35,7 @@ public class HANDOFF_CMD extends SequentialCommandGroup {
                  new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kHandoffElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()), 
                  new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kHandoffEndEffectorSetpoint).withTimeout(3),
                  new SequentialCommandGroup(new WaitCommand(1),
-                                            new Elevator_Setpoint_CMD(m_elevatorSubsystem, 1.1).until(m_elevatorSubsystem.isAtSetpoint()),
+                                            new Elevator_Setpoint_CMD(m_elevatorSubsystem, 0.8).until(m_elevatorSubsystem.isAtSetpoint()),
                                             new Elevator_Setpoint_CMD(m_elevatorSubsystem, 5).until(m_elevatorSubsystem.isAtSetpoint()),
                                             new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint))
                                             ));
