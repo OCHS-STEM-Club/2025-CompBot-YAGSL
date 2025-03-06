@@ -12,6 +12,8 @@ import frc.robot.Constants.SetpointConstants;
 import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualIntake;
 import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
+import frc.robot.commands.Setpoints_CMD.GroundIntake_Setpoint_CMD;
+import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 
@@ -22,22 +24,27 @@ public class HANDOFF_CMD extends SequentialCommandGroup {
   /** Creates a new L1_CMD. */
   EndEffectorSubsystem m_endEffectorSubsystem;
   ElevatorSubsystem m_elevatorSubsystem;
+  CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem;
   
-  public HANDOFF_CMD(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem) {
+  public HANDOFF_CMD(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem, CoralGroundIntakeSubsystem coralGroundIntakeSubsystem) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_elevatorSubsystem = elevatorSubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
+    m_coralGroundIntakeSubsystem = coralGroundIntakeSubsystem;
 
     addCommands(
     new ParallelCommandGroup(
                  m_endEffectorSubsystem.intakeWithTOF(),
                  new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kHandoffElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()), 
                  new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kHandoffEndEffectorSetpoint).withTimeout(3),
+                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.35).withTimeout(4),
                  new SequentialCommandGroup(new WaitCommand(1),
                                             new Elevator_Setpoint_CMD(m_elevatorSubsystem, 0.8).until(m_elevatorSubsystem.isAtSetpoint()),
                                             new Elevator_Setpoint_CMD(m_elevatorSubsystem, 5).until(m_elevatorSubsystem.isAtSetpoint()),
-                                            new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint))
+                                            new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint)),
+                 new SequentialCommandGroup(new WaitCommand(3.2),
+                                            new GroundIntake_Setpoint_CMD(coralGroundIntakeSubsystem, 0.5))
                                             ));
 
   }

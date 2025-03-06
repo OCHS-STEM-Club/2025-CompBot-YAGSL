@@ -135,7 +135,7 @@ public class RobotContainer
   L2_CMD m_L2_CMD = new L2_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   L3_CMD m_L3_CMD = new L3_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   L4_CMD m_L4_CMD = new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
-  HANDOFF_CMD m_HANDOFF_CMD = new HANDOFF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
+  HANDOFF_CMD m_HANDOFF_CMD = new HANDOFF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
 
   // Ground Intake Commands
   Coral_Intake_CMD m_Coral_Intake_CMD = new Coral_Intake_CMD(m_coralGroundIntakeSubsystem);
@@ -450,7 +450,7 @@ public class RobotContainer
             m_endEffectorStow.cancel();
             updateRobotState(RobotState.HANDING_OFF_CORAL);
           })
-        ).whileFalse(
+        ).onFalse(
           Commands.runOnce(() -> {
             m_HANDOFF_CMD.cancel();
             m_endEffectorStow.schedule();

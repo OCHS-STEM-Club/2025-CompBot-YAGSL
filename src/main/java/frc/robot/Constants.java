@@ -121,7 +121,7 @@ public final class Constants
     // Sensor To Mechanism Ratio
     public static final double kElevatorSensorToMechRatio = 0.875;
     // Motion Magic Configs
-    public static final double kElevatorMotionMagicAcceleration = 30633;
+    public static final double kElevatorMotionMagicAcceleration = 40633;
     public static final double kElevatorMotionMagicCruiseVelocity = 35633;
     public static final double kElevatorMotionMagicJerk = 45000;
     // Elevator Speed
