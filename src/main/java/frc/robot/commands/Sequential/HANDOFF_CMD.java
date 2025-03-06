@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.SetpointConstants;
+import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualIntake;
 import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -30,8 +31,14 @@ public class HANDOFF_CMD extends SequentialCommandGroup {
 
     addCommands(
     new ParallelCommandGroup(
-                 new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kHandoffElevatorSetpoint), 
-                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kHandoffEndEffectorSetpoint),
-                 new SequentialCommandGroup(new WaitCommand(2), new Elevator_Setpoint_CMD(elevatorSubsystem, 3))));
+                 m_endEffectorSubsystem.intakeWithTOF(),
+                 new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kHandoffElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()), 
+                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kHandoffEndEffectorSetpoint).withTimeout(3),
+                 new SequentialCommandGroup(new WaitCommand(1),
+                                            new Elevator_Setpoint_CMD(m_elevatorSubsystem, 1.1).until(m_elevatorSubsystem.isAtSetpoint()),
+                                            new Elevator_Setpoint_CMD(m_elevatorSubsystem, 5).until(m_elevatorSubsystem.isAtSetpoint()),
+                                            new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint))
+                                            ));
+
   }
 }

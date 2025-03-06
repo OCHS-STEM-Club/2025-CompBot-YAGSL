@@ -46,6 +46,7 @@ import frc.robot.commands.Sequential.L4_CMD;
 import frc.robot.commands.Sequential.STOW_CMD;
 import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
+import frc.robot.commands.Setpoints_CMD.GroundIntake_Setpoint_CMD;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.CoralGroundIntakeSubsystem;
@@ -126,7 +127,7 @@ public class RobotContainer
   EndEffector_Setpoint_CMD m_endEffectorCS = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kCSEndEffectorSetpoint);
 
   // Coral Ground Setpoint Commands
-  EndEffector_Setpoint_CMD m_GI_Setpoint_Test = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, 0.4);
+  GroundIntake_Setpoint_CMD m_GI_Setpoint_Test = new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.5);
   // Sequence Commands
   CS_CMD m_CS_CMD = new CS_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   STOW_CMD m_STOW_CMD = new STOW_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
@@ -266,57 +267,57 @@ public class RobotContainer
         Commands.runOnce(m_swerveSubsystem :: zeroGyro)
       );
       
-      // Driver End Effector Manual Intake
-      DRIVER_LEFT_TRIGGER.whileTrue(
-        Commands.run(() -> {
-          m_endEffectorManualIntake.schedule();
-          updateRobotState(RobotState.INTAKING_CORAL);
-        })
-      ).whileFalse(
-        Commands.runOnce(() -> {
-          m_endEffectorManualIntake.cancel();
-          updateRobotState(RobotState.STOW);
-        })
-      );
+      // // Driver End Effector Manual Intake
+      // DRIVER_LEFT_TRIGGER.whileTrue(
+      //   Commands.run(() -> {
+      //     m_endEffectorManualIntake.schedule();
+      //     updateRobotState(RobotState.INTAKING_CORAL);
+      //   })
+      // ).whileFalse(
+      //   Commands.runOnce(() -> {
+      //     m_endEffectorManualIntake.cancel();
+      //     updateRobotState(RobotState.STOW);
+      //   })
+      // );
 
-      // // Driver End Effector Manual Outtake
-      DRIVER_RIGHT_TRIGGER.whileTrue(
-        Commands.run(() -> {
-          m_endEffectorManualOuttake.schedule();
-          updateRobotState(RobotState.EJECTING_CORAL);
-        })
-      ).whileFalse(
-        Commands.runOnce(() -> {
-          m_endEffectorManualOuttake.cancel();
-          updateRobotState(RobotState.STOW);
-        })
-      );
+      // // // Driver End Effector Manual Outtake
+      // DRIVER_RIGHT_TRIGGER.whileTrue(
+      //   Commands.run(() -> {
+      //     m_endEffectorManualOuttake.schedule();
+      //     updateRobotState(RobotState.EJECTING_CORAL);
+      //   })
+      // ).whileFalse(
+      //   Commands.runOnce(() -> {
+      //     m_endEffectorManualOuttake.cancel();
+      //     updateRobotState(RobotState.STOW);
+      //   })
+      // );
 
-      // // Driver End Effector Manual Pivot Up
-      DRIVER_RIGHT_BUMPER.whileTrue(
-        Commands.run(() -> {
-          m_endEffectorManualPivotUp.schedule();
-          updateRobotState(RobotState.MANUAL_END_EFFECTOR_UP);
-        })
-      ).whileFalse(
-        Commands.runOnce(() -> {
-          m_endEffectorManualPivotUp.cancel();
-          updateRobotState(RobotState.STOW);
-        })
-      );
+      // // // Driver End Effector Manual Pivot Up
+      // DRIVER_RIGHT_BUMPER.whileTrue(
+      //   Commands.run(() -> {
+      //     m_endEffectorManualPivotUp.schedule();
+      //     updateRobotState(RobotState.MANUAL_END_EFFECTOR_UP);
+      //   })
+      // ).whileFalse(
+      //   Commands.runOnce(() -> {
+      //     m_endEffectorManualPivotUp.cancel();
+      //     updateRobotState(RobotState.STOW);
+      //   })
+      // );
 
-      // // Driver End Effector Manual Pivot Down
-      DRIVER_LEFT_BUMPER.whileTrue(
-        Commands.run(() -> {
-          m_endEffectorManualPivotDown.schedule();
-          updateRobotState(RobotState.MANUAL_END_EFFECTOR_DOWN);
-        })
-      ).whileFalse(
-        Commands.runOnce(() -> {
-          m_endEffectorManualPivotDown.cancel();
-          updateRobotState(RobotState.STOW);
-        })
-      );
+      // // // Driver End Effector Manual Pivot Down
+      // DRIVER_LEFT_BUMPER.whileTrue(
+      //   Commands.run(() -> {
+      //     m_endEffectorManualPivotDown.schedule();
+      //     updateRobotState(RobotState.MANUAL_END_EFFECTOR_DOWN);
+      //   })
+      // ).whileFalse(
+      //   Commands.runOnce(() -> {
+      //     m_endEffectorManualPivotDown.cancel();
+      //     updateRobotState(RobotState.STOW);
+      //   })
+      // );
 
 
       // Driver Elevator Stow
@@ -353,15 +354,15 @@ public class RobotContainer
       );
 
 
-      // DRIVER_X_BUTTON.whileTrue(m_groundManualIntakePivotDown);
-      // DRIVER_Y_BUTTON.whileTrue(m_groundManualIntakePivotUp);
+      DRIVER_X_BUTTON.whileTrue(m_groundManualIntakePivotDown);
+      DRIVER_Y_BUTTON.whileTrue(m_groundManualIntakePivotUp);
 
-      // DRIVER_LEFT_TRIGGER.whileTrue(m_Coral_Intake_CMD);
+      DRIVER_LEFT_TRIGGER.whileTrue(m_endEffectorSubsystem.intakeWithTOF());
       // DRIVER_RIGHT_TRIGGER.whileTrue(m_groundManualRollersOuttake);
 
-      // DRIVER_RIGHT_BUMPER.whileTrue(m_GI_Setpoint_Test);
+      DRIVER_RIGHT_BUMPER.whileTrue(m_GI_Setpoint_Test);
 
-      // DRIVER_LEFT_BUMPER.whileTrue(m_groundManualRollersIntake);
+      DRIVER_LEFT_BUMPER.whileTrue(m_groundManualRollersIntake);
 
 
     // Operator controls

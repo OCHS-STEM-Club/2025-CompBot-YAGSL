@@ -73,7 +73,7 @@ public final class Constants
     public static final int kEndEffectorPivotID = 22;
     public static final int kEndEffectorSensorID = 0;
     // End Effector Speeds
-    public static final double kEndEffectorSpeed = 0.95;
+    public static final double kEndEffectorSpeed = 0.60;
     public static final double kPivotSpeed = 0.15;
     // End Effector Current Spike
     public static final double kEndEffectorCurrentSpike = 110;
@@ -145,7 +145,7 @@ public final class Constants
     public static final double kGroundRollersSpeed = 0.6;
     public static final double kGroundPivotSpeed = 0.3;
 
-    public static final double kGroundPivotPIDValueP = 0.11239;
+    public static final double kGroundPivotPIDValueP = 30;
     public static final double kGroundPivotPIDValueI = 0;
     public static final double kGroundPivotPIDValueD = 0;
 
@@ -156,7 +156,7 @@ public final class Constants
     public static final double kGroundIntakePivotMotionMagicJerk = 0;
 
     public static final double kGroundIntakeEncoderOffset = 0;
-    public static final double kGroundIntakeDiscontinuityPoint = 0;
+    public static final double kGroundIntakeDiscontinuityPoint = 1;
 
     public static final double kSensorToMechanismRatio = 1;
     public static final double kRotorToSensorRatio = 80;
@@ -183,7 +183,7 @@ public final class Constants
     public static final double kStowEndEffectorSetpoint = 0.55; 
 
     public static final double kHandoffElevatorSetpoint = 5; 
-    public static final double kHandoffEndEffectorSetpoint = 0.97; 
+    public static final double kHandoffEndEffectorSetpoint = 1.01; 
 
     public static final double kSetpointThreshold = 0.75;
 

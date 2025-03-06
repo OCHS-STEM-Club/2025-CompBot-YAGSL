@@ -31,9 +31,12 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.playingwithfusion.TimeOfFlight;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.EndEffectorConstants;
@@ -59,7 +62,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   private CANdiConfiguration canDiConfigs;
 
   // Intake Beam Break
-  private DigitalInput intakeBeamBreak;
+  private TimeOfFlight intakeSensor;
 
   // Voltage Request
   private VoltageOut m_voltageRequest;
@@ -74,7 +77,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
     endEffectorPivot = new TalonFX(EndEffectorConstants.kEndEffectorPivotID);
 
     // Intake Beam Break
-    intakeBeamBreak = new DigitalInput(EndEffectorConstants.kEndEffectorBeamBreakPort);
+    intakeSensor = new TimeOfFlight(27);
 
     // CANdi 
     canDi = new CANdi(EndEffectorConstants.kCANdiID);
@@ -87,7 +90,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                       // .withSensorDirection(true))
                         .withPWM2(new PWM2Configs()
                                       .withAbsoluteSensorOffset(GroundIntakeConstants.kGroundIntakeEncoderOffset)
-                                      .withAbsoluteSensorDiscontinuityPoint(GroundIntakeConstants.kGroundIntakeDiscontinuityPoint));
+                                      .withAbsoluteSensorDiscontinuityPoint(GroundIntakeConstants.kGroundIntakeDiscontinuityPoint)
+                                      .withSensorDirection(false));
 
     // Apply CANdi Configs
     canDi.getConfigurator().apply(canDiConfigs);
@@ -140,10 +144,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
     // Motion Magic motion request
     m_motionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(EndEffectorConstants.kEndEffectorFeedForward);
 
-    
-
-
-
 
   }
 
@@ -163,18 +163,18 @@ public class EndEffectorSubsystem extends SubsystemBase {
     endEffectorIntake.set(0);
   }
 
+  public Command intakeWithTOF(){
+    return Commands.run(()-> {
+              if(intakeSensor.getRange() > 70){
+                rollersIntake();
+              }else
+              rollersStop();
+    });
+  }
+
   // Intake with current spike detection
   public void intakeCoralWithCurrentSpikeDetection() {
     if (endEffectorIntake.getSupplyCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike) {
-      endEffectorIntake.set(0);
-    } else {
-      endEffectorIntake.set(EndEffectorConstants.kEndEffectorSpeed);
-    }
-  }
-
-  // Intake with beam break detection
-  public void intakeAlgaeWithBeamBreak() {
-    if (intakeBeamBreak.get()) {
       endEffectorIntake.set(0);
     } else {
       endEffectorIntake.set(EndEffectorConstants.kEndEffectorSpeed);
@@ -185,12 +185,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/HasCoral?")
   public boolean hasCoral(){
     return endEffectorIntake.getSupplyCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike;
-  }
-
-  // Do we have algae?
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/HasAlgae?")
-  public boolean hasAlgae(){
-    return intakeBeamBreak.get();
   }
   //Is At Set Point?
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtSetpoint?")
@@ -329,6 +323,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    
+    // System.out.println(intakeSensor.getRange());
+
 
   }
   

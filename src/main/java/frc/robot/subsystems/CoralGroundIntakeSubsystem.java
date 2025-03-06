@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.configs.FeedbackConfigs;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.EndEffectorConstants;
 import frc.robot.Constants.GroundIntakeConstants;
+import frc.robot.Constants.SetpointConstants;
 
 public class CoralGroundIntakeSubsystem extends SubsystemBase {
   /** Creates a new GroundIntakeSubsystem. */
@@ -48,13 +51,13 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
 
       groundIntakeRollersConfig = new TalonFXConfiguration()
                             .withMotorOutput(new MotorOutputConfigs()
-                                          .withInverted(InvertedValue.Clockwise_Positive)
+                                          .withInverted(InvertedValue.CounterClockwise_Positive)
                                           .withNeutralMode(NeutralModeValue.Brake));
       groundIntakeRollers.getConfigurator().apply(groundIntakeRollersConfig);
 
       groundIntakePivotConfig = new TalonFXConfiguration()
                             .withMotorOutput(new MotorOutputConfigs()
-                                          .withInverted(InvertedValue.Clockwise_Positive)
+                                          .withInverted(InvertedValue.CounterClockwise_Positive)
                                           .withNeutralMode(NeutralModeValue.Brake))
                             .withFeedback(new FeedbackConfigs()
                                             .withFeedbackRemoteSensorID(EndEffectorConstants.kCANdiID)
@@ -78,7 +81,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   }
 
   public void groundRollersIntake() {
-    groundIntakeRollers.set(GroundIntakeConstants.kGroundRollersSpeed);
+    groundIntakeRollers.set(-GroundIntakeConstants.kGroundRollersSpeed);
   }
 
   public void groundRollersStop() {
@@ -86,7 +89,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   }
 
   public void groundRollersOuttake() {
-    groundIntakeRollers.set(-GroundIntakeConstants.kGroundRollersSpeed);
+    groundIntakeRollers.set(GroundIntakeConstants.kGroundRollersSpeed);
   }
 
   public void groundIntakePivotUp() {
@@ -104,6 +107,10 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   public void setPivotPosition(double Position){
     groundIntakePivot.setControl(m_motionRequest.withPosition(Position));
   }
+
+  public BooleanSupplier isAtSetpoint(){
+      return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
+    }
   
   @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/IntakeBeamBreak")
   public boolean getIntakeSensor(){
