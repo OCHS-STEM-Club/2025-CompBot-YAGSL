@@ -167,14 +167,14 @@ public final class Constants
     public static final double kL1ElevatorSetpoint = 0; 
     public static final double kL1EndEffectorSetpoint = 0.296875; 
 
-    public static final double kL2ElevatorSetpoint = 8.066; 
-    public static final double kL2EndEffectorSetpoint = 0.18; 
+    public static final double kL2ElevatorSetpoint = 7.166; 
+    public static final double kL2EndEffectorSetpoint = 0.17; 
 
-    public static final double kL3ElevatorSetpoint = 13.218; 
-    public static final double kL3EndEffectorSetpoint = 0.1503;
+    public static final double kL3ElevatorSetpoint = 12.218; 
+    public static final double kL3EndEffectorSetpoint = 0.175;//17
 
     public static final double kL4ElevatorSetpoint = 20.370; 
-    public static final double kL4EndEffectorSetpoint = 0.1445; 
+    public static final double kL4EndEffectorSetpoint = 0.16;//0.1445;
 
     public static final double kCSElevatorSetpoint = 3.05; 
     public static final double kCSEndEffectorSetpoint = 0.643; 
