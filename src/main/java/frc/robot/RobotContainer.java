@@ -36,7 +36,7 @@ import frc.robot.commands.Manual.GroundIntake.Pivot.GroundIntakeManualPivotDown;
 import frc.robot.commands.Manual.GroundIntake.Pivot.GroundIntakeManualPivotUp;
 import frc.robot.commands.Manual.GroundIntake.Rollers.GroundManualRollersIntake;
 import frc.robot.commands.Manual.GroundIntake.Rollers.GroundManualRollersOuttake;
-import frc.robot.commands.Sequential.CS_CMD;
+import frc.robot.commands.Sequential.HP_CMD;
 import frc.robot.commands.Sequential.HANDOFF_CMD;
 import frc.robot.commands.Sequential.STOW_CMD;
 import frc.robot.commands.Sequential.Reef.L1_CMD;
@@ -115,7 +115,7 @@ public class RobotContainer
   Elevator_Setpoint_CMD m_elevatorL3 = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL3ElevatorSetpoint);
   Elevator_Setpoint_CMD m_elevatorL4 = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL4ElevatorSetpoint);
   Elevator_Setpoint_CMD m_elevatorStow = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kStowElevatorSetpoint);
-  Elevator_Setpoint_CMD m_elevatorCS = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kCSElevatorSetpoint);
+  Elevator_Setpoint_CMD m_elevatorHP = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kHPElevatorSetpoint);
 
   // End Effector Setpoint Commands
   EndEffector_Setpoint_CMD m_endEffectorL1 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL1EndEffectorSetpoint);
@@ -123,12 +123,12 @@ public class RobotContainer
   EndEffector_Setpoint_CMD m_endEffectorL3 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL3EndEffectorSetpoint);
   EndEffector_Setpoint_CMD m_endEffectorL4 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL4EndEffectorSetpoint);
   EndEffector_Setpoint_CMD m_endEffectorStow = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint);
-  EndEffector_Setpoint_CMD m_endEffectorCS = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kCSEndEffectorSetpoint);
+  EndEffector_Setpoint_CMD m_endEffectorHP = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kHPEndEffectorSetpoint);
 
   // Coral Ground Setpoint Commands
   GroundIntake_Setpoint_CMD m_GI_Setpoint_Test = new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.5);
   // Sequence Commands
-  CS_CMD m_CS_CMD = new CS_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
+  HP_CMD m_HP_CMD = new HP_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   STOW_CMD m_STOW_CMD = new STOW_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   L1_CMD m_L1_CMD = new L1_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   L2_CMD m_L2_CMD = new L2_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
@@ -343,14 +343,14 @@ public class RobotContainer
         );
 
         // Operator Coral Station
-        m_operatorController2.button(OperatorConstants.kButtonBox_CS_Button_Port2).whileTrue(
+        m_operatorController2.button(OperatorConstants.kButtonBox_HP_Button_Port2).whileTrue(
           Commands.run(() -> {
-            m_CS_CMD.schedule();
+            m_HP_CMD.schedule();
             m_endEffectorStow.cancel();
           })
         ).whileFalse(
           Commands.runOnce(() -> {
-            m_CS_CMD.cancel();
+            m_HP_CMD.cancel();
             m_endEffectorStow.schedule();
           })
         );

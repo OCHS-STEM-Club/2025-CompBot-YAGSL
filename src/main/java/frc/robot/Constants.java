@@ -57,7 +57,7 @@ public final class Constants
     public static final int kButtonBox_L2_Button_Port1 = 1;
     public static final int kButtonBox_L3_Button_Port1 = 3;
     public static final int kButtonBox_L4_Button_Port2 = 2;
-    public static final int kButtonBox_CS_Button_Port2 = 11;
+    public static final int kButtonBox_HP_Button_Port2 = 11;
     public static final int kButtonBox_HANDOFF_Button_Port2 = 10;
     public static final int kButtonBox_ELEVATOR_MANUAL_UP_Button_Port2 = 12;
     public static final int kButtonBox_ELEVATOR_MANUAL_DOWN_Button_Port1 = 12;
@@ -176,8 +176,8 @@ public final class Constants
     public static final double kL4ElevatorSetpoint = 20.370; 
     public static final double kL4EndEffectorSetpoint = 0.16;//0.1445;
 
-    public static final double kCSElevatorSetpoint = 3.05; 
-    public static final double kCSEndEffectorSetpoint = 0.643; 
+    public static final double kHPElevatorSetpoint = 3.05; 
+    public static final double kHPEndEffectorSetpoint = 0.643; 
 
     public static final double kStowElevatorSetpoint = 0; 
     public static final double kStowEndEffectorSetpoint = 0.55; 
