@@ -91,7 +91,9 @@ public class RobotContainer
   ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem = new CoralGroundIntakeSubsystem();
 
-  // Commands Definitions
+  // State Machine
+  StateMachine m_stateMachine = new StateMachine(m_elevatorSubsystem, m_endEffectorSubsystem);
+
 
   //Elevator Manual Commands
   ElevatorManualDown m_elevatorManualDown = new ElevatorManualDown(m_elevatorSubsystem);
