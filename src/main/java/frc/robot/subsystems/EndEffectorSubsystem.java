@@ -77,7 +77,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
     endEffectorPivot = new TalonFX(EndEffectorConstants.kEndEffectorPivotID);
 
     // Intake Beam Break
-    intakeSensor = new TimeOfFlight(27);
+    intakeSensor = new TimeOfFlight(EndEffectorConstants.kEndEffectorTOFID);
 
     // CANdi 
     canDi = new CANdi(EndEffectorConstants.kCANdiID);
@@ -87,7 +87,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
                         .withPWM1(new PWM1Configs()
                                       .withAbsoluteSensorOffset(EndEffectorConstants.kPWM1AbsoluteEncoderOffset)
                                       .withAbsoluteSensorDiscontinuityPoint(EndEffectorConstants.kPWM1AbsoluteEncoderDiscontinuityPoint))
-                                      // .withSensorDirection(true))
                         .withPWM2(new PWM2Configs()
                                       .withAbsoluteSensorOffset(GroundIntakeConstants.kGroundIntakeEncoderOffset)
                                       .withAbsoluteSensorDiscontinuityPoint(GroundIntakeConstants.kGroundIntakeDiscontinuityPoint)
@@ -103,8 +102,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                               .withNeutralMode(NeutralModeValue.Brake))
                         .withCommutation(new CommutationConfigs()
                                               .withMotorArrangement(MotorArrangementValue.Minion_JST));
-                        // .withCurrentLimits(new CurrentLimitsConfigs()
-                        //                       .withStatorCurrentLimit(40));
 
     // Apply Intake Configs
     endEffectorIntake.getConfigurator().apply(intakeConfigs);
@@ -122,11 +119,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                             .withMotionMagicCruiseVelocity(EndEffectorConstants.kEndEffectorPivotMotionMagicCruiseVelocity)
                                             .withMotionMagicAcceleration(EndEffectorConstants.kEndEffectorPivotMotionMagicAcceleration)
                                             .withMotionMagicJerk(EndEffectorConstants.kEndEffectorPivotMotionMagicJerk))
-                        .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
-                                                  .withForwardSoftLimitEnable(false)
-                                                  .withReverseSoftLimitEnable(false)
-                                                  .withForwardSoftLimitThreshold(EndEffectorConstants.kEndEffectorFowardSoftLimit)
-                                                  .withReverseSoftLimitThreshold(EndEffectorConstants.kEndEffectorReverseSoftLimit))
                         .withFeedback(new FeedbackConfigs()
                                             .withFeedbackRemoteSensorID(EndEffectorConstants.kCANdiID)
                                             .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANdiPWM1)
@@ -163,45 +155,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
     endEffectorIntake.set(0);
   }
 
-  public Command intakeWithTOF(){
-    return Commands.run(()-> {
-              if(intakeSensor.getRange() > 70){
-                rollersIntake();
-              }else
-              rollersStop();
-    });
-  }
-
-  // Intake with current spike detection
-  public void intakeCoralWithCurrentSpikeDetection() {
-    if (endEffectorIntake.getSupplyCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike) {
-      endEffectorIntake.set(0);
-    } else {
-      endEffectorIntake.set(EndEffectorConstants.kEndEffectorSpeed);
-    }
-  }
-
-  // Do we have coral?
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/HasCoral?")
-  public boolean hasCoral(){
-    return endEffectorIntake.getSupplyCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike;
-  }
-  //Is At Set Point?
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtSetpoint?")
-  public boolean isAtSetpoint(){
-    return Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
-  }
-  //Is At Top Limit
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtTopLimit?")
-  public boolean isAtTopLimit() {
-    return getPivotPosition() > EndEffectorConstants.kEndEffectorFowardSoftLimit;
-  }
-  //Is At Bottom Limit
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorIsAtBottomLimit?")
-  public boolean isAtBottomLimit() {
-    return getPivotPosition() < EndEffectorConstants.kEndEffectorReverseSoftLimit;
-  }
-
 
   // End Effector Pivot Up
   public void EndEffectorPivotUp() {
@@ -218,7 +171,23 @@ public class EndEffectorSubsystem extends SubsystemBase {
     endEffectorPivot.set(0);
   } 
 
-// SysID definition
+  // Intake with TOF Sensor
+  public Command intakeWithTOF(){
+    return Commands.run(()-> {
+              if(intakeSensor.getRange() > EndEffectorConstants.kEndEffectorTOFDetectionValue){
+                rollersIntake();
+              }else
+                rollersStop();
+    });
+  }
+
+  // Set Pivot Postion
+  public void setPivotPosition(double position){
+    endEffectorPivot.setControl(m_motionRequest.withPosition(position));
+  }
+
+
+  // SysID definition
   private final SysIdRoutine m_sysIdRoutine =
     new SysIdRoutine(
         new SysIdRoutine.Config(
@@ -244,87 +213,103 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return m_sysIdRoutine.dynamic(direction);
   }
 
-  // Set Pivot Postion
-  public void setPivotPosition(double position){
-    endEffectorPivot.setControl(m_motionRequest.withPosition(position));
+  // Do we have coral?
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/HasCoral?")
+  public boolean hasCoral(){
+      if(intakeSensor.getRange() > EndEffectorConstants.kEndEffectorTOFDetectionValue){
+        return false;
+      }else
+        return true;
+  }
+
+  //Is At Setpoint?
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/IsAtSetpoint?")
+  public boolean isAtSetpoint(){
+    return Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
   }
 
   // Get Pivot Position
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotPosition")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/PivotPosition")
   public double getPivotPosition() {
     return endEffectorPivot.getPosition().getValueAsDouble();
   }
 
+  // Get Pivot Position Setpoint
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/PivotSetpoint")
+  public double getPivotSetpoint(){
+    return m_motionRequest.Position;
+  }
+
+  //Get CANdi End Effector Position
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/PWM1 Postion")
+  public double getCANDIPWM1(){
+    return canDi.getPWM1Position().getValueAsDouble();
+  }
+
   // Get Pivot Velocity
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotVelocity")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotVelocity")
   public double getPivotVelocity() {
     return endEffectorPivot.get();
   }
 
   // Get Pivot Current
-    @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotCurrent")
-    public double getPivotCurrent() {
-      return endEffectorPivot.getStatorCurrent().getValueAsDouble();
-    }
-
-  // Get Pivot Voltage
-    @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotMotorVoltage")
-    public double getPivotMotorVoltage(){
-      return endEffectorPivot.getMotorVoltage().getValueAsDouble();
-    }
-
-  // Get Pivot Position Request
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorPivotSetpoint")
-  public double getPivotSetpoint(){
-    return m_motionRequest.Position;
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotCurrent")
+  public double getPivotCurrent() {
+    return endEffectorPivot.getSupplyCurrent().getValueAsDouble();
   }
 
+  // Get Pivot Voltage
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotVoltage")
+  public double getPivotMotorVoltage(){
+    return endEffectorPivot.getMotorVoltage().getValueAsDouble();
+  }
+  
+  // Get Pivot Motor Temp
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotTemperature")
+  public double getPivotMotorTemperature(){
+    return endEffectorPivot.getDeviceTemp().getValueAsDouble();
+  }
+
+
   // Get Intake Velocity
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeVelocity")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeVelocity")
   public double getIntakeVelocity() {
     return endEffectorIntake.get();
   }
 
  // Get Intake Current
- @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeSupplyCurrent")
+ @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeCurrent")
  public double getIntakeSupplyCurrent() {
    return endEffectorIntake.getSupplyCurrent().getValueAsDouble();
  }
 
- // Get Intake Current
- @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeStatorCurrent")
- public double getIntakeStatorCurrent() {
-   return endEffectorIntake.getStatorCurrent().getValueAsDouble();
- }
-
   // Get Intake Voltage
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/EndEffectorIntakeMotorVoltage")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeVoltage")
   public double getIntakeVoltage() {
     return endEffectorIntake.getMotorVoltage().getValueAsDouble();
   }
 
   //Gets Intake Motor Temperature
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeTemperature")
   public double getIntakeMotorTemperature(){
     return endEffectorIntake.getExternalMotorTemp().getValueAsDouble();
   }
 
-  //Get CANdi
-  public CANdi getCANdi(){
-    return canDi;
+
+
+  //Get CANdi GI Position
+  @AutoLogOutput(key = "Subsystems/CoralGroundIntakeSubsystem/Pivot/Position/PWM2 Postion")
+  public double getCANDIPWM2(){
+    return canDi.getPWM2Position().getValueAsDouble();
   }
 
-  //Get CANdi End Effector Position
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/EndEffectorCANDI PWM1 Postion")
-  public double getCANDIPWM1(){
-    return canDi.getPWM1Position().getValueAsDouble();
-  }
+
 
   
 
   @Override
   public void periodic() {
-    
-    // System.out.println(intakeSensor.getRange());
+  
 
 
   }

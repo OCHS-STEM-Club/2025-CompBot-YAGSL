@@ -2,42 +2,39 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.Functions.GroundIntake;
+package frc.robot.commands.StateMachine_CMD;
 
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.CoralGroundIntakeSubsystem;
+import frc.robot.Robot;
+import frc.robot.StateMachine;
+import frc.robot.StateMachine.ReefState;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Coral_Intake_CMD extends Command {
-  /** Creates a new GroundIntake. */
-  private CoralGroundIntakeSubsystem m_groundIntakeSubsystem;
-  
-  public Coral_Intake_CMD(CoralGroundIntakeSubsystem groundIntakeSubsystem) {
+public class Set_Desired_ReefState_CMD extends Command {
+  /** Creates a new Set_Desired_ReefState_CMD. */
+  private StateMachine m_stateMachine;
+  private ReefState m_desiredReefState;
+  public Set_Desired_ReefState_CMD(StateMachine stateMachine, ReefState desiredReefState) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_groundIntakeSubsystem = groundIntakeSubsystem;
+    m_stateMachine = stateMachine;
+    m_desiredReefState = desiredReefState;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_groundIntakeSubsystem.getIntakeSensor()){
-      m_groundIntakeSubsystem.groundRollersStop();
-    }else
-    m_groundIntakeSubsystem.groundRollersIntake();
-    
+    m_stateMachine.setDesiredReefState(m_desiredReefState);
   }
+
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_groundIntakeSubsystem.groundRollersStop();
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

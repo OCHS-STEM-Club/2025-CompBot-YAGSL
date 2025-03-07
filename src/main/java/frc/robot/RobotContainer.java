@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SetpointConstants;
 import frc.robot.Constants.SpeedConstants;
-import frc.robot.commands.Functions.GroundIntake.Coral_Intake_CMD;
 import frc.robot.commands.Manual.Elevator.ElevatorManualDown;
 import frc.robot.commands.Manual.Elevator.ElevatorManualUp;
 import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualIntake;
@@ -37,13 +36,13 @@ import frc.robot.commands.Manual.GroundIntake.Pivot.GroundIntakeManualPivotDown;
 import frc.robot.commands.Manual.GroundIntake.Pivot.GroundIntakeManualPivotUp;
 import frc.robot.commands.Manual.GroundIntake.Rollers.GroundManualRollersIntake;
 import frc.robot.commands.Manual.GroundIntake.Rollers.GroundManualRollersOuttake;
-import frc.robot.commands.Sequential.CS_CMD;
+import frc.robot.commands.Sequential.HP_CMD;
 import frc.robot.commands.Sequential.HANDOFF_CMD;
-import frc.robot.commands.Sequential.L1_CMD;
-import frc.robot.commands.Sequential.L2_CMD;
-import frc.robot.commands.Sequential.L3_CMD;
-import frc.robot.commands.Sequential.L4_CMD;
 import frc.robot.commands.Sequential.STOW_CMD;
+import frc.robot.commands.Sequential.Reef.L1_CMD;
+import frc.robot.commands.Sequential.Reef.L2_CMD;
+import frc.robot.commands.Sequential.Reef.L3_CMD;
+import frc.robot.commands.Sequential.Reef.L4_CMD;
 import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.GroundIntake_Setpoint_CMD;
@@ -92,7 +91,9 @@ public class RobotContainer
   ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem = new CoralGroundIntakeSubsystem();
 
-  // Commands Definitions
+  // State Machine
+  StateMachine m_stateMachine = new StateMachine(m_elevatorSubsystem, m_endEffectorSubsystem);
+
 
   //Elevator Manual Commands
   ElevatorManualDown m_elevatorManualDown = new ElevatorManualDown(m_elevatorSubsystem);
@@ -116,7 +117,7 @@ public class RobotContainer
   Elevator_Setpoint_CMD m_elevatorL3 = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL3ElevatorSetpoint);
   Elevator_Setpoint_CMD m_elevatorL4 = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL4ElevatorSetpoint);
   Elevator_Setpoint_CMD m_elevatorStow = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kStowElevatorSetpoint);
-  Elevator_Setpoint_CMD m_elevatorCS = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kCSElevatorSetpoint);
+  Elevator_Setpoint_CMD m_elevatorHP = new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kHPElevatorSetpoint);
 
   // End Effector Setpoint Commands
   EndEffector_Setpoint_CMD m_endEffectorL1 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL1EndEffectorSetpoint);
@@ -124,12 +125,12 @@ public class RobotContainer
   EndEffector_Setpoint_CMD m_endEffectorL3 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL3EndEffectorSetpoint);
   EndEffector_Setpoint_CMD m_endEffectorL4 = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL4EndEffectorSetpoint);
   EndEffector_Setpoint_CMD m_endEffectorStow = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint);
-  EndEffector_Setpoint_CMD m_endEffectorCS = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kCSEndEffectorSetpoint);
+  EndEffector_Setpoint_CMD m_endEffectorHP = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kHPEndEffectorSetpoint);
 
   // Coral Ground Setpoint Commands
   GroundIntake_Setpoint_CMD m_GI_Setpoint_Test = new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.5);
   // Sequence Commands
-  CS_CMD m_CS_CMD = new CS_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
+  HP_CMD m_HP_CMD = new HP_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   STOW_CMD m_STOW_CMD = new STOW_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   L1_CMD m_L1_CMD = new L1_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   L2_CMD m_L2_CMD = new L2_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
@@ -137,8 +138,6 @@ public class RobotContainer
   L4_CMD m_L4_CMD = new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   HANDOFF_CMD m_HANDOFF_CMD = new HANDOFF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
 
-  // Ground Intake Commands
-  Coral_Intake_CMD m_Coral_Intake_CMD = new Coral_Intake_CMD(m_coralGroundIntakeSubsystem);
 
 
 
@@ -169,23 +168,7 @@ public class RobotContainer
                                                             .robotRelative(true); 
                                                       
 
-  enum RobotState
-  {
-    L1,L2,L3,L4,
-    CORAL_STATION,
-    STOW,
-    MANUAL_END_EFFECTOR_UP,
-    MANUAL_END_EFFECTOR_DOWN,
-    MANUAL_ELEVATOR_UP,
-    MANUAL_ELEVATOR_DOWN,
-    INTAKING_CORAL,
-    EJECTING_CORAL,
-    HANDING_OFF_CORAL
-  }
 
-  @AutoLogOutput(key = "RobotState")
-  private RobotState m_robotState = RobotState.STOW;
-  
  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -203,10 +186,7 @@ public class RobotContainer
     m_swerveSubsystem.replaceSwerveModuleFeedforward(OperatorConstants.kSSwerveFeedforward, OperatorConstants.kVSwerveFeedforward, OperatorConstants.kASwerveFeedforward);
   }
 
-  private void updateRobotState(RobotState newState) {
-    m_robotState = newState;
-    SmartDashboard.putString("Robot_State", m_robotState.toString());
-  }
+
 
   private DoubleSupplier getXAxisPOV(){
     return () -> {
@@ -267,69 +247,14 @@ public class RobotContainer
         Commands.runOnce(m_swerveSubsystem :: zeroGyro)
       );
       
-      // // Driver End Effector Manual Intake
-      // DRIVER_LEFT_TRIGGER.whileTrue(
-      //   Commands.run(() -> {
-      //     m_endEffectorManualIntake.schedule();
-      //     updateRobotState(RobotState.INTAKING_CORAL);
-      //   })
-      // ).whileFalse(
-      //   Commands.runOnce(() -> {
-      //     m_endEffectorManualIntake.cancel();
-      //     updateRobotState(RobotState.STOW);
-      //   })
-      // );
-
-      // // // Driver End Effector Manual Outtake
-      // DRIVER_RIGHT_TRIGGER.whileTrue(
-      //   Commands.run(() -> {
-      //     m_endEffectorManualOuttake.schedule();
-      //     updateRobotState(RobotState.EJECTING_CORAL);
-      //   })
-      // ).whileFalse(
-      //   Commands.runOnce(() -> {
-      //     m_endEffectorManualOuttake.cancel();
-      //     updateRobotState(RobotState.STOW);
-      //   })
-      // );
-
-      // // // Driver End Effector Manual Pivot Up
-      // DRIVER_RIGHT_BUMPER.whileTrue(
-      //   Commands.run(() -> {
-      //     m_endEffectorManualPivotUp.schedule();
-      //     updateRobotState(RobotState.MANUAL_END_EFFECTOR_UP);
-      //   })
-      // ).whileFalse(
-      //   Commands.runOnce(() -> {
-      //     m_endEffectorManualPivotUp.cancel();
-      //     updateRobotState(RobotState.STOW);
-      //   })
-      // );
-
-      // // // Driver End Effector Manual Pivot Down
-      // DRIVER_LEFT_BUMPER.whileTrue(
-      //   Commands.run(() -> {
-      //     m_endEffectorManualPivotDown.schedule();
-      //     updateRobotState(RobotState.MANUAL_END_EFFECTOR_DOWN);
-      //   })
-      // ).whileFalse(
-      //   Commands.runOnce(() -> {
-      //     m_endEffectorManualPivotDown.cancel();
-      //     updateRobotState(RobotState.STOW);
-      //   })
-      // );
-
-
       // Driver Elevator Stow
       DRIVER_B_BUTTON.whileTrue(
         Commands.run(() -> {
           m_endEffectorStow.schedule();
-          updateRobotState(RobotState.STOW);
         })
       ).whileFalse(
         Commands.runOnce(() -> {
           m_endEffectorStow.cancel();
-          updateRobotState(RobotState.STOW);
         })
       );
 
@@ -358,7 +283,6 @@ public class RobotContainer
       DRIVER_Y_BUTTON.whileTrue(m_groundManualIntakePivotUp);
 
       DRIVER_LEFT_TRIGGER.whileTrue(m_endEffectorSubsystem.intakeWithTOF());
-      // DRIVER_RIGHT_TRIGGER.whileTrue(m_groundManualRollersOuttake);
 
       DRIVER_RIGHT_BUMPER.whileTrue(m_GI_Setpoint_Test);
 
@@ -372,13 +296,11 @@ public class RobotContainer
           Commands.run(() -> {
             m_L1_CMD.schedule();
             m_endEffectorStow.cancel();
-            updateRobotState(RobotState.L1);
           })
         ).whileFalse(
           Commands.runOnce(() -> {
             m_L1_CMD.cancel();
             m_endEffectorStow.schedule();
-            updateRobotState(RobotState.STOW);
           })
         );
 
@@ -387,13 +309,11 @@ public class RobotContainer
           Commands.run(() -> {
             m_L2_CMD.schedule();
             m_endEffectorStow.cancel();
-            updateRobotState(RobotState.L2);
           })
         ).whileFalse(
           Commands.runOnce(() -> {
             m_L2_CMD.cancel();
             m_endEffectorStow.schedule();
-            updateRobotState(RobotState.STOW);
           })
         );
 
@@ -402,13 +322,11 @@ public class RobotContainer
           Commands.run(() -> {
             m_L3_CMD.schedule();
             m_endEffectorStow.cancel();
-            updateRobotState(RobotState.L3);
           })
         ).whileFalse(
           Commands.runOnce(() -> {
             m_L3_CMD.cancel();
             m_endEffectorStow.schedule();
-            updateRobotState(RobotState.STOW);
           })
         );
 
@@ -418,28 +336,24 @@ public class RobotContainer
           Commands.run(() -> {
             m_L4_CMD.schedule();
             m_endEffectorStow.cancel();
-            updateRobotState(RobotState.L4);
           })
         ).whileFalse(
           Commands.runOnce(() -> {
             m_L4_CMD.cancel();
             m_endEffectorStow.schedule();
-            updateRobotState(RobotState.STOW);
           })
         );
 
         // Operator Coral Station
-        m_operatorController2.button(OperatorConstants.kButtonBox_CS_Button_Port2).whileTrue(
+        m_operatorController2.button(OperatorConstants.kButtonBox_HP_Button_Port2).whileTrue(
           Commands.run(() -> {
-            m_CS_CMD.schedule();
+            m_HP_CMD.schedule();
             m_endEffectorStow.cancel();
-            updateRobotState(RobotState.CORAL_STATION);
           })
         ).whileFalse(
           Commands.runOnce(() -> {
-            m_CS_CMD.cancel();
+            m_HP_CMD.cancel();
             m_endEffectorStow.schedule();
-            updateRobotState(RobotState.STOW);
           })
         );
 
@@ -448,43 +362,37 @@ public class RobotContainer
           Commands.run(() -> {
             m_HANDOFF_CMD.schedule();
             m_endEffectorStow.cancel();
-            updateRobotState(RobotState.HANDING_OFF_CORAL);
           })
         ).onFalse(
           Commands.runOnce(() -> {
             m_HANDOFF_CMD.cancel();
             m_endEffectorStow.schedule();
-            updateRobotState(RobotState.STOW);
           })
         );
 
 
-    // Operator Elevator Manual Up
-    m_operatorController2.button(OperatorConstants.kButtonBox_ELEVATOR_MANUAL_UP_Button_Port2).whileTrue(
-      Commands.run(() -> {
-        m_elevatorManualUp.schedule();
-        updateRobotState(RobotState.MANUAL_ELEVATOR_UP);
-      })
-    ).whileFalse(
-      Commands.runOnce(() -> {
-        m_elevatorManualUp.cancel();
-        updateRobotState(RobotState.STOW);
-      })
-    );
+        // Operator Elevator Manual Up
+        m_operatorController2.button(OperatorConstants.kButtonBox_ELEVATOR_MANUAL_UP_Button_Port2).whileTrue(
+          Commands.run(() -> {
+            m_elevatorManualUp.schedule();
+          })
+        ).whileFalse(
+          Commands.runOnce(() -> {
+            m_elevatorManualUp.cancel();
+          })
+        );
 
-    // Operator Elevator Manual Down
-    m_operatorController1.button(OperatorConstants.kButtonBox_ELEVATOR_MANUAL_DOWN_Button_Port1).whileTrue(
-      Commands.run(() -> {
-        m_elevatorManualDown.schedule();
-        updateRobotState(RobotState.MANUAL_ELEVATOR_DOWN);
-      })
-    ).whileFalse(
-      Commands.runOnce(() -> {
-        m_elevatorManualDown.cancel();
-        updateRobotState(RobotState.STOW);
-      })
-    );
-    }
+        // Operator Elevator Manual Down
+        m_operatorController1.button(OperatorConstants.kButtonBox_ELEVATOR_MANUAL_DOWN_Button_Port1).whileTrue(
+          Commands.run(() -> {
+            m_elevatorManualDown.schedule();
+          })
+        ).whileFalse(
+          Commands.runOnce(() -> {
+            m_elevatorManualDown.cancel();
+          })
+        );
+        }
  
       
   }

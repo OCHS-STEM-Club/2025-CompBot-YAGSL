@@ -117,6 +117,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           .withLimitReverseMotion(isAtBottomLimit()));
       elevatorRightFollowerMotor.setControl(elevatorFollower);
     }
+
     // Defines SysID Configs
     private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
         new SysIdRoutine.Config(
@@ -124,7 +125,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             Volts.of(1.2), // Reduce dynamic step voltage to 4 to prevent brownout
             Seconds.of(5.3), // Use default timeout (10 s)
             // Log state with Phoenix SignalLogger class
-            (state) -> SignalLogger.writeString("state", state.toString())),
+            (state) -> SignalLogger.writeString("Elevator state", state.toString())),
         new SysIdRoutine.Mechanism(
             (volts) -> elevatorLeftLeaderMotor.setControl(m_voltageRequest.withOutput(volts.in(Volts))),
             null,
@@ -140,16 +141,22 @@ public class ElevatorSubsystem extends SubsystemBase {
       return m_sysIdRoutine.dynamic(direction);
     }
 
-    // get Elevator Setpoint
-    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorSetpointInRotations")
-    public double getElevatorPositionSetpoint() {
-      return elevatorPositionRequest.Position;
+    // is at Setpoint?
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/Position/IsAtSetpoint?")
+    public BooleanSupplier isAtSetpoint(){
+      return () -> Math.abs(getElevatorPositionRotations() - getElevatorPositionSetpoint()) < SetpointConstants.kSetpointThreshold;
     }
 
     // get Elevator Position
-    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorPositionInRotations")
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/Position/ElevatorPosition")
     public double getElevatorPositionRotations() {
       return elevatorLeftLeaderMotor.getRotorPosition().getValueAsDouble();
+    }
+
+    // get Elevator Setpoint
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/Position/ElevatorSetpoint")
+    public double getElevatorPositionSetpoint() {
+      return elevatorPositionRequest.Position;
     }
 
     // get Elevator Left Motor Velocity
@@ -170,14 +177,13 @@ public class ElevatorSubsystem extends SubsystemBase {
       return elevatorLeftLeaderMotor.getMotorVoltage().getValueAsDouble();
     }
 
-    // is at Setpoint?
-    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtSetpoint?")
-    public BooleanSupplier isAtSetpoint(){
-      return () -> Math.abs(getElevatorPositionRotations() - getElevatorPositionSetpoint()) < SetpointConstants.kSetpointThreshold;
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorTemperature")
+    public double getElevatorMotorTemp(){
+      return elevatorLeftLeaderMotor.getDeviceTemp().getValueAsDouble();
     }
 
     // is at Top Limit?
-    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtTopLimit?")
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorLimits/ElevatorIsAtTopLimit?")
     public boolean isAtTopLimit() {
       if (elevatorTopLimit.get()) {
         return false;
@@ -187,7 +193,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     // is at Bottom Limit?
-    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/Elevator/ElevatorIsAtBottomLimit?")
+    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorLimits/ElevatorIsAtBottomLimit?")
     public boolean isAtBottomLimit() {
       if (elevatorBottonLimit.get()) {
         return false;

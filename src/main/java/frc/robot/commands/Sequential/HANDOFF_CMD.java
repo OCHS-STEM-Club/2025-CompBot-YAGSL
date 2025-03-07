@@ -36,15 +36,15 @@ public class HANDOFF_CMD extends SequentialCommandGroup {
     addCommands(
     new ParallelCommandGroup(
                  m_endEffectorSubsystem.intakeWithTOF(),
-                 new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kHandoffElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()), 
+                 new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kBufferElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()), 
                  new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kHandoffEndEffectorSetpoint).withTimeout(3),
-                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.35).withTimeout(4),
+                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kBufferCoralGroundIntakeSetpoint).withTimeout(4),
                  new SequentialCommandGroup(new WaitCommand(1),
-                                            new Elevator_Setpoint_CMD(m_elevatorSubsystem, 0.8).until(m_elevatorSubsystem.isAtSetpoint()),
-                                            new Elevator_Setpoint_CMD(m_elevatorSubsystem, 5).until(m_elevatorSubsystem.isAtSetpoint()),
+                                            new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kHandoffElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()),
+                                            new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kBufferElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()),
                                             new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint)),
                  new SequentialCommandGroup(new WaitCommand(3.2),
-                                            new GroundIntake_Setpoint_CMD(coralGroundIntakeSubsystem, 0.5))
+                                            new GroundIntake_Setpoint_CMD(coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint))
                                             ));
 
   }

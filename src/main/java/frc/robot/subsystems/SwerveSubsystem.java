@@ -506,7 +506,7 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @return The robot's pose
    */
-  @AutoLogOutput
+  @AutoLogOutput(key = "Subsystems/SwerveSubsystem/Pose2d")
   public Pose2d getPose()
   {
     return swerveDrive.getPose();

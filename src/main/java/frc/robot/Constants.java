@@ -57,7 +57,7 @@ public final class Constants
     public static final int kButtonBox_L2_Button_Port1 = 1;
     public static final int kButtonBox_L3_Button_Port1 = 3;
     public static final int kButtonBox_L4_Button_Port2 = 2;
-    public static final int kButtonBox_CS_Button_Port2 = 11;
+    public static final int kButtonBox_HP_Button_Port2 = 11;
     public static final int kButtonBox_HANDOFF_Button_Port2 = 10;
     public static final int kButtonBox_ELEVATOR_MANUAL_UP_Button_Port2 = 12;
     public static final int kButtonBox_ELEVATOR_MANUAL_DOWN_Button_Port1 = 12;
@@ -71,12 +71,12 @@ public final class Constants
     // End Effector IDs
     public static final int kEndEffectorIntakeID = 23;
     public static final int kEndEffectorPivotID = 22;
-    public static final int kEndEffectorSensorID = 0;
+    public static final int kEndEffectorTOFID = 27;
     // End Effector Speeds
     public static final double kEndEffectorSpeed = 0.60;
     public static final double kPivotSpeed = 0.15;
-    // End Effector Current Spike
-    public static final double kEndEffectorCurrentSpike = 110;
+    // End Effector TOF Detection Value
+    public static final double kEndEffectorTOFDetectionValue = 70;
     // End Effector PID Values
     public static final double kEndEffectorPivotPIDValueP = 38.029;
     public static final double kEndEffectorPivotPIDValueI = 0;
@@ -176,16 +176,23 @@ public final class Constants
     public static final double kL4ElevatorSetpoint = 20.370; 
     public static final double kL4EndEffectorSetpoint = 0.16;//0.1445;
 
-    public static final double kCSElevatorSetpoint = 3.05; 
-    public static final double kCSEndEffectorSetpoint = 0.643; 
+    public static final double kHPElevatorSetpoint = 3.05; 
+    public static final double kHPEndEffectorSetpoint = 0.643; 
 
     public static final double kStowElevatorSetpoint = 0; 
     public static final double kStowEndEffectorSetpoint = 0.55; 
-
-    public static final double kHandoffElevatorSetpoint = 5; 
+    public static final double kStowCoralGroundIntakeSetpoint = 0.5; 
+    
+    public static final double kHandoffElevatorSetpoint = 0.8; 
     public static final double kHandoffEndEffectorSetpoint = 1.01; 
 
+    public static final double kBufferElevatorSetpoint = 0; 
+    public static final double kBufferCoralGroundIntakeSetpoint = 0.35; 
+
+
+
     public static final double kSetpointThreshold = 0.75;
+
 
     
   }
