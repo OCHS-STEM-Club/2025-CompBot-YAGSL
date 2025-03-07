@@ -77,7 +77,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
     endEffectorPivot = new TalonFX(EndEffectorConstants.kEndEffectorPivotID);
 
     // Intake Beam Break
-    intakeSensor = new TimeOfFlight(27);
+    intakeSensor = new TimeOfFlight(EndEffectorConstants.kEndEffectorTOFID);
 
     // CANdi 
     canDi = new CANdi(EndEffectorConstants.kCANdiID);
@@ -174,7 +174,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   // Intake with TOF Sensor
   public Command intakeWithTOF(){
     return Commands.run(()-> {
-              if(intakeSensor.getRange() > 70){
+              if(intakeSensor.getRange() > EndEffectorConstants.kEndEffectorTOFDetectionValue){
                 rollersIntake();
               }else
               rollersStop();
@@ -216,7 +216,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   // Do we have coral?
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/HasCoral?")
   public boolean hasCoral(){
-      if(intakeSensor.getRange() > 70){
+      if(intakeSensor.getRange() > EndEffectorConstants.kEndEffectorTOFDetectionValue){
         return false;
       }else
         return true;

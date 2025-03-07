@@ -71,12 +71,12 @@ public final class Constants
     // End Effector IDs
     public static final int kEndEffectorIntakeID = 23;
     public static final int kEndEffectorPivotID = 22;
-    public static final int kEndEffectorSensorID = 0;
+    public static final int kEndEffectorTOFID = 27;
     // End Effector Speeds
     public static final double kEndEffectorSpeed = 0.60;
     public static final double kPivotSpeed = 0.15;
-    // End Effector Current Spike
-    public static final double kEndEffectorCurrentSpike = 110;
+    // End Effector TOF Detection Value
+    public static final double kEndEffectorTOFDetectionValue = 70;
     // End Effector PID Values
     public static final double kEndEffectorPivotPIDValueP = 38.029;
     public static final double kEndEffectorPivotPIDValueI = 0;
