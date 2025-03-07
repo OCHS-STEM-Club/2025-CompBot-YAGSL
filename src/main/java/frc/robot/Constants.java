@@ -181,11 +181,18 @@ public final class Constants
 
     public static final double kStowElevatorSetpoint = 0; 
     public static final double kStowEndEffectorSetpoint = 0.55; 
-
-    public static final double kHandoffElevatorSetpoint = 5; 
+    public static final double kStowCoralGroundIntakeSetpoint = 0.5; 
+    
+    public static final double kHandoffElevatorSetpoint = 0.8; 
     public static final double kHandoffEndEffectorSetpoint = 1.01; 
 
+    public static final double kBufferElevatorSetpoint = 0; 
+    public static final double kBufferCoralGroundIntakeSetpoint = 0.35; 
+
+
+
     public static final double kSetpointThreshold = 0.75;
+
 
     
   }
