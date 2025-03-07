@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SetpointConstants;
 import frc.robot.Constants.SpeedConstants;
-import frc.robot.commands.Functions.GroundIntake.Coral_Intake_CMD;
 import frc.robot.commands.Manual.Elevator.ElevatorManualDown;
 import frc.robot.commands.Manual.Elevator.ElevatorManualUp;
 import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualIntake;
@@ -39,11 +38,11 @@ import frc.robot.commands.Manual.GroundIntake.Rollers.GroundManualRollersIntake;
 import frc.robot.commands.Manual.GroundIntake.Rollers.GroundManualRollersOuttake;
 import frc.robot.commands.Sequential.CS_CMD;
 import frc.robot.commands.Sequential.HANDOFF_CMD;
-import frc.robot.commands.Sequential.L1_CMD;
-import frc.robot.commands.Sequential.L2_CMD;
-import frc.robot.commands.Sequential.L3_CMD;
-import frc.robot.commands.Sequential.L4_CMD;
 import frc.robot.commands.Sequential.STOW_CMD;
+import frc.robot.commands.Sequential.Reef.L1_CMD;
+import frc.robot.commands.Sequential.Reef.L2_CMD;
+import frc.robot.commands.Sequential.Reef.L3_CMD;
+import frc.robot.commands.Sequential.Reef.L4_CMD;
 import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.GroundIntake_Setpoint_CMD;
@@ -137,8 +136,6 @@ public class RobotContainer
   L4_CMD m_L4_CMD = new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   HANDOFF_CMD m_HANDOFF_CMD = new HANDOFF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
 
-  // Ground Intake Commands
-  Coral_Intake_CMD m_Coral_Intake_CMD = new Coral_Intake_CMD(m_coralGroundIntakeSubsystem);
 
 
 

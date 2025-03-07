@@ -177,7 +177,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
               if(intakeSensor.getRange() > EndEffectorConstants.kEndEffectorTOFDetectionValue){
                 rollersIntake();
               }else
-              rollersStop();
+                rollersStop();
     });
   }
 

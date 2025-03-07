@@ -22,6 +22,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.EndEffectorConstants;
 import frc.robot.Constants.GroundIntakeConstants;
@@ -111,6 +113,17 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   // Pivot Stop
   public void groundIntakePivotStop() {
     groundIntakePivot.set(0);
+  }
+
+  // Intake coral with Intake Sensor
+  public Command intakeWithSensor(){
+    return Commands.run(()-> {
+      if(getIntakeSensor() == false){
+        groundRollersIntake();
+      }else
+        groundRollersStop();
+      
+    });
   }
 
   // Set Pivot Position
