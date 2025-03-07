@@ -222,77 +222,88 @@ public class EndEffectorSubsystem extends SubsystemBase {
         return true;
   }
 
-  //Is At SetPoint?
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/IsAtSetpoint?")
+  //Is At Setpoint?
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/IsAtSetpoint?")
   public boolean isAtSetpoint(){
     return Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
   }
 
   // Get Pivot Position
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/PivotPosition")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/PivotPosition")
   public double getPivotPosition() {
     return endEffectorPivot.getPosition().getValueAsDouble();
   }
 
   // Get Pivot Position Setpoint
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/PivotSetpoint")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/PivotSetpoint")
   public double getPivotSetpoint(){
     return m_motionRequest.Position;
   }
 
+  //Get CANdi End Effector Position
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/PWM1 Postion")
+  public double getCANDIPWM1(){
+    return canDi.getPWM1Position().getValueAsDouble();
+  }
+
   // Get Pivot Velocity
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/PivotVelocity")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotVelocity")
   public double getPivotVelocity() {
     return endEffectorPivot.get();
   }
 
   // Get Pivot Current
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/PivotCurrent")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotCurrent")
   public double getPivotCurrent() {
     return endEffectorPivot.getSupplyCurrent().getValueAsDouble();
   }
 
   // Get Pivot Voltage
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/PivotMotorVoltage")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotVoltage")
   public double getPivotMotorVoltage(){
     return endEffectorPivot.getMotorVoltage().getValueAsDouble();
   }
+  
   // Get Pivot Motor Temp
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/PivotTemperature")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotTemperature")
   public double getPivotMotorTemperature(){
     return endEffectorPivot.getDeviceTemp().getValueAsDouble();
   }
 
 
   // Get Intake Velocity
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/IntakeVelocity")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeVelocity")
   public double getIntakeVelocity() {
     return endEffectorIntake.get();
   }
 
  // Get Intake Current
- @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/IntakeCurrent")
+ @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeCurrent")
  public double getIntakeSupplyCurrent() {
    return endEffectorIntake.getSupplyCurrent().getValueAsDouble();
  }
 
   // Get Intake Voltage
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/IntakeMotorVoltage")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeVoltage")
   public double getIntakeVoltage() {
     return endEffectorIntake.getMotorVoltage().getValueAsDouble();
   }
 
   //Gets Intake Motor Temperature
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/IntakeTemperature")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeTemperature")
   public double getIntakeMotorTemperature(){
     return endEffectorIntake.getExternalMotorTemp().getValueAsDouble();
   }
 
-  //Get CANdi End Effector Position
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/PWM1 Postion")
-  public double getCANDIPWM1(){
-    return canDi.getPWM1Position().getValueAsDouble();
+
+
+  //Get CANdi GI Position
+  @AutoLogOutput(key = "Subsystems/CoralGroundIntakeSubsystem/Pivot/Position/PWM2 Postion")
+  public double getCANDIPWM2(){
+    return canDi.getPWM2Position().getValueAsDouble();
   }
+
+
 
   
 
