@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.SetpointConstants;
 import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
+import frc.robot.commands.Setpoints_CMD.GroundIntake_Setpoint_CMD;
+import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 
@@ -21,16 +23,19 @@ public class L2_CMD extends SequentialCommandGroup {
   /** Creates a new L2_CMD. */
   EndEffectorSubsystem m_endEffectorSubsystem;
   ElevatorSubsystem m_elevatorSubsystem;
+  CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem;
   
-  public L2_CMD(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem) {
+  public L2_CMD(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem, CoralGroundIntakeSubsystem coralGroundIntakeSubsystem) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_elevatorSubsystem = elevatorSubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
+    m_coralGroundIntakeSubsystem = coralGroundIntakeSubsystem;
 
     addCommands(
     new ParallelCommandGroup(
                  new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL2ElevatorSetpoint),
-                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL2EndEffectorSetpoint)));
+                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL2EndEffectorSetpoint),
+                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.6)));
   }
 }

@@ -4,9 +4,11 @@
 
 package frc.robot.commands.Functions;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Manual.GroundIntake.Rollers.GroundManualRollersIntake;
 import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 
@@ -14,6 +16,7 @@ import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 public class Coral_Intake_Pulse_CMD extends Command {
   /** Creates a new GroundIntake. */
   private CoralGroundIntakeSubsystem m_groundIntakeSubsystem;
+  Timer pulseTimer = new Timer();
   
   public Coral_Intake_Pulse_CMD(CoralGroundIntakeSubsystem groundIntakeSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -27,8 +30,12 @@ public class Coral_Intake_Pulse_CMD extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      new GroundManualRollersIntake(m_groundIntakeSubsystem).withTimeout(0.5).andThen(
-      Commands.run(()-> m_groundIntakeSubsystem.groundRollersStop()).withTimeout(0.2));
+    new SequentialCommandGroup(
+      new GroundManualRollersIntake(m_groundIntakeSubsystem).withTimeout(2),
+      new WaitCommand(0.2),
+      Commands.run(()-> m_groundIntakeSubsystem.groundRollersStop())
+    );
+
 
     
   }

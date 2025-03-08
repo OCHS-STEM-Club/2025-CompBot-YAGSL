@@ -4,9 +4,12 @@
 
 package frc.robot.commands.Sequential;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.SetpointConstants;
 import frc.robot.commands.Functions.Coral_Intake_CMD;
 import frc.robot.commands.Manual.GroundIntake.Rollers.GroundManualRollersIntake;
@@ -20,37 +23,32 @@ import frc.robot.subsystems.EndEffectorSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class Intaking_CMD extends SequentialCommandGroup {
+public class GI_CMD extends SequentialCommandGroup {
   /** Creates a new L1_CMD. */
   EndEffectorSubsystem m_endEffectorSubsystem;
   ElevatorSubsystem m_elevatorSubsystem;
   CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem;
-  boolean m_isHPCMD;
+
   
-  public Intaking_CMD(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem, CoralGroundIntakeSubsystem coralGroundIntakeSubsystem, boolean hp) {
+  public GI_CMD(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem, CoralGroundIntakeSubsystem coralGroundIntakeSubsystem) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_elevatorSubsystem = elevatorSubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
     m_coralGroundIntakeSubsystem = coralGroundIntakeSubsystem;
-    m_isHPCMD = hp;
 
-    if(m_isHPCMD){
+ 
     addCommands(
       new ParallelCommandGroup(
-                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.65).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
-                 new GroundManualRollersIntake(coralGroundIntakeSubsystem).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier())),
-      new HANDOFF_CMD(elevatorSubsystem, endEffectorSubsystem, coralGroundIntakeSubsystem)
-                 );
-    }else{
-      addCommands(
+                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.39).until(m_coralGroundIntakeSubsystem.getIntakeSensorSupplier()),
+                 new GroundManualRollersIntake(m_coralGroundIntakeSubsystem).until(m_coralGroundIntakeSubsystem.getIntakeSensorSupplier())),
       new ParallelCommandGroup(
-                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.37).until(m_coralGroundIntakeSubsystem.isAtSetpoint()),
-                 new Coral_Intake_CMD(coralGroundIntakeSubsystem).until(m_coralGroundIntakeSubsystem.getIntakeSensorSupplier())),
-      new GroundIntake_Setpoint_CMD(coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
-      new GroundManualRollersIntake(coralGroundIntakeSubsystem).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
-      new HANDOFF_CMD(elevatorSubsystem, endEffectorSubsystem, coralGroundIntakeSubsystem)
+              new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.67).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
+              new SequentialCommandGroup(
+                new WaitCommand(0.5),
+                new GroundManualRollersIntake(m_coralGroundIntakeSubsystem).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()))),
+      new HANDOFF_CMD(elevatorSubsystem, endEffectorSubsystem, m_coralGroundIntakeSubsystem)
                  );
-    }
+    
 }
 }

@@ -73,7 +73,7 @@ public final class Constants
     public static final int kEndEffectorPivotID = 22;
     public static final int kEndEffectorTOFID = 27;
     // End Effector Speeds
-    public static final double kEndEffectorSpeed = 0.60;
+    public static final double kEndEffectorSpeed = 0.50;
     public static final double kPivotSpeed = 0.15;
     // End Effector TOF Detection Value
     public static final double kEndEffectorTOFDetectionValue = 70;
@@ -142,7 +142,7 @@ public final class Constants
     public static final int kGroundIntakeBeamBreakPort = 8;
     public static final int kHopperBeamBreakPort = 9;
     
-    public static final double kGroundRollersSpeed = 0.75;
+    public static final double kGroundRollersSpeed = 0.5;
     public static final double kGroundPivotSpeed = 0.3;
 
     public static final double kGroundPivotPIDValueP = 30;

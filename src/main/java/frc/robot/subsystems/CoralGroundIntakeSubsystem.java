@@ -93,6 +93,10 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   public void groundRollersIntake() {
     groundIntakeRollers.set(-GroundIntakeConstants.kGroundRollersSpeed);
   }
+
+  public void groundRollersIntakeSpeed(double speed) {
+    groundIntakeRollers.set(-speed);
+  }
   // Rollers Outtake
   public void groundRollersOuttake() {
     groundIntakeRollers.set(GroundIntakeConstants.kGroundRollersSpeed);
@@ -143,6 +147,10 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   @AutoLogOutput(key = "Subsystems/CoralGroundIntakeSubsystem/Pivot/Position/IsAtSetpoint?")
   public BooleanSupplier isAtSetpoint(){
       return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
+    }
+
+    public BooleanSupplier isAtStowSetpoint(){
+      return () -> Math.abs(getPivotPosition() - 0.65) < SetpointConstants.kSetpointThreshold;
     }
   
   // Get Pivot Position
