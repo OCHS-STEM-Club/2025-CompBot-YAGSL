@@ -24,12 +24,13 @@ public class Set_Desired_ReefState_CMD extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_stateMachine.setDesiredReefState(m_desiredReefState);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_stateMachine.setDesiredReefState(m_desiredReefState);
+   
   }
 
   // Called once the command ends or is interrupted.
@@ -39,6 +40,6 @@ public class Set_Desired_ReefState_CMD extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

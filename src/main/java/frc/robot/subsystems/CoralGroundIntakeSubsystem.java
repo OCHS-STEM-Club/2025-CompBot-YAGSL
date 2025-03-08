@@ -126,6 +126,14 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     });
   }
 
+  public BooleanSupplier getHopperSensorSupplier(){
+    return () -> getHopperSensor();
+  }
+
+  public BooleanSupplier getIntakeSensorSupplier(){
+    return () -> getIntakeSensor();
+  }
+
   // Set Pivot Position
   public void setPivotPosition(double Position){
     groundIntakePivot.setControl(m_motionRequest.withPosition(Position));

@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.BooleanSupplier;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -39,9 +41,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.StateMachine;
 import frc.robot.Constants.EndEffectorConstants;
 import frc.robot.Constants.GroundIntakeConstants;
 import frc.robot.Constants.SetpointConstants;
+import frc.robot.StateMachine.ReefState;
+import frc.robot.commands.StateMachine_CMD.Execute_ReefState_CMD;
 
 public class EndEffectorSubsystem extends SubsystemBase {
   /** Creates a new EndEffector. */
@@ -70,6 +75,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
   //MotionMagic Voltage Request
   private MotionMagicVoltage m_motionRequest;
 
+  private StateMachine m_stateMachine;
+
   public EndEffectorSubsystem() {
     // End Effector Intake
     endEffectorIntake = new TalonFXS(EndEffectorConstants.kEndEffectorIntakeID);
@@ -89,7 +96,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                       .withAbsoluteSensorDiscontinuityPoint(EndEffectorConstants.kPWM1AbsoluteEncoderDiscontinuityPoint))
                         .withPWM2(new PWM2Configs()
                                       .withAbsoluteSensorOffset(GroundIntakeConstants.kGroundIntakeEncoderOffset)
-                                      .withAbsoluteSensorDiscontinuityPoint(GroundIntakeConstants.kGroundIntakeDiscontinuityPoint)
+                                      // .withAbsoluteSensorDiscontinuityPoint(GroundIntakeConstants.kGroundIntakeDiscontinuityPoint)
                                       .withSensorDirection(false));
 
     // Apply CANdi Configs
@@ -224,8 +231,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
   //Is At Setpoint?
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/IsAtSetpoint?")
-  public boolean isAtSetpoint(){
-    return Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
+  public BooleanSupplier isAtSetpoint(){
+    return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
   }
 
   // Get Pivot Position
