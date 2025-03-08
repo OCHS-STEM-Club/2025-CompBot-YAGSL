@@ -40,8 +40,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private Follower elevatorFollower;
   // Elevator Position Request
   private MotionMagicVoltage elevatorPositionRequest;
-  // Top Limit
-  private DigitalInput elevatorTopLimit;
   // Bottom Limit
   private DigitalInput elevatorBottonLimit;
   // Voltage Request
@@ -55,9 +53,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Elevator Follower
     elevatorFollower = new Follower(ElevatorConstants.kElevatorLeftMotorID, false);
     elevatorRightFollowerMotor.setControl(elevatorFollower);
-
-    // Set Elevator Top Limit
-    elevatorTopLimit = new DigitalInput(ElevatorConstants.kTopElevatorLimitPort);
     // Set Elevator Bottom Limit
     elevatorBottonLimit = new DigitalInput(ElevatorConstants.kBottomElevatorLimitPort);
     
@@ -113,7 +108,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     // set Elevator Position
     public void setElevatorPosition(double height) {
       elevatorLeftLeaderMotor.setControl(elevatorPositionRequest.withPosition(height)
-          .withLimitForwardMotion(isAtTopLimit())
           .withLimitReverseMotion(isAtBottomLimit()));
       elevatorRightFollowerMotor.setControl(elevatorFollower);
     }
@@ -180,16 +174,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorTemperature")
     public double getElevatorMotorTemp(){
       return elevatorLeftLeaderMotor.getDeviceTemp().getValueAsDouble();
-    }
-
-    // is at Top Limit?
-    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorLimits/ElevatorIsAtTopLimit?")
-    public boolean isAtTopLimit() {
-      if (elevatorTopLimit.get()) {
-        return false;
-      } else {
-        return true;
-      }
     }
 
     // is at Bottom Limit?

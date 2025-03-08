@@ -46,8 +46,11 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   private DigitalInput m_intakeBeamBreak;
   private DigitalInput m_hopperBeamBreak;
 
+  private EndEffectorSubsystem m_endEffectorSubsystem;
+
   
-  public CoralGroundIntakeSubsystem() {
+  public CoralGroundIntakeSubsystem(EndEffectorSubsystem endEffectorSubsystem) {
+    m_endEffectorSubsystem = endEffectorSubsystem;
     // Motors
     groundIntakeRollers = new TalonFX(GroundIntakeConstants.kGroundIntakeMotorID);
     groundIntakePivot = new TalonFX(GroundIntakeConstants.kGroundIntakePivotID);
@@ -236,10 +239,21 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     return true;
   }
 
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  }
+    if(getIntakeSensor()){
+      m_endEffectorSubsystem.m_CANdle.setLEDs(255, 255, 255);
+    }else if (m_endEffectorSubsystem.hasCoral()) {
+      m_endEffectorSubsystem.m_CANdle.setLEDs(17, 255, 0);
+    }else 
+      m_endEffectorSubsystem.m_CANdle.setLEDs(0, 57, 162);
+    
+
+    }
 
   
 }
+
+

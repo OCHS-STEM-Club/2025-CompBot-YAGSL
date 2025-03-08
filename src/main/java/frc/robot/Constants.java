@@ -128,8 +128,7 @@ public final class Constants
     public static final double kElevatorSpeed = 0.15;
     public static final double kElevatorVoltage = 1.2;
     // Elevator Limits
-    public static final int kTopElevatorLimitPort = 5;
-    public static final int kBottomElevatorLimitPort = 7;
+    public static final int kBottomElevatorLimitPort = 5;
 
 
   }

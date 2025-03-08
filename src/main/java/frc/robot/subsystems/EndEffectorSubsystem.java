@@ -8,8 +8,11 @@ import static edu.wpi.first.units.Units.*;
 
 import java.util.function.BooleanSupplier;
 
+import javax.swing.plaf.RootPaneUI;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
@@ -74,9 +77,14 @@ public class EndEffectorSubsystem extends SubsystemBase {
   //MotionMagic Voltage Request
   private MotionMagicVoltage m_motionRequest;
 
-  private StateMachine m_stateMachine;
+  public CANdle m_CANdle;
+
+
 
   public EndEffectorSubsystem() {
+    m_CANdle = new CANdle(25);
+
+    m_CANdle.setLEDs(0, 57, 162);
     // End Effector Intake
     endEffectorIntake = new TalonFXS(EndEffectorConstants.kEndEffectorIntakeID);
     // End Effector Pivot
@@ -224,8 +232,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
   public boolean hasCoral(){
       if(intakeSensor.getRange() > EndEffectorConstants.kEndEffectorTOFDetectionValue){
         return false;
-      }else
+      }else{
         return true;
+      }
   }
 
   //Is At Setpoint?
@@ -309,6 +318,10 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return canDi.getPWM2Position().getValueAsDouble();
   }
 
+  // public CANdle getCANdle(){
+  //   return m_CANdle;
+  // }
+
 
 
   
@@ -316,15 +329,18 @@ public class EndEffectorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
   
+  //   if(hasCoral()){
+  //     m_CANdle.setLEDs(17, 255, 0);//Green
 
-
-  }
+  // }else
+  //   m_CANdle.setLEDs(0, 57, 162);
   
 
 
 
 
 
+}
 }
 
 
