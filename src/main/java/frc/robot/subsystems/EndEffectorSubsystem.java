@@ -46,7 +46,6 @@ import frc.robot.Constants.EndEffectorConstants;
 import frc.robot.Constants.GroundIntakeConstants;
 import frc.robot.Constants.SetpointConstants;
 import frc.robot.StateMachine.ReefState;
-import frc.robot.commands.StateMachine_CMD.Execute_ReefState_CMD;
 
 public class EndEffectorSubsystem extends SubsystemBase {
   /** Creates a new EndEffector. */
