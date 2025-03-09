@@ -27,7 +27,8 @@ public class HP_CMD extends SequentialCommandGroup {
   EndEffectorSubsystem m_endEffectorSubsystem;
   ElevatorSubsystem m_elevatorSubsystem;
   CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem;
-  BooleanSupplier m_isHPCMD;
+  HANDOFF_CMD m_handoffCMD;
+
   
   public HP_CMD(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem, CoralGroundIntakeSubsystem coralGroundIntakeSubsystem) {
     // Add your commands in the addCommands() call, e.g.
@@ -35,15 +36,19 @@ public class HP_CMD extends SequentialCommandGroup {
     m_elevatorSubsystem = elevatorSubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
     m_coralGroundIntakeSubsystem = coralGroundIntakeSubsystem;
+    m_handoffCMD = new HANDOFF_CMD(elevatorSubsystem, endEffectorSubsystem, coralGroundIntakeSubsystem);
 
 
  
     addCommands(
       new ParallelCommandGroup(
-                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.65).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
-                 new GroundManualRollersIntake(m_coralGroundIntakeSubsystem).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier())),
-      new HANDOFF_CMD(elevatorSubsystem, endEffectorSubsystem, m_coralGroundIntakeSubsystem)
-                 );
+        new EndEffector_Setpoint_CMD(endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).until(()-> m_handoffCMD.isScheduled()),
+          new SequentialCommandGroup(
+              new ParallelCommandGroup(
+                        new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.65).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
+                        new GroundManualRollersIntake(m_coralGroundIntakeSubsystem).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier())),
+              Commands.run(()-> m_handoffCMD.schedule())
+          )));
     
 
 }
