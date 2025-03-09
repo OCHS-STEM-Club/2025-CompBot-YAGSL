@@ -193,25 +193,25 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   }
 
   // get Intake Velocity
-  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/PivotVelocity")
+  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeVelocity")
   public double getIntakeVelocity(){
     return groundIntakeRollers.get();
   }
 
   // get Intake Current
-  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/PivotCurrent")
+  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeCurrent")
   public double getIntakeCurrent(){
     return groundIntakeRollers.getSupplyCurrent().getValueAsDouble();
   }
 
   // get Intake Voltage
-  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/PivotVoltage")
+  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeVoltage")
   public double getIntakeMotorVoltage(){
     return groundIntakeRollers.getMotorVoltage().getValueAsDouble();
   }
 
   // get Intake Temp
-  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/PivotTemperature")
+  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeTemperature")
   public double getIntakeMotorTemp(){
     return groundIntakeRollers.getDeviceTemp().getValueAsDouble();
   }

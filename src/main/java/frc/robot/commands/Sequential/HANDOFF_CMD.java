@@ -61,6 +61,6 @@ public class HANDOFF_CMD extends SequentialCommandGroup {
     if(m_endEffectorSubsystem.hasCoral() == false && m_coralGroundIntakeSubsystem.getHopperSensor() == true){
       return new HANDOFF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
     }else
-      return null;
+      return Commands.none();
   } 
 }

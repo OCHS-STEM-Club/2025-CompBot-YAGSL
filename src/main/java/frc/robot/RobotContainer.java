@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -363,23 +364,6 @@ public class RobotContainer
 
       DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
 
-      DRIVER_LEFT_TRIGGER.whileTrue(
-        Commands.runOnce(() -> {
-          m_HP_Intake_Sequence.cancel();
-            m_HANDOFF_CMD.cancel();
-            m_GI_STOW_CMD.cancel();
-            m_endEffectorStow.cancel();
-            m_elevatorManualDown.cancel();
-            m_GI_Intake_Sequence.schedule();
-      })
-      ).whileFalse(
-        Commands.runOnce(() -> {
-          m_GI_Intake_Sequence.cancel();
-          m_endEffectorStow.schedule();
-        })
-      );
-
-        // TODO:Check if this works
       // DRIVER_LEFT_TRIGGER.whileTrue(
       //   Commands.runOnce(() -> {
       //     m_HP_Intake_Sequence.cancel();
@@ -387,16 +371,28 @@ public class RobotContainer
       //       m_GI_STOW_CMD.cancel();
       //       m_endEffectorStow.cancel();
       //       m_elevatorManualDown.cancel();
-      //       getDesiredIntakeCMD().schedule();
-
+      //       m_GI_Intake_Sequence.schedule();
       // })
       // ).whileFalse(
       //   Commands.runOnce(() -> {
       //     m_GI_Intake_Sequence.cancel();
-      //     getDesiredIntakeCMD().cancel();
       //     m_endEffectorStow.schedule();
       //   })
       // );
+
+        // TODO:Check if this 
+      DRIVER_LEFT_TRIGGER.onTrue(
+        Commands.runOnce(() -> {
+            // m_HP_Intake_Sequence.cancel();
+            // m_HANDOFF_CMD.cancel();
+            // m_GI_STOW_CMD.cancel();
+            // m_endEffectorStow.cancel();
+            // m_elevatorManualDown.cancel();
+            CommandScheduler.getInstance().cancelAll();
+            getDesiredIntakeCMD().schedule();
+
+      })
+      );
 
       // DRIVER_POV_UP.whileTrue(m_groundManualRollersIntake);
 
