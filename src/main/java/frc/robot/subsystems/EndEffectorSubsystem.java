@@ -240,7 +240,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   //Is At Setpoint?
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/IsAtSetpoint?")
   public BooleanSupplier isAtSetpoint(){
-    return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
+    return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < 0.05;
   }
 
   // Get Pivot Position

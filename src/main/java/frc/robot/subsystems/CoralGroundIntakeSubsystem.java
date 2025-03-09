@@ -149,11 +149,11 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   // isAtSetpoint?
   @AutoLogOutput(key = "Subsystems/CoralGroundIntakeSubsystem/Pivot/Position/IsAtSetpoint?")
   public BooleanSupplier isAtSetpoint(){
-      return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
+      return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < 0.05;
     }
 
     public BooleanSupplier isAtStowSetpoint(){
-      return () -> Math.abs(getPivotPosition() - 0.65) < SetpointConstants.kSetpointThreshold;
+      return () -> Math.abs(getPivotPosition() - 0.65) < 0.05;
     }
   
   // Get Pivot Position

@@ -58,7 +58,7 @@ public final class Constants
     public static final int kButtonBox_L3_Button_Port1 = 3;
     public static final int kButtonBox_L4_Button_Port2 = 2;
     public static final int kButtonBox_HP_Button_Port2 = 11;
-    public static final int kButtonBox_HANDOFF_Button_Port2 = 10;
+    public static final int kButtonBox_GI_Button_Port2 = 10;
     public static final int kButtonBox_ELEVATOR_MANUAL_UP_Button_Port2 = 12;
     public static final int kButtonBox_ELEVATOR_MANUAL_DOWN_Button_Port1 = 12;
 
