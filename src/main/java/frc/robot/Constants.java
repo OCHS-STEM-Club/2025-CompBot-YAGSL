@@ -39,7 +39,8 @@ public final class Constants
 
   public static class SpeedConstants{
     // Robot Speed
-    public static final double kRobotSpeed = 0.4;
+    public static final double kRobotTranslationSpeed = 0.4;
+    public static final double kRobotRotationSpeed = 1;
     public static final double kRobotNudgeSpeed = 0.15;
   }
   public static class OperatorConstants

@@ -170,7 +170,8 @@ public class RobotContainer
                                                                 () -> m_driverController.getLeftX() * 1)
                                                             .withControllerRotationAxis(() -> m_driverController.getRightX() * 1)
                                                             .deadband(OperatorConstants.kDeadband)
-                                                            .scaleTranslation(SpeedConstants.kRobotSpeed)
+                                                            .scaleTranslation(SpeedConstants.kRobotTranslationSpeed)
+                                                            .scaleRotation(SpeedConstants.kRobotRotationSpeed)
                                                             .allianceRelativeControl(false);
 
   /**
