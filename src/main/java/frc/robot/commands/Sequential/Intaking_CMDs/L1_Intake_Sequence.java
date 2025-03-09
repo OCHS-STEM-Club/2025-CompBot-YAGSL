@@ -38,7 +38,7 @@ public class L1_Intake_Sequence extends SequentialCommandGroup {
  
     addCommands(
       new ParallelCommandGroup(
-        new EndEffector_Setpoint_CMD(endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint),
+        new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint),
         new SequentialCommandGroup(
             new ParallelCommandGroup(
                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.39).until(m_coralGroundIntakeSubsystem.getIntakeSensorSupplier()),

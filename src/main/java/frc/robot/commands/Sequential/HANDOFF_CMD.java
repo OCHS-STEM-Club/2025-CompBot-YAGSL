@@ -36,6 +36,8 @@ public class HANDOFF_CMD extends SequentialCommandGroup {
     m_coralGroundIntakeSubsystem = coralGroundIntakeSubsystem;
     m_buffer_EE_CMD = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kHandoffEndEffectorSetpoint).withTimeout(3);
 
+
+
     addCommands(
     new ParallelCommandGroup(
                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).until(()->m_buffer_EE_CMD.isScheduled()),
@@ -48,8 +50,17 @@ public class HANDOFF_CMD extends SequentialCommandGroup {
                                             new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kBufferElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()),
                                             new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint)),
                  new SequentialCommandGroup(new WaitCommand(3.2),
-                                            new GroundIntake_Setpoint_CMD(coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint))
-                                            ));
+                                            new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint))
+                                            ),
+    rerunHandoff()
+                                            );
 
   }
+
+  private Command rerunHandoff(){
+    if(m_endEffectorSubsystem.hasCoral() == false && m_coralGroundIntakeSubsystem.getHopperSensor() == true){
+      return new HANDOFF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
+    }else
+      return null;
+  } 
 }
