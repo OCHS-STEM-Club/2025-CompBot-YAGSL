@@ -170,8 +170,8 @@ public class RobotContainer
                                                                 () -> m_driverController.getLeftX() * 1)
                                                             .withControllerRotationAxis(() -> m_driverController.getRightX() * 1)
                                                             .deadband(OperatorConstants.kDeadband)
-                                                            .scaleTranslation(SpeedConstants.kRobotTranslationSpeed)
-                                                            .scaleRotation(SpeedConstants.kRobotRotationSpeed)
+                                                            .scaleTranslation(SpeedConstants.kCurrentRobotTranslationSpeed)
+                                                            .scaleRotation(SpeedConstants.kCurrentRobotRotationSpeed)
                                                             .allianceRelativeControl(false);
 
   /**
@@ -248,6 +248,8 @@ public class RobotContainer
   private String getIntakeMethodString(){
     return intakeMethodValue.toString();
   }
+
+  
 
   // Method to configure bindings
   private void configureBindings()

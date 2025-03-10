@@ -24,10 +24,13 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.SetpointConstants;
+import frc.robot.Constants.SpeedConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
   /** Creates a new ElevatorSubsystem. */
@@ -186,11 +189,31 @@ public class ElevatorSubsystem extends SubsystemBase {
       }
     }
 
+    public Command reduceRobotSpeed() {
+      return Commands.runOnce(() -> {
+        SpeedConstants.kCurrentRobotTranslationSpeed = SpeedConstants.kReducedRobotTranslationSpeed;
+        SpeedConstants.kCurrentRobotRotationSpeed = SpeedConstants.kReducedRobotRotationSpeed;
+      });
+    }
+
+    public Command normalRobotSpeed() {
+      return Commands.runOnce(() -> {
+        SpeedConstants.kCurrentRobotTranslationSpeed = SpeedConstants.kNormalRobotTranslationSpeed;
+        SpeedConstants.kCurrentRobotRotationSpeed = SpeedConstants.kNormalRobotRotationSpeed;
+      });
+    }
+
     @Override
     public void periodic() {
       // set Elevator Zero Position
       if (isAtBottomLimit()) {
         elevatorLeftLeaderMotor.setPosition(0);
+      }
+
+      if(getElevatorPositionRotations() > 6){
+        this.reduceRobotSpeed().schedule();
+      }else{
+        this.normalRobotSpeed().schedule();
       }
 
     }
