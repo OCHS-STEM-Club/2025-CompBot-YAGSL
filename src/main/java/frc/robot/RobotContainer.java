@@ -13,6 +13,9 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import com.fasterxml.jackson.core.util.ReadConstrainedTextBuffer;
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -172,9 +175,9 @@ public class RobotContainer
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_swerveSubsystem.getSwerveDrive(),
-                                                                () -> m_driverController.getLeftY() * 1,
-                                                                () -> m_driverController.getLeftX() * 1)
-                                                            .withControllerRotationAxis(() -> m_driverController.getRightX() * 1)
+                                                                () -> m_driverController.getLeftY() * -1,
+                                                                () -> m_driverController.getLeftX() * -1)
+                                                            .withControllerRotationAxis(() -> m_driverController.getRightX() * -1)
                                                             .deadband(OperatorConstants.kDeadband)
                                                             .scaleTranslation(SpeedConstants.kCurrentRobotTranslationSpeed)
                                                             .scaleRotation(SpeedConstants.kCurrentRobotRotationSpeed)
@@ -220,8 +223,8 @@ public class RobotContainer
 
   private DoubleSupplier getXAxisPOV(){
     return () -> {
-      if(DRIVER_POV_LEFT.getAsBoolean()) return -1;
-      if(DRIVER_POV_RIGHT.getAsBoolean()) return 1;
+      if(DRIVER_POV_LEFT.getAsBoolean()) return 1;
+      if(DRIVER_POV_RIGHT.getAsBoolean()) return -1;
       return 0;
     };
   }
@@ -323,7 +326,7 @@ public class RobotContainer
         })
       );
 
-      DRIVER_X_BUTTON.whileTrue(
+      DRIVER_POV_DOWN.whileTrue(
         Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
             m_GI_Intake_Setpoint.schedule();
@@ -334,7 +337,7 @@ public class RobotContainer
         })
       );
 
-      DRIVER_Y_BUTTON.whileTrue(
+      DRIVER_POV_UP.whileTrue(
         Commands.runOnce(() -> {
             CommandScheduler.getInstance().cancelAll();
             m_GI_Stow_Setpoint.schedule();
@@ -356,6 +359,8 @@ public class RobotContainer
           m_endEffectorStow.schedule();
         })
       );
+
+      DRIVER_Y_BUTTON.whileTrue(m_swerveSubsystem.pathFindThenFollowPath_REEF_A());
 
       DRIVER_RIGHT_TRIGGER.whileTrue(m_groundManualRollersOuttake);
       DRIVER_POV_UP.whileTrue(m_endEffectorManualIntake);

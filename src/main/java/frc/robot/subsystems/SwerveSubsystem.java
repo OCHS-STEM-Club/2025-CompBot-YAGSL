@@ -60,7 +60,7 @@ public class SwerveSubsystem extends SubsystemBase
   
   private VisionCamera[] camerasArray = new VisionCamera[2];
 
-  private boolean enableVision = false;
+  private boolean enableVision = true;
 
 
   public SwerveSubsystem(File directory)
@@ -238,7 +238,7 @@ public class SwerveSubsystem extends SubsystemBase
 
         var stdDevs = camera.getEstimationStdDevs();
 
-        swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
+        swerveDrive.addVisionMeasurement(new Pose2d(pose.estimatedPose.getX(),pose.estimatedPose.getY(), this.getHeading()),
                                          pose.timestampSeconds,
                                          stdDevs
                                         );
@@ -291,10 +291,10 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
 
-  public Command pathFindThenFollowPath(Pose2d pose) {
+  public Command pathFindThenFollowPath_REEF_A() {
     PathPlannerPath path = null;
     try {
-      path = PathPlannerPath.fromPathFile("Test");
+      path = PathPlannerPath.fromPathFile("Reef_A");
     } catch (Exception e) {
       System.out.println("Path not found");
     }
