@@ -39,7 +39,15 @@ public final class Constants
 
   public static class SpeedConstants{
     // Robot Speed
-    public static final double kRobotSpeed = 0.4;
+    public static double kCurrentRobotTranslationSpeed = 0.4;
+    public static double kCurrentRobotRotationSpeed = 1;
+
+    public static final double kNormalRobotTranslationSpeed = 0.4;
+    public static final double kNormalRobotRotationSpeed = 1;
+
+    public static final double kReducedRobotTranslationSpeed = 0.2;
+    public static final double kReducedRobotRotationSpeed = 0.5;
+    
     public static final double kRobotNudgeSpeed = 0.15;
   }
   public static class OperatorConstants
@@ -58,7 +66,7 @@ public final class Constants
     public static final int kButtonBox_L3_Button_Port1 = 3;
     public static final int kButtonBox_L4_Button_Port2 = 2;
     public static final int kButtonBox_HP_Button_Port2 = 11;
-    public static final int kButtonBox_HANDOFF_Button_Port2 = 10;
+    public static final int kButtonBox_GI_Button_Port2 = 10;
     public static final int kButtonBox_ELEVATOR_MANUAL_UP_Button_Port2 = 12;
     public static final int kButtonBox_ELEVATOR_MANUAL_DOWN_Button_Port1 = 12;
 
@@ -215,6 +223,11 @@ public final class Constants
         public static final Matrix<N3, N1> FR_SingleTagStdDevs = VecBuilder.fill(4, 4, 8);
         public static final Matrix<N3, N1> FR_MultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
 
+  }
+
+  public static class LEDConstants {
+    public static final int kLEDCount = 60;
+    public static final int kCANdiID = 25;
   }
   
 

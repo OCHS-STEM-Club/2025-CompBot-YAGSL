@@ -77,14 +77,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
   //MotionMagic Voltage Request
   private MotionMagicVoltage m_motionRequest;
 
-  public CANdle m_CANdle;
-
-
 
   public EndEffectorSubsystem() {
-    m_CANdle = new CANdle(25);
-
-    m_CANdle.setLEDs(0, 57, 162);
+    
     // End Effector Intake
     endEffectorIntake = new TalonFXS(EndEffectorConstants.kEndEffectorIntakeID);
     // End Effector Pivot
@@ -240,7 +235,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   //Is At Setpoint?
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/IsAtSetpoint?")
   public BooleanSupplier isAtSetpoint(){
-    return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
+    return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < 0.05;
   }
 
   // Get Pivot Position

@@ -46,11 +46,11 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   private DigitalInput m_intakeBeamBreak;
   private DigitalInput m_hopperBeamBreak;
 
-  private EndEffectorSubsystem m_endEffectorSubsystem;
+
 
   
-  public CoralGroundIntakeSubsystem(EndEffectorSubsystem endEffectorSubsystem) {
-    m_endEffectorSubsystem = endEffectorSubsystem;
+  public CoralGroundIntakeSubsystem() {
+
     // Motors
     groundIntakeRollers = new TalonFX(GroundIntakeConstants.kGroundIntakeMotorID);
     groundIntakePivot = new TalonFX(GroundIntakeConstants.kGroundIntakePivotID);
@@ -149,11 +149,11 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   // isAtSetpoint?
   @AutoLogOutput(key = "Subsystems/CoralGroundIntakeSubsystem/Pivot/Position/IsAtSetpoint?")
   public BooleanSupplier isAtSetpoint(){
-      return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < SetpointConstants.kSetpointThreshold;
+      return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < 0.05;
     }
 
     public BooleanSupplier isAtStowSetpoint(){
-      return () -> Math.abs(getPivotPosition() - 0.65) < SetpointConstants.kSetpointThreshold;
+      return () -> Math.abs(getPivotPosition() - 0.65) < 0.05;
     }
   
   // Get Pivot Position
@@ -193,25 +193,25 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   }
 
   // get Intake Velocity
-  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/PivotVelocity")
+  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeVelocity")
   public double getIntakeVelocity(){
     return groundIntakeRollers.get();
   }
 
   // get Intake Current
-  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/PivotCurrent")
+  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeCurrent")
   public double getIntakeCurrent(){
     return groundIntakeRollers.getSupplyCurrent().getValueAsDouble();
   }
 
   // get Intake Voltage
-  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/PivotVoltage")
+  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeVoltage")
   public double getIntakeMotorVoltage(){
     return groundIntakeRollers.getMotorVoltage().getValueAsDouble();
   }
 
   // get Intake Temp
-  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/PivotTemperature")
+  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeTemperature")
   public double getIntakeMotorTemp(){
     return groundIntakeRollers.getDeviceTemp().getValueAsDouble();
   }
@@ -243,17 +243,11 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(getIntakeSensor()){
-      m_endEffectorSubsystem.m_CANdle.setLEDs(255, 255, 255);
-    }else if (m_endEffectorSubsystem.hasCoral()) {
-      m_endEffectorSubsystem.m_CANdle.setLEDs(17, 255, 0);
-    }else 
-      m_endEffectorSubsystem.m_CANdle.setLEDs(0, 57, 162);
     
 
-    }
-
   
+  }
+
 }
 
 
