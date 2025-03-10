@@ -29,7 +29,7 @@ public class GI_Intake_Sequence extends SequentialCommandGroup {
   EndEffectorSubsystem m_endEffectorSubsystem;
   ElevatorSubsystem m_elevatorSubsystem;
   CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem;
-  HANDOFF_CMD m_handoffCMD;
+  public HANDOFF_CMD m_handoffCMD;
 
   
   public GI_Intake_Sequence(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem, CoralGroundIntakeSubsystem coralGroundIntakeSubsystem) {

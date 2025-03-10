@@ -56,6 +56,7 @@ import frc.robot.commands.Setpoints_CMD.GroundIntake_Setpoint_CMD;
 import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
@@ -103,7 +104,9 @@ public class RobotContainer
   SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
   EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem();
   ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
-  CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem = new CoralGroundIntakeSubsystem(m_endEffectorSubsystem);
+  CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem = new CoralGroundIntakeSubsystem();
+
+
 
 
 
@@ -139,8 +142,8 @@ public class RobotContainer
   EndEffector_Setpoint_CMD m_endEffectorStow = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint);
   EndEffector_Setpoint_CMD m_endEffectorHP = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kHPEndEffectorSetpoint);
   // Sequence Commands
-  HP_Intake_Sequence m_HP_Intake_Sequence = new HP_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem,m_coralGroundIntakeSubsystem);
-  GI_Intake_Sequence m_GI_Intake_Sequence = new GI_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
+  public HP_Intake_Sequence m_HP_Intake_Sequence = new HP_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem,m_coralGroundIntakeSubsystem);
+  public GI_Intake_Sequence m_GI_Intake_Sequence = new GI_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
   L1_Intake_Sequence m_L1_Intake_Sequence = new L1_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem); 
 
   STOW_CMD m_STOW_CMD = new STOW_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
@@ -153,12 +156,15 @@ public class RobotContainer
 
   Coral_Intake_CMD m_Coral_Intake_CMD = new Coral_Intake_CMD(m_coralGroundIntakeSubsystem);
   // Algae Removal Commands
-  REEF_CMD m_L3_Algae_Removal = new REEF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, 0.28, 8);
-  REEF_CMD m_L2_Algae_Removal = new REEF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, 0.25, 5);
+  public REEF_CMD m_L3_Algae_Removal = new REEF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, 0.28, 8);
+  public REEF_CMD m_L2_Algae_Removal = new REEF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, 0.25, 5);
   // GI Setpoint Commands
   GroundIntake_Setpoint_CMD m_GI_Intake_Setpoint = new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.37);
   GroundIntake_Setpoint_CMD m_GI_Stow_Setpoint = new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.65);
   GroundIntake_Setpoint_CMD m_GI_STOW_CMD = new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.63);
+
+  LEDSubsystem m_ledSubsystem = new LEDSubsystem(m_coralGroundIntakeSubsystem, m_endEffectorSubsystem, m_elevatorSubsystem, m_swerveSubsystem,
+                                                this,this.m_GI_Intake_Sequence , this.m_HP_Intake_Sequence);
 
 
 

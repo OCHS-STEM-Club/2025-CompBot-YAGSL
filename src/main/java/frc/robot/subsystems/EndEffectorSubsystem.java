@@ -77,14 +77,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
   //MotionMagic Voltage Request
   private MotionMagicVoltage m_motionRequest;
 
-  public CANdle m_CANdle;
-
-
 
   public EndEffectorSubsystem() {
-    m_CANdle = new CANdle(25);
-
-    m_CANdle.setLEDs(0, 57, 162);
+    
     // End Effector Intake
     endEffectorIntake = new TalonFXS(EndEffectorConstants.kEndEffectorIntakeID);
     // End Effector Pivot
