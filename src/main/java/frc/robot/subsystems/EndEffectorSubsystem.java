@@ -44,11 +44,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.StateMachine;
 import frc.robot.Constants.EndEffectorConstants;
 import frc.robot.Constants.GroundIntakeConstants;
 import frc.robot.Constants.SetpointConstants;
-import frc.robot.StateMachine.ReefState;
+import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
 
 public class EndEffectorSubsystem extends SubsystemBase {
   /** Creates a new EndEffector. */
@@ -144,6 +143,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
     m_voltageRequest = new VoltageOut(0);
     // Motion Magic motion request
     m_motionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(EndEffectorConstants.kEndEffectorFeedForward);
+
+    new EndEffector_Setpoint_CMD(this,SetpointConstants.kStowEndEffectorSetpoint);
 
 
   }
@@ -329,6 +330,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
   // }else
   //   m_CANdle.setLEDs(0, 57, 162);
+  // System.out.println(this.intakeSensor.getRange());
   
 
 

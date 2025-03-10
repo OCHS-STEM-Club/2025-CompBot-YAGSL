@@ -26,7 +26,6 @@ public class HANDOFF_CMD extends SequentialCommandGroup {
   EndEffectorSubsystem m_endEffectorSubsystem;
   ElevatorSubsystem m_elevatorSubsystem;
   CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem;
-  Command m_buffer_EE_CMD;
   
   public HANDOFF_CMD(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem, CoralGroundIntakeSubsystem coralGroundIntakeSubsystem) {
     // Add your commands in the addCommands() call, e.g.
@@ -34,30 +33,25 @@ public class HANDOFF_CMD extends SequentialCommandGroup {
     m_elevatorSubsystem = elevatorSubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
     m_coralGroundIntakeSubsystem = coralGroundIntakeSubsystem;
-    m_buffer_EE_CMD = new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kHandoffEndEffectorSetpoint).withTimeout(3);
-
-
 
     addCommands(
     new ParallelCommandGroup(
-                new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).until(()->m_buffer_EE_CMD.isScheduled()),
+
                  m_endEffectorSubsystem.intakeWithTOF(),
                  new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kBufferElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()), 
-                 Commands.run(()->m_buffer_EE_CMD.schedule()),
+                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kHandoffEndEffectorSetpoint).withTimeout(3),
                  new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kBufferCoralGroundIntakeSetpoint).withTimeout(4),
                  new SequentialCommandGroup(new WaitCommand(1),
                                             new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kHandoffElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()),
                                             new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kBufferElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()),
                                             new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint)),
                  new SequentialCommandGroup(new WaitCommand(3.2),
-                                            new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint))
-                                            ),
-    rerunHandoff()
-                                            );
+                                            new GroundIntake_Setpoint_CMD(coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint))
+                                            ));
 
   }
 
-  private Command rerunHandoff(){
+  public Command rerunHandoff(){
     if(m_endEffectorSubsystem.hasCoral() == false && m_coralGroundIntakeSubsystem.getHopperSensor() == true){
       return new HANDOFF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
     }else

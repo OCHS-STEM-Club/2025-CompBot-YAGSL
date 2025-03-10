@@ -46,7 +46,7 @@ public class HP_Intake_Sequence extends SequentialCommandGroup {
         new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).until(()-> m_handoffCMD.isScheduled()),
           new SequentialCommandGroup(
               new ParallelCommandGroup(
-                        new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.65).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
+                        new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.67).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
                         new GroundManualRollersIntake(m_coralGroundIntakeSubsystem).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier())),
               Commands.run(()-> m_handoffCMD.schedule())
           )));

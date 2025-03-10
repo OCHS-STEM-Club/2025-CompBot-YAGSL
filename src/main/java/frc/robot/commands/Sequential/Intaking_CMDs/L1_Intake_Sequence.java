@@ -43,7 +43,7 @@ public class L1_Intake_Sequence extends SequentialCommandGroup {
             new ParallelCommandGroup(
                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.39).until(m_coralGroundIntakeSubsystem.getIntakeSensorSupplier()),
                 new GroundManualRollersIntake(m_coralGroundIntakeSubsystem).until(m_coralGroundIntakeSubsystem.getIntakeSensorSupplier())),
-            new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.67).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier())
+            new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.65).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier())
                     )));
     
 

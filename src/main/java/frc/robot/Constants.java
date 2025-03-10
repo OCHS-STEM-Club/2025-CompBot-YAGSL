@@ -45,8 +45,8 @@ public final class Constants
     public static final double kNormalRobotTranslationSpeed = 0.4;
     public static final double kNormalRobotRotationSpeed = 1;
 
-    public static final double kReducedRobotTranslationSpeed = 0.2;
-    public static final double kReducedRobotRotationSpeed = 0.5;
+    public static final double kReducedRobotTranslationSpeed = 0.1;
+    public static final double kReducedRobotRotationSpeed = 0.25;
     
     public static final double kRobotNudgeSpeed = 0.15;
   }
@@ -84,7 +84,7 @@ public final class Constants
     public static final double kEndEffectorSpeed = 0.50;
     public static final double kPivotSpeed = 0.15;
     // End Effector TOF Detection Value
-    public static final double kEndEffectorTOFDetectionValue = 70;
+    public static final double kEndEffectorTOFDetectionValue = 77;
     // End Effector PID Values
     public static final double kEndEffectorPivotPIDValueP = 38.029;
     public static final double kEndEffectorPivotPIDValueI = 0;
@@ -226,7 +226,7 @@ public final class Constants
   }
 
   public static class LEDConstants {
-    public static final int kLEDCount = 60;
+    public static final int kLEDCount = 69;
     public static final int kCANdiID = 25;
   }
   
