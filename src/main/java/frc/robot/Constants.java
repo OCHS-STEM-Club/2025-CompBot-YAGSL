@@ -224,6 +224,11 @@ public final class Constants
         public static final Matrix<N3, N1> FR_MultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
 
   }
+
+  public static class LEDConstants {
+    public static final int kLEDCount = 60;
+    public static final int kCANdiID = 25;
+  }
   
 
 }

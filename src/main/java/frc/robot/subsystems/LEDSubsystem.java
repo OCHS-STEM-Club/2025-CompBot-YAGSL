@@ -12,6 +12,7 @@ import com.ctre.phoenix.led.StrobeAnimation;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.commands.Sequential.Intaking_CMDs.GI_Intake_Sequence;
 import frc.robot.commands.Sequential.Intaking_CMDs.HP_Intake_Sequence;
 
@@ -36,7 +37,7 @@ public class LEDSubsystem extends SubsystemBase {
     Stow
     
   }
-  private int kLEDCount = 60;
+
 
   public LEDSubsystem(CoralGroundIntakeSubsystem coralGroundIntakeSubsystem,
                       EndEffectorSubsystem endEffectorSubsystem,
@@ -45,7 +46,7 @@ public class LEDSubsystem extends SubsystemBase {
                       RobotContainer robotContainer,
                       GI_Intake_Sequence GI_Intake_Sequence,
                       HP_Intake_Sequence HP_Intake_Sequence) {
-                        
+
     m_coralGroundIntakeSubsystem = coralGroundIntakeSubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
     m_elevatorSubsystem = elevatorSubsystem;
@@ -55,26 +56,26 @@ public class LEDSubsystem extends SubsystemBase {
     m_GI_Intake_Sequence = GI_Intake_Sequence;
     m_HP_Intake_Sequence = HP_Intake_Sequence;
 
-    m_CANdle = new CANdle(25);
+    m_CANdle = new CANdle(LEDConstants.kCANdiID);
   }
 
   public void setCANdle(LED_States toChange){
 
     switch (toChange) {
       case EE_Has_Coral:
-        m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.5, kLEDCount)); // White
+        m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.5, LEDConstants.kLEDCount)); // White
         break;
       case GI_Has_Coral:
-        m_CANdle.animate(new StrobeAnimation(247, 181, 0, 255, 0.5, kLEDCount)); // Traffic Yellow
+        m_CANdle.animate(new StrobeAnimation(247, 181, 0, 255, 0.5, LEDConstants.kLEDCount)); // Traffic Yellow
         break;
       case Algae_Removal:
-        m_CANdle.animate(new ColorFlowAnimation(155, 240, 217, 255, 0.5, kLEDCount, Direction.Forward)); // Algae Color
+        m_CANdle.animate(new ColorFlowAnimation(155, 240, 217, 255, 0.5, LEDConstants.kLEDCount, Direction.Forward)); // Algae Color
         break;
       case Handoff_Coral:
-        m_CANdle.animate(new StrobeAnimation(54, 1, 63, 255, 0.5, kLEDCount)); // Purple
+        m_CANdle.animate(new StrobeAnimation(54, 1, 63, 255, 0.5, LEDConstants.kLEDCount)); // Purple
         break;
       case Stow:
-        m_CANdle.animate(new ColorFlowAnimation(0, 57, 162, 255, 0.75, kLEDCount, Direction.Forward)); // Phillipine Blue
+        m_CANdle.animate(new ColorFlowAnimation(0, 57, 162, 255, 0.75, LEDConstants.kLEDCount, Direction.Forward)); // Philippine Blue
         break;
     }
   }
