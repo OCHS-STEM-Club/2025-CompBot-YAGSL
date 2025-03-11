@@ -169,6 +169,16 @@ public final class Constants
     public static final double kRotorToSensorRatio = 80;
   }
 
+  public static class ClimberConstants {
+    public static final int kClimberMotorID = 24;
+    public static final int kClimberEncoderID = 0;
+
+    public static final double kEncoderOffset = 0;
+
+    public static final double kClimberSpeed = 0.35;
+
+  }
+
   public static class SetpointConstants{
 
     public static final double kL1ElevatorSetpoint = 0; 
@@ -195,6 +205,16 @@ public final class Constants
 
     public static final double kBufferElevatorSetpoint = 5; 
     public static final double kBufferCoralGroundIntakeSetpoint = 0.5; 
+
+    public static final double kCoralIntakeSetpoint = 0.39;
+
+    public static final double kEndEffectorL2AlgaeRemovalSetpoint = 0.25;
+    public static final double kElevatorL2AlgaeRemovalSetpoint = 5;
+
+    public static final double kEndEffectorL3AlgaeRemovalSetpoint = 0.28;
+    public static final double kElevatorL3AlgaeRemovalSetpoint = 8;
+
+    public static final double kElevatorClimbSetpoint = 6;
 
 
 
