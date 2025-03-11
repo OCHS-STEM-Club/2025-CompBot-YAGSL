@@ -63,7 +63,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     switch (toChange) {
       case EE_Has_Coral:
-        m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.1, LEDConstants.kLEDCount)); // White
+        m_CANdle.setLEDs(255, 255, 255); // White
         break;
       case GI_Has_Coral:
         m_CANdle.animate(new StrobeAnimation(247, 181, 0, 255, 0.1, LEDConstants.kLEDCount)); // Traffic Yellow

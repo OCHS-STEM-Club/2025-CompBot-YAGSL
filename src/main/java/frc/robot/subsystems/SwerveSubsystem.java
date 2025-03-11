@@ -16,6 +16,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,6 +24,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -46,6 +48,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
+import swervelib.SwerveInputStream;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -62,9 +65,12 @@ public class SwerveSubsystem extends SubsystemBase
 
   private boolean enableVision = true;
 
+  private SwerveInputStream m_swerveInputStream;
+
 
   public SwerveSubsystem(File directory)
   {
+
 
     camerasArray[0] = new VisionCamera(VisionConstants.FL_Module_Camera_Name,
                                        VisionConstants.FL_Module_Camera_Transformed,
@@ -99,6 +105,8 @@ public class SwerveSubsystem extends SubsystemBase
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
 //    swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
     setupPathPlanner();
+
+
   }
 
   /**
@@ -133,6 +141,19 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void simulationPeriodic()
   {
+  }
+
+  public void driveToPoseWithInputStream(){
+    m_swerveInputStream.driveToPose(()-> new Pose2d(new Translation2d(3.3, 4.350), new Rotation2d()), 
+    new ProfiledPIDController(5,
+                              0,
+                              0,
+                              new Constraints(5, 2)),
+    new ProfiledPIDController(5,
+                              0,
+                              0,
+                              new Constraints(Units.degreesToRadians(360),
+                                              Units.degreesToRadians(180))));
   }
 
   /**
@@ -172,9 +193,9 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(5.0, 0.0, 0.0),
+              new PIDConstants(5.25, 0.0, 0.0),
               // Translation PID constants
-              new PIDConstants(5.0, 0.0, 0.0)
+              new PIDConstants(4, 0.0, 0.0)
               // Rotation PID constants
           ),
           config,
@@ -249,6 +270,8 @@ public class SwerveSubsystem extends SubsystemBase
 
 
   }
+
+
     
 
 

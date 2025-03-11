@@ -13,9 +13,12 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import com.fasterxml.jackson.core.util.ReadConstrainedTextBuffer;
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -197,6 +200,9 @@ public class RobotContainer
                                                             .scaleTranslation(SpeedConstants.kRobotNudgeSpeed)
                                                             .allianceRelativeControl(false)
                                                             .robotRelative(true); 
+
+  SwerveInputStream m_swerveInputStream;
+  
                                                           
                                                       
 
@@ -268,6 +274,16 @@ public class RobotContainer
     Command driveFieldOrientedAnglularVelocity = m_swerveSubsystem.driveFieldOriented(driveAngularVelocity); 
     Command driveRobotOrientedNudge = m_swerveSubsystem.driveFieldOriented(driveRobotOriented);
 
+    Command driveToPoseStream = Commands.run(()->driveAngularVelocity.driveToPose(()-> new Pose2d(new Translation2d(3.3, 4.350), new Rotation2d()), 
+    new ProfiledPIDController(5,
+                              0,
+                              0,
+                              new Constraints(5, 2)),
+    new ProfiledPIDController(5,
+                              0,
+                              0,
+                              new Constraints(Units.degreesToRadians(360),
+                                              Units.degreesToRadians(180)))));
 
     if (RobotBase.isSimulation())
     {
@@ -360,7 +376,8 @@ public class RobotContainer
         })
       );
 
-      DRIVER_Y_BUTTON.whileTrue(m_swerveSubsystem.pathFindThenFollowPath_REEF_A());
+      DRIVER_Y_BUTTON.whileTrue(driveToPoseStream);
+
 
       DRIVER_RIGHT_TRIGGER.whileTrue(m_groundManualRollersOuttake);
       DRIVER_POV_UP.whileTrue(m_endEffectorManualIntake);
