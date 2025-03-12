@@ -209,8 +209,10 @@ public class RobotContainer
                                                             getXAxisPOV())
                                                             .withControllerRotationAxis(getRotAxis())
                                                             .scaleTranslation(SpeedConstants.kRobotNudgeSpeed)
-                                                            .allianceRelativeControl(false)
+                                                           .allianceRelativeControl(false)
                                                             .robotRelative(true); 
+
+  L4_CMD m_L4_CMD_AUTO = new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem); 
 
   
                                                           
@@ -222,10 +224,15 @@ public class RobotContainer
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer()
-  {
-    NamedCommands.registerCommand("L4_CMD", m_L4_CMD);
-    // HPintake = ()-> true;
-    // Configure the trigger bindings
+
+  { 
+    NamedCommands.registerCommand("L2_CMD", new L2_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
+    NamedCommands.registerCommand("L3_CMD", new L3_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
+    NamedCommands.registerCommand("L4_CMD", m_L4_CMD_AUTO);
+    NamedCommands.registerCommand("EndEffector_Eject_Coral", new EndEffectorManualOuttake(m_endEffectorSubsystem).withTimeout(2));
+    NamedCommands.registerCommand("EndEffector_Stow_Until_L4", new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).until(()->m_L4_CMD_AUTO.isScheduled()));
+    NamedCommands.registerCommand("GI_Stow_Until_L4", new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint).until(()->m_L4_CMD_AUTO.isScheduled()));
+
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
 
