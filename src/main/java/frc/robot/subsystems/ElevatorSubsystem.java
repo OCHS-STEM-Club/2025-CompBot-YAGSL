@@ -165,7 +165,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // get Elevator Current
     @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorCurrent")
     public double getElevatorCurrent() {
-      return elevatorLeftLeaderMotor.getStatorCurrent().getValueAsDouble();
+      return elevatorLeftLeaderMotor.getSupplyCurrent().getValueAsDouble();
     }
 
     // get Elevator Voltage

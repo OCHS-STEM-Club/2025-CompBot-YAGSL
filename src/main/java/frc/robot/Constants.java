@@ -214,7 +214,7 @@ public final class Constants
     public static final double kEndEffectorL3AlgaeRemovalSetpoint = 0.28;
     public static final double kElevatorL3AlgaeRemovalSetpoint = 8;
 
-    public static final double kElevatorClimbSetpoint = 6;
+    public static final double kElevatorClimbSetpoint = 4;
 
 
 
@@ -231,8 +231,8 @@ public final class Constants
         public static final Transform3d FL_Module_Camera_Transformed =
                         new Transform3d(new Translation3d(0.21082, -0.23876, 0.2032), 
                         new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(343)));
-        public static final Matrix<N3, N1> FL_SingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-        public static final Matrix<N3, N1> FL_MultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+        public final static Matrix<N3, N1> FL_SingleTagStdDevs = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(10));
+        public final static Matrix<N3, N1> FL_MultiTagStdDevs = VecBuilder.fill(0.9, 0.9, Units.degreesToRadians(10));
 
 
         public static final String FR_Module_Camera_Name = "FR-Module";
@@ -240,8 +240,8 @@ public final class Constants
         public static final Transform3d FR_Module_Camera_Transformed =
                         new Transform3d(new Translation3d(0.21082, 0.23876, 0.2032), 
                         new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(17)));
-        public static final Matrix<N3, N1> FR_SingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-        public static final Matrix<N3, N1> FR_MultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+        public final static Matrix<N3, N1> FR_SingleTagStdDevs = VecBuilder.fill(0.1, 0.1, Units.degreesToRadians(10));
+        public final static Matrix<N3, N1> FR_MultiTagStdDevs = VecBuilder.fill(0.9, 0.9, Units.degreesToRadians(10));
 
   }
 
