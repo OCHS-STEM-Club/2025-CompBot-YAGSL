@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CB to H"
+                  "pathName": "Center to H"
                 }
               },
               {
@@ -71,6 +71,6 @@
     }
   },
   "resetOdom": false,
-  "folder": "CB Autos",
+  "folder": "Center Autos",
   "choreoAuto": false
 }

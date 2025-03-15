@@ -194,8 +194,8 @@ public class RobotContainer
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_swerveSubsystem.getSwerveDrive(),
-                                                                () -> m_driverController.getLeftY() * -1,
-                                                                () -> m_driverController.getLeftX() * -1)
+                                                                () -> m_driverController.getLeftY() * 1,
+                                                                () -> m_driverController.getLeftX() * 1)
                                                             .withControllerRotationAxis(() -> m_driverController.getRightX() * -1)
                                                             .deadband(OperatorConstants.kDeadband)
                                                             .scaleTranslation(SpeedConstants.kCurrentRobotTranslationSpeed)
@@ -246,7 +246,8 @@ public class RobotContainer
                                                         new WaitCommand(1),
                                                         new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kStowElevatorSetpoint)
                                                       )
-                                                      ));
+                                                      ).withTimeout(1));
+    NamedCommands.registerCommand("HP_CMD", new HP_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
 
 
     configureBindings();
@@ -334,7 +335,7 @@ public class RobotContainer
     // Driver Controls
 
       DRIVER_A_BUTTON.onTrue(
-        Commands.runOnce(m_swerveSubsystem :: zeroGyro)
+        Commands.runOnce(m_swerveSubsystem :: zeroGyroWithAlliance)
       );
       
       // Driver Elevator Stow

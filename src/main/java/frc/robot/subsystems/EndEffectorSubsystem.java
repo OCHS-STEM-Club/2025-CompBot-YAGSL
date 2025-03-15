@@ -134,6 +134,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                             .withRotorToSensorRatio(EndEffectorConstants.kRotorToSensorRatio))
                         .withCurrentLimits(new CurrentLimitsConfigs()
                                             .withStatorCurrentLimit(Units.Amps.of(EndEffectorConstants.kEndEffectorPivotCurrentLimit)));
+
                         
                         
     // Apply Pivot Configs

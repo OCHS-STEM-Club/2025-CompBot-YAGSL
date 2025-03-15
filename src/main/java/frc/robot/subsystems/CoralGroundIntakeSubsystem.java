@@ -8,6 +8,7 @@ import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -84,7 +85,9 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
                                           .withKP(GroundIntakeConstants.kGroundPivotPIDValueP)
                                           .withKI(GroundIntakeConstants.kGroundPivotPIDValueI)
                                           .withKD(GroundIntakeConstants.kGroundPivotPIDValueD)
-                                          .withGravityType(GravityTypeValue.Arm_Cosine));
+                                          .withGravityType(GravityTypeValue.Arm_Cosine))
+                          .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
+                                            .withContinuousWrap(true));;
 
     groundIntakePivot.getConfigurator().apply(groundIntakePivotConfig);
 
