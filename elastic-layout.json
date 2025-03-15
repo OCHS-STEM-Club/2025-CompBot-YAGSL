@@ -9,7 +9,7 @@
         "containers": [
           {
             "title": "IntakeMethod",
-            "x": 768.0,
+            "x": 896.0,
             "y": 0.0,
             "width": 640.0,
             "height": 512.0,
@@ -22,10 +22,10 @@
           },
           {
             "title": "Auto Chooser",
-            "x": 128.0,
+            "x": 0.0,
             "y": 0.0,
-            "width": 640.0,
-            "height": 512.0,
+            "width": 384.0,
+            "height": 384.0,
             "type": "ComboBox Chooser",
             "properties": {
               "topic": "/SmartDashboard/Auto Chooser",

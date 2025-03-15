@@ -234,10 +234,30 @@ public class EndEffectorSubsystem extends SubsystemBase {
       }
   }
 
+  public BooleanSupplier hasCoralSupplier(){
+    if(intakeSensor.getRange() > EndEffectorConstants.kEndEffectorTOFDetectionValue){
+      return ()-> false;
+    }else{
+      return ()-> true;
+    }
+}
+
+public BooleanSupplier endHP_CMD(){
+  if(hasCoral() && isAtStowSetpoint()){
+    return ()-> true;
+  }else
+    return ()-> false;
+
+}
+
   //Is At Setpoint?
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/IsAtSetpoint?")
   public BooleanSupplier isAtSetpoint(){
     return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < 0.05;
+  }
+
+  public boolean isAtStowSetpoint(){
+    return Math.abs(getPivotPosition() - SetpointConstants.kStowEndEffectorSetpoint) < 0.05;
   }
 
   // Get Pivot Position

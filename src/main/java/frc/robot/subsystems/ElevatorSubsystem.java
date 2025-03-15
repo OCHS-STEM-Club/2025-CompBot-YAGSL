@@ -197,7 +197,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public Command normalRobotSpeed() {
-      return Commands.run(() -> {
+      return Commands.runOnce(() -> {
         SpeedConstants.kCurrentRobotTranslationSpeed = SpeedConstants.kNormalRobotTranslationSpeed;
         SpeedConstants.kCurrentRobotRotationSpeed = SpeedConstants.kNormalRobotRotationSpeed;
       });
@@ -210,11 +210,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorLeftLeaderMotor.setPosition(0);
       }
 
-      if(getElevatorPositionRotations() > 6){
-        this.reduceRobotSpeed().schedule();
-      }else{
-        this.normalRobotSpeed().schedule();
-      }
 
     }
 

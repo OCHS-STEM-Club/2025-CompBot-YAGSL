@@ -123,7 +123,7 @@ public class RobotContainer
   EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem();
   ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem = new CoralGroundIntakeSubsystem();
-  ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
+  // ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 
 
 
@@ -183,8 +183,8 @@ public class RobotContainer
   LEDSubsystem m_ledSubsystem = new LEDSubsystem(m_coralGroundIntakeSubsystem, m_endEffectorSubsystem, m_elevatorSubsystem, m_swerveSubsystem,
                                                 this,this.m_GI_Intake_Sequence , this.m_HP_Intake_Sequence);
   
-  ClimberManualDown m_climberManualDown = new ClimberManualDown(m_climberSubsystem);
-  ClimberManualUp m_climberManualUp = new ClimberManualUp(m_climberSubsystem);
+  // ClimberManualDown m_climberManualDown = new ClimberManualDown(m_climberSubsystem);
+  // ClimberManualUp m_climberManualUp = new ClimberManualUp(m_climberSubsystem);
 
   CLIMB_CMD m_climb_CMD = new CLIMB_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
 
@@ -198,9 +198,10 @@ public class RobotContainer
                                                                 () -> m_driverController.getLeftX() * 1)
                                                             .withControllerRotationAxis(() -> m_driverController.getRightX() * -1)
                                                             .deadband(OperatorConstants.kDeadband)
-                                                            .scaleTranslation(SpeedConstants.kCurrentRobotTranslationSpeed)
-                                                            .scaleRotation(SpeedConstants.kCurrentRobotRotationSpeed)
+                                                            .scaleTranslation(SpeedConstants.kNormalRobotTranslationSpeed)
+                                                            .scaleRotation(SpeedConstants.kNormalRobotRotationSpeed)
                                                             .allianceRelativeControl(false);
+                                                            
 
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
@@ -218,6 +219,14 @@ public class RobotContainer
                                                             .robotRelative(true); 
 
   L4_CMD m_L4_CMD_AUTO = new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem); 
+
+
+  Command m_HP_AUTO = new HP_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem).withTimeout(8.5);
+
+  SequentialCommandGroup m_L4_JK = new SequentialCommandGroup(
+    Commands.runOnce(()->m_HP_AUTO.cancel()).withTimeout(0.1),
+    new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem) 
+  );
 
   
                                                           
@@ -243,11 +252,13 @@ public class RobotContainer
     NamedCommands.registerCommand("STOW_CMD", new ParallelCommandGroup(
                                                       new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint),
                                                       new SequentialCommandGroup(
-                                                        new WaitCommand(1),
+                                                        new WaitCommand(0.5),
                                                         new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kStowElevatorSetpoint)
                                                       )
-                                                      ).withTimeout(1));
-    NamedCommands.registerCommand("HP_CMD", new HP_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
+                                                      ).withTimeout(2));
+    NamedCommands.registerCommand("HP_CMD", m_HP_AUTO);
+    NamedCommands.registerCommand("getHopperSensor", new WaitCommand(4).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()));
+    NamedCommands.registerCommand("L4_with_canceAll", m_L4_JK);
 
 
     configureBindings();
@@ -407,12 +418,15 @@ public class RobotContainer
       DRIVER_RIGHT_TRIGGER.whileTrue(m_groundManualRollersOuttake);
       DRIVER_POV_UP.whileTrue(m_endEffectorManualIntake);
   
-      DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
+      DRIVER_Y_BUTTON.whileTrue(m_endEffectorManualOuttake);
 
       DRIVER_X_BUTTON.onTrue(Commands.runOnce(()->CommandScheduler.getInstance().cancelAll()));
 
-      m_driverController.start().whileTrue(m_climberManualUp);
-      m_driverController.back().whileTrue(m_climberManualDown);
+      // DRIVER_Y_BUTTON.whileTrue(m_swerveSubsystem.pathFindThenFollowPath_REEF_A());
+
+
+      // m_driverController.start().whileTrue(m_climberManualUp);
+      // m_driverController.back().whileTrue(m_climberManualDown);
 
 
       DRIVER_LEFT_TRIGGER.onTrue(
