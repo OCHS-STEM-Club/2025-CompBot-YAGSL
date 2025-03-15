@@ -231,24 +231,6 @@ public class SwerveSubsystem extends SubsystemBase
 
   public void setupPhotonCameras(){
 
-    // var FL_VisionEst = FL_Module_Camera.getEstimatedGlobalPose();
-    // FL_VisionEst.ifPresent(
-    //             FL_est -> {
-    //                 // Change our trust in the measurement based on the tags we can see
-    //                 var FL_estDevs = FL_Module_Camera.getEstimationStdDevs();
-
-    //                 swerveDrive.addVisionMeasurement(FL_est.estimatedPose.toPose2d(), FL_est.timestampSeconds, FL_estDevs);
-    //             });
-    
-    // var FR_VisionEst = FR_Module_Camera.getEstimatedGlobalPose();
-    // FR_VisionEst.ifPresent(
-    //             FR_est -> {
-    //                   // Change our trust in the measurement based on the tags we can see
-    //                   var FR_estDevs = FR_Module_Camera.getEstimationStdDevs();
-            
-    //                   swerveDrive.addVisionMeasurement(FR_est.estimatedPose.toPose2d(), FR_est.timestampSeconds, FR_estDevs);
-    //               });
-
     for(VisionCamera camera : camerasArray){
 
       Optional<EstimatedRobotPose> poseEst = camera.getEstimatedGlobalPose();
@@ -259,7 +241,7 @@ public class SwerveSubsystem extends SubsystemBase
 
         var stdDevs = camera.getEstimationStdDevs();
 
-        swerveDrive.addVisionMeasurement(new Pose2d(pose.estimatedPose.getX(),pose.estimatedPose.getY(), this.getHeading()),
+        swerveDrive.addVisionMeasurement(new Pose2d(pose.estimatedPose.getX(),pose.estimatedPose.getY(), pose.estimatedPose.getRotation().toRotation2d()),
                                          pose.timestampSeconds,
                                          stdDevs
                                         );

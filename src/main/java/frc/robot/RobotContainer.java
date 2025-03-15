@@ -13,6 +13,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import com.fasterxml.jackson.core.util.ReadConstrainedTextBuffer;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -111,14 +112,16 @@ public class RobotContainer
   private final Trigger DRIVER_RIGHT_BUMPER = new Trigger(m_driverController.rightBumper());
 
 
+  // Mirror Autos
+
+
+
   // Subsystem definitions
   SwerveSubsystem m_swerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve/falcon"));
   EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem();
   ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem = new CoralGroundIntakeSubsystem();
   ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
-
-
 
 
 
@@ -226,6 +229,9 @@ public class RobotContainer
   public RobotContainer()
 
   { 
+
+    
+
     NamedCommands.registerCommand("L2_CMD", new L2_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
     NamedCommands.registerCommand("L3_CMD", new L3_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
     NamedCommands.registerCommand("L4_CMD", m_L4_CMD_AUTO);
@@ -237,6 +243,7 @@ public class RobotContainer
     DriverStation.silenceJoystickConnectionWarning(true);
 
     autoChooser = AutoBuilder.buildAutoChooser();
+
     
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
