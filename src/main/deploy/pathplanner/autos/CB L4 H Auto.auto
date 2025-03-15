@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "RB to E"
+                  "pathName": "CB to H"
                 }
               },
               {
@@ -71,6 +71,6 @@
     }
   },
   "resetOdom": false,
-  "folder": "RB Autos",
+  "folder": "CB Autos",
   "choreoAuto": false
 }

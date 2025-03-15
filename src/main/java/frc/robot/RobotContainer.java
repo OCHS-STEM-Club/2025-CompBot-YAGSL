@@ -31,6 +31,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -235,9 +237,17 @@ public class RobotContainer
     NamedCommands.registerCommand("L2_CMD", new L2_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
     NamedCommands.registerCommand("L3_CMD", new L3_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
     NamedCommands.registerCommand("L4_CMD", m_L4_CMD_AUTO);
-    NamedCommands.registerCommand("EndEffector_Eject_Coral", new EndEffectorManualOuttake(m_endEffectorSubsystem).withTimeout(2));
+    NamedCommands.registerCommand("EndEffector_Eject_Coral", new EndEffectorManualOuttake(m_endEffectorSubsystem).withTimeout(1));
     NamedCommands.registerCommand("EndEffector_Stow_Until_L4", new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).until(()->m_L4_CMD_AUTO.isScheduled()));
     NamedCommands.registerCommand("GI_Stow_Until_L4", new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint).until(()->m_L4_CMD_AUTO.isScheduled()));
+    NamedCommands.registerCommand("STOW_CMD", new ParallelCommandGroup(
+                                                      new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint),
+                                                      new SequentialCommandGroup(
+                                                        new WaitCommand(1),
+                                                        new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kStowElevatorSetpoint)
+                                                      )
+                                                      ));
+
 
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
