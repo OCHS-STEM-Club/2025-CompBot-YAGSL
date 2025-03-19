@@ -123,7 +123,7 @@ public class RobotContainer
   EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem();
   ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem = new CoralGroundIntakeSubsystem();
-  // ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
+  ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 
 
 
@@ -183,8 +183,8 @@ public class RobotContainer
   LEDSubsystem m_ledSubsystem = new LEDSubsystem(m_coralGroundIntakeSubsystem, m_endEffectorSubsystem, m_elevatorSubsystem, m_swerveSubsystem,
                                                 this,this.m_GI_Intake_Sequence , this.m_HP_Intake_Sequence);
   
-  // ClimberManualDown m_climberManualDown = new ClimberManualDown(m_climberSubsystem);
-  // ClimberManualUp m_climberManualUp = new ClimberManualUp(m_climberSubsystem);
+  ClimberManualDown m_climberManualDown = new ClimberManualDown(m_climberSubsystem);
+  ClimberManualUp m_climberManualUp = new ClimberManualUp(m_climberSubsystem);
 
   CLIMB_CMD m_climb_CMD = new CLIMB_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
 
@@ -194,13 +194,13 @@ public class RobotContainer
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_swerveSubsystem.getSwerveDrive(),
-                                                                () -> m_driverController.getLeftY() * 1,
-                                                                () -> m_driverController.getLeftX() * 1)
+                                                                () -> m_driverController.getLeftY() * -1,
+                                                                () -> m_driverController.getLeftX() * -1)
                                                             .withControllerRotationAxis(() -> m_driverController.getRightX() * -1)
                                                             .deadband(OperatorConstants.kDeadband)
                                                             .scaleTranslation(SpeedConstants.kNormalRobotTranslationSpeed)
                                                             .scaleRotation(SpeedConstants.kNormalRobotRotationSpeed)
-                                                            .allianceRelativeControl(false);
+                                                            .allianceRelativeControl(true);
                                                             
 
   /**
@@ -402,31 +402,31 @@ public class RobotContainer
         })
       );
 
-     DRIVER_LEFT_BUMPER.whileTrue(
-        Commands.runOnce(() -> {
-            CommandScheduler.getInstance().cancelAll();
-            m_HP_Intake_Sequence.schedule();
-      })
-      ).whileFalse(
-        Commands.runOnce(() -> {
-          m_HP_Intake_Sequence.cancel();
-          m_endEffectorStow.schedule();
-        })
-      );
+    //  DRIVER_LEFT_BUMPER.whileTrue(
+    //     Commands.runOnce(() -> {
+    //         CommandScheduler.getInstance().cancelAll();
+    //         m_HP_Intake_Sequence.schedule();
+    //   })
+    //   ).whileFalse(
+    //     Commands.runOnce(() -> {
+    //       m_HP_Intake_Sequence.cancel();
+    //       m_endEffectorStow.schedule();
+    //     })
+    //   );
 
 
       DRIVER_RIGHT_TRIGGER.whileTrue(m_groundManualRollersOuttake);
-      DRIVER_POV_UP.whileTrue(m_endEffectorManualIntake);
+      // DRIVER_POV_UP.whileTrue(m_endEffectorManualIntake);
   
-      DRIVER_Y_BUTTON.whileTrue(m_endEffectorManualOuttake);
+      DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
 
       DRIVER_X_BUTTON.onTrue(Commands.runOnce(()->CommandScheduler.getInstance().cancelAll()));
 
-      // DRIVER_Y_BUTTON.whileTrue(m_swerveSubsystem.pathFindThenFollowPath_REEF_A());
+      DRIVER_Y_BUTTON.whileTrue(m_swerveSubsystem.sysIdDriveMotorCommand());
 
 
-      // m_driverController.start().whileTrue(m_climberManualUp);
-      // m_driverController.back().whileTrue(m_climberManualDown);
+      m_driverController.start().whileTrue(m_climberManualUp);
+      m_driverController.back().whileTrue(m_climberManualDown);
 
 
       DRIVER_LEFT_TRIGGER.onTrue(

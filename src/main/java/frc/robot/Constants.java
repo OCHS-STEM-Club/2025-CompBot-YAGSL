@@ -56,9 +56,9 @@ public final class Constants
     public static final double kDeadband = 0.1;
   
     // Swerve Feedforward Values
-    public static final double kSSwerveFeedforward = 0.2612;
-    public static final double kVSwerveFeedforward = 2.1245;
-    public static final double kASwerveFeedforward = 0.28492;
+    public static final double kSSwerveFeedforward = 0.24744;
+    public static final double kVSwerveFeedforward = 1.9568;
+    public static final double kASwerveFeedforward = 0.433;
 
     // ButtonBox Button IDs
     public static final int kButtonBox_L1_Button_Port1 = 2;
@@ -171,7 +171,7 @@ public final class Constants
 
   public static class ClimberConstants {
     public static final int kClimberMotorID = 24;
-    public static final int kClimberEncoderID = 0;
+    public static final int kClimberEncoderID = 28;
 
     public static final double kEncoderOffset = 0;
 

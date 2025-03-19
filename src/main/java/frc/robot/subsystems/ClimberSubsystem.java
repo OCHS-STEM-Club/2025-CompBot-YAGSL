@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -39,14 +40,20 @@ public class ClimberSubsystem extends SubsystemBase {
                                           .withInverted(InvertedValue.CounterClockwise_Positive))
                           .withFeedback(new FeedbackConfigs()
                                         .withFeedbackRemoteSensorID(ClimberConstants.kClimberEncoderID)
-                                        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder));
+                                        .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder))
+                          .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
+                                                      .withForwardSoftLimitEnable(true)
+                                                      .withForwardSoftLimitThreshold(0.537)
+                                                      .withReverseSoftLimitEnable(true)
+                                                      .withReverseSoftLimitThreshold(0.24));
     climberMotor.getConfigurator().apply(climberConfigs);
 
     climberEncoder = new CANcoder(ClimberConstants.kClimberEncoderID,"Drive CANivore");
     climberEncoderConfigs = new CANcoderConfiguration()
                               .withMagnetSensor(new MagnetSensorConfigs()
                                                 .withMagnetOffset(ClimberConstants.kEncoderOffset)
-                                                .withSensorDirection(SensorDirectionValue.Clockwise_Positive)); 
+                                                .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
+                                                .withAbsoluteSensorDiscontinuityPoint(0.75)); 
     climberEncoder.getConfigurator().apply(climberEncoderConfigs);
   }
 
