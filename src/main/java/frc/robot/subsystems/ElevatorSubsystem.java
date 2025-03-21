@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ElevatorConstants;
@@ -47,6 +48,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private DigitalInput elevatorBottonLimit;
   // Voltage Request
   private VoltageOut m_voltageRequest;
+
+  private Trigger m_bottomLimitTrigger;
 
 
   public ElevatorSubsystem() {
@@ -86,6 +89,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorPositionRequest = new MotionMagicVoltage(0).withSlot(0);
     // Voltage Request
     m_voltageRequest = new VoltageOut(0.0);
+
+    m_bottomLimitTrigger = new Trigger(()-> isAtBottomLimit());
 
 
     }
@@ -206,9 +211,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
       // set Elevator Zero Position
-      if (isAtBottomLimit()) {
-        elevatorLeftLeaderMotor.setPosition(0);
-      }
+      // if (isAtBottomLimit()) {
+      //   elevatorLeftLeaderMotor.setPosition(0);
+      // }
+
+      m_bottomLimitTrigger.onTrue(Commands.runOnce(()->elevatorLeftLeaderMotor.setPosition(0)));
 
 
     }

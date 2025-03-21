@@ -97,7 +97,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
 
   // Roller Intake
   public void groundRollersIntake() {
-    groundIntakeRollers.set(-GroundIntakeConstants.kGroundRollersSpeed);
+    groundIntakeRollers.set(-GroundIntakeConstants.kGroundRollersSpeedIntakeSpeed);
   }
 
   public void groundRollersIntakeSpeed(double speed) {
@@ -105,7 +105,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   }
   // Rollers Outtake
   public void groundRollersOuttake() {
-    groundIntakeRollers.set(GroundIntakeConstants.kGroundRollersSpeed);
+    groundIntakeRollers.set(GroundIntakeConstants.kGroundRollersSpeedOuttakeSpeed);
   }
   // Rollers Stop
   public void groundRollersStop() {
