@@ -49,7 +49,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Voltage Request
   private VoltageOut m_voltageRequest;
 
-  private Trigger m_bottomLimitTrigger;
+  // private Trigger m_bottomLimitTrigger;
 
 
   public ElevatorSubsystem() {
@@ -90,7 +90,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Voltage Request
     m_voltageRequest = new VoltageOut(0.0);
 
-    m_bottomLimitTrigger = new Trigger(()-> isAtBottomLimit());
+    // m_bottomLimitTrigger = new Trigger(()-> isAtBottomLimit());
+// 
+    // if (isAtBottomLimit()) {
+    //     elevatorLeftLeaderMotor.setPosition(0);
+    //   }
 
 
     }
@@ -116,7 +120,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // set Elevator Position
     public void setElevatorPosition(double height) {
       elevatorLeftLeaderMotor.setControl(elevatorPositionRequest.withPosition(height)
-          .withLimitReverseMotion(isAtBottomLimit()));
+          );
       elevatorRightFollowerMotor.setControl(elevatorFollower);
     }
 
@@ -179,10 +183,10 @@ public class ElevatorSubsystem extends SubsystemBase {
       return elevatorLeftLeaderMotor.getMotorVoltage().getValueAsDouble();
     }
 
-    @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorTemperature")
-    public double getElevatorMotorTemp(){
-      return elevatorLeftLeaderMotor.getDeviceTemp().getValueAsDouble();
-    }
+    // @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorMotors/ElevatorTemperature")
+    // public double getElevatorMotorTemp(){
+    //   return elevatorLeftLeaderMotor.getDeviceTemp().getValueAsDouble();
+    // }
 
     // is at Bottom Limit?
     @AutoLogOutput(key = "Subsystems/ElevatorSubsystem/ElevatorLimits/ElevatorIsAtBottomLimit?")
@@ -211,11 +215,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
       // set Elevator Zero Position
-      // if (isAtBottomLimit()) {
-      //   elevatorLeftLeaderMotor.setPosition(0);
-      // }
+      if (isAtBottomLimit()) {
+        elevatorLeftLeaderMotor.setPosition(0);
+      }
 
-      m_bottomLimitTrigger.onTrue(Commands.runOnce(()->elevatorLeftLeaderMotor.setPosition(0)));
+      // m_bottomLimitTrigger.whileTrue(Commands.runOnce(()->elevatorLeftLeaderMotor.setPosition(0)).withTimeout(0.002));
 
 
     }

@@ -296,11 +296,11 @@ public BooleanSupplier endHP_CMD(){
     return endEffectorPivot.getMotorVoltage().getValueAsDouble();
   }
   
-  // Get Pivot Motor Temp
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotTemperature")
-  public double getPivotMotorTemperature(){
-    return endEffectorPivot.getDeviceTemp().getValueAsDouble();
-  }
+  // // Get Pivot Motor Temp
+  // @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotTemperature")
+  // public double getPivotMotorTemperature(){
+  //   return endEffectorPivot.getDeviceTemp().getValueAsDouble();
+  // }
 
 
   // Get Intake Velocity
@@ -321,11 +321,11 @@ public BooleanSupplier endHP_CMD(){
     return endEffectorIntake.getMotorVoltage().getValueAsDouble();
   }
 
-  //Gets Intake Motor Temperature
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeTemperature")
-  public double getIntakeMotorTemperature(){
-    return endEffectorIntake.getExternalMotorTemp().getValueAsDouble();
-  }
+  // //Gets Intake Motor Temperature
+  // @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeTemperature")
+  // public double getIntakeMotorTemperature(){
+  //   return endEffectorIntake.getExternalMotorTemp().getValueAsDouble();
+  // }
 
 
 

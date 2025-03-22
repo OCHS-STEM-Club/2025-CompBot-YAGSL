@@ -64,7 +64,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     // Rollers Config
     groundIntakeRollersConfig = new TalonFXConfiguration()
                           .withMotorOutput(new MotorOutputConfigs()
-                                        .withInverted(InvertedValue.CounterClockwise_Positive)
+                                        .withInverted(InvertedValue.Clockwise_Positive)
                                         .withNeutralMode(NeutralModeValue.Brake));
                                         
     groundIntakeRollers.getConfigurator().apply(groundIntakeRollersConfig);
@@ -189,11 +189,11 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     return groundIntakePivot.getMotorVoltage().getValueAsDouble();
   }
 
-  // get Pivot Temp
-  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Pivot/Motor/PivotTemperature")
-  public double getPivotMotorTemp(){
-    return groundIntakePivot.getDeviceTemp().getValueAsDouble();
-  }
+  // // get Pivot Temp
+  // @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Pivot/Motor/PivotTemperature")
+  // public double getPivotMotorTemp(){
+  //   return groundIntakePivot.getDeviceTemp().getValueAsDouble();
+  // }
 
   // get Intake Velocity
   @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeVelocity")
@@ -213,11 +213,11 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     return groundIntakeRollers.getMotorVoltage().getValueAsDouble();
   }
 
-  // get Intake Temp
-  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeTemperature")
-  public double getIntakeMotorTemp(){
-    return groundIntakeRollers.getDeviceTemp().getValueAsDouble();
-  }
+  // // get Intake Temp
+  // @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeTemperature")
+  // public double getIntakeMotorTemp(){
+  //   return groundIntakeRollers.getDeviceTemp().getValueAsDouble();
+  // }
 
 
 

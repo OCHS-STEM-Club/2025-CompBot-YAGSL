@@ -5,22 +5,13 @@
 package frc.robot;
 
 import java.io.File;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
-import com.fasterxml.jackson.core.util.ReadConstrainedTextBuffer;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -56,6 +47,7 @@ import frc.robot.commands.Sequential.CLIMB_CMD;
 import frc.robot.commands.Sequential.HANDOFF_CMD;
 import frc.robot.commands.Sequential.STOW_CMD;
 import frc.robot.commands.Sequential.Intaking_CMDs.GI_Intake_Sequence;
+import frc.robot.commands.Sequential.Intaking_CMDs.HP_EE_Intake_Sequence;
 import frc.robot.commands.Sequential.Intaking_CMDs.HP_Intake_Sequence;
 import frc.robot.commands.Sequential.Intaking_CMDs.L1_Intake_Sequence;
 import frc.robot.commands.Sequential.Reef.L1_CMD;
@@ -86,7 +78,8 @@ public class RobotContainer
   private enum IntakeMethod{
     HP_INTAKE,
     GI_INTAKE,
-    L1_INTAKE
+    L1_INTAKE,
+    HP_EE_INTAKE
   }
   private IntakeMethod intakeMethodValue = IntakeMethod.GI_INTAKE;
 
@@ -162,6 +155,7 @@ public class RobotContainer
   public HP_Intake_Sequence m_HP_Intake_Sequence = new HP_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem,m_coralGroundIntakeSubsystem);
   public GI_Intake_Sequence m_GI_Intake_Sequence = new GI_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
   L1_Intake_Sequence m_L1_Intake_Sequence = new L1_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem); 
+  HP_EE_Intake_Sequence m_HP_EE_Intake_Sequence = new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
 
   STOW_CMD m_STOW_CMD = new STOW_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   L1_CMD m_L1_CMD = new L1_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
@@ -226,6 +220,11 @@ public class RobotContainer
   SequentialCommandGroup m_L4_JK = new SequentialCommandGroup(
     Commands.runOnce(()->m_HP_AUTO.cancel()).withTimeout(0.1),
     new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem) 
+  );
+
+  Command m_GI_Stow_Sequence = new SequentialCommandGroup(
+    new WaitCommand(0.75),
+    new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.65)
   );
 
   
@@ -304,6 +303,7 @@ public class RobotContainer
       case HP_INTAKE -> m_HP_Intake_Sequence;
       case GI_INTAKE -> m_GI_Intake_Sequence;
       case L1_INTAKE -> m_L1_Intake_Sequence;
+      case HP_EE_INTAKE -> m_HP_EE_Intake_Sequence;
     };
   }
   @AutoLogOutput(key = "General/IntakeMethod")
@@ -467,7 +467,7 @@ public class RobotContainer
           Commands.runOnce(() -> {
             m_L2_CMD.cancel();
             m_elevatorManualDown.schedule();
-            m_GI_Stow_Setpoint.schedule();
+            m_GI_Stow_Sequence.schedule();
             m_endEffectorStow.schedule();
           })
         );
@@ -482,7 +482,7 @@ public class RobotContainer
         ).whileFalse(
           Commands.runOnce(() -> {
             m_L3_CMD.cancel();
-            m_GI_Stow_Setpoint.schedule();
+            m_GI_Stow_Sequence.schedule();
             m_elevatorManualDown.schedule();
             m_endEffectorStow.schedule();
           })
@@ -500,7 +500,7 @@ public class RobotContainer
         ).whileFalse(
           Commands.runOnce(() -> {
             m_L4_CMD.cancel();
-            m_GI_Stow_Setpoint.schedule();
+            m_GI_Stow_Sequence.schedule();
             m_elevatorManualDown.schedule();
             m_endEffectorStow.schedule();
           })
@@ -552,10 +552,11 @@ public class RobotContainer
             if(intakeMethodValue == intakeMethodValue.GI_INTAKE)
               intakeMethodValue = intakeMethodValue.HP_INTAKE;
             else if(intakeMethodValue == intakeMethodValue.HP_INTAKE){
+              intakeMethodValue = intakeMethodValue.HP_EE_INTAKE;
+            }else if (intakeMethodValue == intakeMethodValue.HP_EE_INTAKE){
               intakeMethodValue = intakeMethodValue.GI_INTAKE;
             }else if(intakeMethodValue == intakeMethodValue.L1_INTAKE){
               intakeMethodValue = intakeMethodValue.HP_INTAKE;
-
             }
             
           }));
@@ -564,6 +565,7 @@ public class RobotContainer
         // Operator Elevator Manual Up
         m_operatorController2.button(OperatorConstants.kButtonBox_ELEVATOR_MANUAL_UP_Button_Port2).whileTrue(
           Commands.run(() -> {
+            CommandScheduler.getInstance().cancelAll();
             m_elevatorManualUp.schedule();
           })
         ).whileFalse(
@@ -575,6 +577,7 @@ public class RobotContainer
         // Operator Elevator Manual Down
         m_operatorController1.button(OperatorConstants.kButtonBox_ELEVATOR_MANUAL_DOWN_Button_Port1).whileTrue(
           Commands.run(() -> {
+            CommandScheduler.getInstance().cancelAll();
             m_elevatorManualDown.schedule();
           })
         ).whileFalse(

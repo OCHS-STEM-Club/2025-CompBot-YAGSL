@@ -93,11 +93,11 @@ public class ClimberSubsystem extends SubsystemBase {
     return climberMotor.getMotorVoltage().getValueAsDouble();
   }
 
-  // get Intake Temp
-  @AutoLogOutput(key  = "Subsystems/ClimberSubsystem/Motor/ClimberTemperature")
-  public double getIntakeMotorTemp(){
-    return climberMotor.getDeviceTemp().getValueAsDouble();
-  }
+  // // get Intake Temp
+  // @AutoLogOutput(key  = "Subsystems/ClimberSubsystem/Motor/ClimberTemperature")
+  // public double getIntakeMotorTemp(){
+  //   return climberMotor.getDeviceTemp().getValueAsDouble();
+  // }
 
   @AutoLogOutput(key  = "Subsystems/ClimberSubsystem/Position/ClimberPosition")
   public double getPivotPosition(){
