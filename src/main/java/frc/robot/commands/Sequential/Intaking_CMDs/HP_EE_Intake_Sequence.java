@@ -34,8 +34,8 @@ public class HP_EE_Intake_Sequence extends SequentialCommandGroup {
 
     addCommands(
     new ParallelCommandGroup(
-                 new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kL1ElevatorSetpoint), 
-                 new WaitUntilCommand(m_elevatorSubsystem.isAtSetpoint()).andThen(new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kL1EndEffectorSetpoint)),
-                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.6)));
+                m_endEffectorSubsystem.intakeWithTOF(),
+                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, 0.65),
+                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint)).until(()->m_endEffectorSubsystem.hasCoral()));
   }
 }

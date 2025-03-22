@@ -103,9 +103,9 @@ public final class Constants
     // Pivot Current Limits
     public static final double kEndEffectorPivotCurrentLimit = 40;
     //End Effector Motion Magic Values
-    public static final double kEndEffectorPivotMotionMagicCruiseVelocity = 2185;
-    public static final double kEndEffectorPivotMotionMagicAcceleration = 1000;
-    public static final double kEndEffectorPivotMotionMagicJerk = 1700;
+    public static final double kEndEffectorPivotMotionMagicCruiseVelocity = 10;
+    public static final double kEndEffectorPivotMotionMagicAcceleration = 3;
+    public static final double kEndEffectorPivotMotionMagicJerk = 1600;
     // Soft Limit Values
     public static final double kEndEffectorFowardSoftLimit = 0.8;
     public static final double kEndEffectorReverseSoftLimit = 0.15;
@@ -150,7 +150,7 @@ public final class Constants
     public static final int kHopperBeamBreakPort = 9;
     
     public static final double kGroundRollersSpeedIntakeSpeed = 0.5;
-    public static final double kGroundRollersSpeedOuttakeSpeed = 0.75;
+    public static final double kGroundRollersSpeedOuttakeSpeed = 0.6;
     public static final double kGroundPivotSpeed = 0.3;
 
     public static final double kGroundPivotPIDValueP = 30;
@@ -188,7 +188,7 @@ public final class Constants
     public static final double kL2ElevatorSetpoint = 7.166; 
     public static final double kL2EndEffectorSetpoint = 0.17; 
 
-    public static final double kL3ElevatorSetpoint = 12.218; 
+    public static final double kL3ElevatorSetpoint = 12.18; 
     public static final double kL3EndEffectorSetpoint = 0.175;//17
 
     public static final double kL4ElevatorSetpoint = 20.370; 
@@ -201,7 +201,7 @@ public final class Constants
     public static final double kStowEndEffectorSetpoint = 0.55; 
     public static final double kStowCoralGroundIntakeSetpoint = 0.65; 
     
-    public static final double kHandoffElevatorSetpoint = 0.8; 
+    public static final double kHandoffElevatorSetpoint = 0.7; 
     public static final double kHandoffEndEffectorSetpoint = 1.01; 
 
     public static final double kBufferElevatorSetpoint = 5; 
@@ -212,7 +212,7 @@ public final class Constants
     public static final double kEndEffectorL2AlgaeRemovalSetpoint = 0.25;
     public static final double kElevatorL2AlgaeRemovalSetpoint = 4;
 
-    public static final double kEndEffectorL3AlgaeRemovalSetpoint = 0.28;
+    public static final double kEndEffectorL3AlgaeRemovalSetpoint = 0.25;
     public static final double kElevatorL3AlgaeRemovalSetpoint = 8;
 
     public static final double kElevatorClimbSetpoint = 4;
