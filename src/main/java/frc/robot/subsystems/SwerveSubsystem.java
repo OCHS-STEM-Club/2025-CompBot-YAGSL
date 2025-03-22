@@ -4,7 +4,17 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Meter;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.photonvision.EstimatedRobotPose;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -12,10 +22,11 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
+import com.pathplanner.lib.path.Waypoint;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -33,18 +44,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-import frc.robot.VisionCamera;
 import frc.robot.Constants.VisionConstants;
-
-import java.io.File;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.targeting.PhotonPipelineResult;
+import frc.robot.VisionCamera;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -88,7 +89,7 @@ public class SwerveSubsystem extends SubsystemBase
                                        VisionConstants.HP_MultiTagStdDevs);
     
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.LOW;
     try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED,
@@ -318,6 +319,27 @@ public class SwerveSubsystem extends SubsystemBase
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
         
     return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+
+  public Command onTheFlyPathGen_Reef_A(){
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        new Pose2d(2.434, 4.3, Rotation2d.fromDegrees(0)),
+        new Pose2d(3.369, 4.3, Rotation2d.fromDegrees(0)) );
+
+    PathConstraints constraints = new PathConstraints(1, 1, 2 * Math.PI, 4 * Math.PI);
+
+    PathPlannerPath Reef_A_Path = new PathPlannerPath(
+        waypoints,
+        constraints,
+        null,
+        new GoalEndState(0.0, Rotation2d.fromDegrees(0))
+    );
+
+    // Prevent the path from being flipped if the coordinates are already correct
+    Reef_A_Path.preventFlipping = true;
+
+    return AutoBuilder.followPath(Reef_A_Path);
   }
 
 

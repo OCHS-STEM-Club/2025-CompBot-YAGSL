@@ -149,7 +149,8 @@ public final class Constants
     public static final int kGroundIntakeBeamBreakPort = 8;
     public static final int kHopperBeamBreakPort = 9;
     
-    public static final double kGroundRollersSpeed = 0.5;
+    public static final double kGroundRollersSpeedIntakeSpeed = 0.5;
+    public static final double kGroundRollersSpeedOuttakeSpeed = 0.75;
     public static final double kGroundPivotSpeed = 0.3;
 
     public static final double kGroundPivotPIDValueP = 30;
