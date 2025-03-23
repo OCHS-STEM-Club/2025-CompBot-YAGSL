@@ -52,7 +52,9 @@ public class HP_Intake_Sequence extends SequentialCommandGroup {
     // addCommands(
     //   new ParallelCommandGroup(
     //     new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, 1.01).until(()-> m_endEffectorSubsystem.hasCoral()),
-    //     new Elevator_Setpoint_CMD(m_elevatorSubsystem, 5).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
+    //     new SequentialCommandGroup(
+    //         new Elevator_Setpoint_CMD(m_elevatorSubsystem, 5).withTimeout(0.5),
+    //         new Elevator_Setpoint_CMD(m_elevatorSubsystem, 5).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier())),
     //       new SequentialCommandGroup(
     //           new ParallelCommandGroup(
     //                     new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.67).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
