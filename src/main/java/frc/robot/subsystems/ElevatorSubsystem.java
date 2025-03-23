@@ -11,6 +11,7 @@ import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
@@ -79,7 +80,9 @@ public class ElevatorSubsystem extends SubsystemBase {
                           .withMotionMagic(new MotionMagicConfigs()
                                               .withMotionMagicCruiseVelocity(ElevatorConstants.kElevatorMotionMagicCruiseVelocity)
                                               .withMotionMagicAcceleration(ElevatorConstants.kElevatorMotionMagicAcceleration)
-                                              .withMotionMagicJerk(ElevatorConstants.kElevatorMotionMagicJerk));
+                                              .withMotionMagicJerk(ElevatorConstants.kElevatorMotionMagicJerk))
+                          .withCurrentLimits(new CurrentLimitsConfigs()
+                                              .withSupplyCurrentLimit(40));
 
     // Apply elevatorConfigs
     elevatorLeftLeaderMotor.getConfigurator().apply(elevatorConfigs);

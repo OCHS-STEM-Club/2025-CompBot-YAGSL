@@ -402,27 +402,17 @@ public class RobotContainer
         })
       );
 
-    //  DRIVER_LEFT_BUMPER.whileTrue(
-    //     Commands.runOnce(() -> {
-    //         CommandScheduler.getInstance().cancelAll();
-    //         m_HP_Intake_Sequence.schedule();
-    //   })
-    //   ).whileFalse(
-    //     Commands.runOnce(() -> {
-    //       m_HP_Intake_Sequence.cancel();
-    //       m_endEffectorStow.schedule();
-    //     })
-    //   );
+      DRIVER_Y_BUTTON.whileTrue(m_swerveSubsystem.pathFindThenFollowPath_REEF_A());
 
 
+      // Eject Commands
       DRIVER_RIGHT_TRIGGER.whileTrue(m_groundManualRollersOuttake);
-      // DRIVER_POV_UP.whileTrue(m_endEffectorManualIntake);
-  
       DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
 
+      // Cancel All Commands
       DRIVER_X_BUTTON.onTrue(Commands.runOnce(()->CommandScheduler.getInstance().cancelAll()));
 
-      DRIVER_Y_BUTTON.whileTrue(m_swerveSubsystem.sysIdDriveMotorCommand());
+      
 
 
       m_driverController.start().whileTrue(m_climberManualUp);

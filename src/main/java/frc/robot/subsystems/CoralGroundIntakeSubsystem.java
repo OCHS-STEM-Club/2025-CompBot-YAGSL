@@ -9,6 +9,7 @@ import java.util.function.BooleanSupplier;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -65,7 +66,9 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     groundIntakeRollersConfig = new TalonFXConfiguration()
                           .withMotorOutput(new MotorOutputConfigs()
                                         .withInverted(InvertedValue.Clockwise_Positive)
-                                        .withNeutralMode(NeutralModeValue.Brake));
+                                        .withNeutralMode(NeutralModeValue.Brake))
+                          .withCurrentLimits(new CurrentLimitsConfigs()
+                                          .withSupplyCurrentLimit(20));
                                         
     groundIntakeRollers.getConfigurator().apply(groundIntakeRollersConfig);
 
@@ -87,7 +90,9 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
                                           .withKD(GroundIntakeConstants.kGroundPivotPIDValueD)
                                           .withGravityType(GravityTypeValue.Arm_Cosine))
                           .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
-                                            .withContinuousWrap(true));;
+                                            .withContinuousWrap(true))
+                          .withCurrentLimits(new CurrentLimitsConfigs()
+                                          .withSupplyCurrentLimit(40)); // TODO: Test is this too little
 
     groundIntakePivot.getConfigurator().apply(groundIntakePivotConfig);
 

@@ -6,9 +6,11 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.ColorFlowAnimation;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 import com.ctre.phoenix.led.StrobeAnimation;
+import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
@@ -28,6 +30,8 @@ public class LEDSubsystem extends SubsystemBase {
   private HP_Intake_Sequence m_HP_Intake_Sequence;
 
   private CANdle m_CANdle;
+
+  private CANdleConfiguration m_CANdleConfiguration;
 
   public enum LED_States {
     EE_Has_Coral,
@@ -57,6 +61,14 @@ public class LEDSubsystem extends SubsystemBase {
     m_HP_Intake_Sequence = HP_Intake_Sequence;
 
     m_CANdle = new CANdle(LEDConstants.kCANdiID);
+
+    m_CANdleConfiguration = new CANdleConfiguration();
+
+    m_CANdleConfiguration.vBatOutputMode = VBatOutputMode.Off;
+
+    m_CANdle.getAllConfigs(m_CANdleConfiguration);
+                              
+    
   }
 
   public void setCANdle(LED_States toChange){
