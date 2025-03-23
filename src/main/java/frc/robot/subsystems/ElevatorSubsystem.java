@@ -218,11 +218,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
       // set Elevator Zero Position
-      if (isAtBottomLimit()) {
+      if (isAtBottomLimit() && getElevatorPositionRotations() != 0) {
         elevatorLeftLeaderMotor.setPosition(0);
       }
 
-      // m_bottomLimitTrigger.whileTrue(Commands.runOnce(()->elevatorLeftLeaderMotor.setPosition(0)).withTimeout(0.002));
+
 
 
     }

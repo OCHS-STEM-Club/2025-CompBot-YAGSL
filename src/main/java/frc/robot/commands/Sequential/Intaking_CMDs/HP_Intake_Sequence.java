@@ -4,13 +4,10 @@
 
 package frc.robot.commands.Sequential.Intaking_CMDs;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.SetpointConstants;
-import frc.robot.commands.Functions.Coral_Intake_CMD;
 import frc.robot.commands.Manual.GroundIntake.Rollers.GroundManualRollersIntake;
 import frc.robot.commands.Sequential.HANDOFF_CMD;
 import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
@@ -50,6 +47,22 @@ public class HP_Intake_Sequence extends SequentialCommandGroup {
                         new GroundManualRollersIntake(m_coralGroundIntakeSubsystem).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier())),
               Commands.run(()-> m_handoffCMD.schedule())
           )));
+
+
+    // addCommands(
+    //   new ParallelCommandGroup(
+    //     new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, 1.01).until(()-> m_endEffectorSubsystem.hasCoral()),
+    //     new Elevator_Setpoint_CMD(m_elevatorSubsystem, 5).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
+    //       new SequentialCommandGroup(
+    //           new ParallelCommandGroup(
+    //                     new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.67).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
+    //                     new GroundManualRollersIntake(m_coralGroundIntakeSubsystem).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier())),
+    //           new ParallelCommandGroup( 
+    //             new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kBufferCoralGroundIntakeSetpoint).until(()-> m_endEffectorSubsystem.hasCoral()),
+    //             new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kHandoffElevatorSetpoint).until(()-> m_endEffectorSubsystem.hasCoral()),
+    //             m_endEffectorSubsystem.intakeWithTOF().until(()-> m_endEffectorSubsystem.hasCoral())
+    //           )
+    //       )));
     
 
 }
