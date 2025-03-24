@@ -99,7 +99,7 @@ public final class Constants
     public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 1; 
     // Sensor Configs
     public static final double kSensorToMechanismRatio = 1;
-    public static final double kRotorToSensorRatio = 24.9;
+    public static final double kRotorToSensorRatio = 20.5; // TODO: Change Setpoints based on this value
     // Pivot Current Limits
     public static final double kEndEffectorPivotCurrentLimit = 40;
     //End Effector Motion Magic Values
@@ -180,44 +180,44 @@ public final class Constants
 
   }
 
-  public static class SetpointConstants{
-
+  public static class SetpointConstants{ // Change EE Values to match new gear ratio
+    // L1
     public static final double kL1ElevatorSetpoint = 0; 
     public static final double kL1EndEffectorSetpoint = 0.296875; 
-
+    // L2
     public static final double kL2ElevatorSetpoint = 7.166; 
     public static final double kL2EndEffectorSetpoint = 0.17; 
-
+    // L3
     public static final double kL3ElevatorSetpoint = 12.18; 
     public static final double kL3EndEffectorSetpoint = 0.175;//17
-
+    // L4
     public static final double kL4ElevatorSetpoint = 20.370; 
     public static final double kL4EndEffectorSetpoint = 0.16;//0.1445;
-
+    // HP
     public static final double kHPElevatorSetpoint = 3.05; 
     public static final double kHPEndEffectorSetpoint = 0.643; 
-
+    // STOW
     public static final double kStowElevatorSetpoint = 0; 
     public static final double kStowEndEffectorSetpoint = 0.55; 
     public static final double kStowCoralGroundIntakeSetpoint = 0.65; 
-    
+    // Handoff
     public static final double kHandoffElevatorSetpoint = 0.7; 
     public static final double kHandoffEndEffectorSetpoint = 1.01; 
-
+    // Buffer
     public static final double kBufferElevatorSetpoint = 5; 
     public static final double kBufferCoralGroundIntakeSetpoint = 0.5; 
-
+    // GI Setpoints
     public static final double kCoralIntakeSetpoint = 0.39;
-
+    // DA2
     public static final double kEndEffectorL2AlgaeRemovalSetpoint = 0.25;
     public static final double kElevatorL2AlgaeRemovalSetpoint = 4;
-
+    // DA3
     public static final double kEndEffectorL3AlgaeRemovalSetpoint = 0.25;
     public static final double kElevatorL3AlgaeRemovalSetpoint = 8;
-
+    // Climb
     public static final double kElevatorClimbSetpoint = 4;
 
-
+    // EE HP
     public static final double kEndEffectorHPIntakeSetpoint = 0.7;
     public static final double kElevatorHPIntakeSetpoint = 5;
 
