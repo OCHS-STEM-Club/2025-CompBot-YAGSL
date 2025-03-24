@@ -109,7 +109,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                               .withInverted(InvertedValue.CounterClockwise_Positive)
                                               .withNeutralMode(NeutralModeValue.Brake))
                         .withCommutation(new CommutationConfigs()
-                                              .withMotorArrangement(MotorArrangementValue.Minion_JST));
+                                              .withMotorArrangement(MotorArrangementValue.Minion_JST))
+                        .withCurrentLimits(new CurrentLimitsConfigs()
+                                              .withSupplyCurrentLimit(15));
 
     // Apply Intake Configs
     endEffectorIntake.getConfigurator().apply(intakeConfigs);

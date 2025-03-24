@@ -5,6 +5,7 @@
   "pathFolders": [
     "Center",
     "Left",
+    "Reef Paths",
     "Right"
   ],
   "autoFolders": [
@@ -12,19 +13,19 @@
     "Left Autos",
     "Right Autos"
   ],
-  "defaultMaxVel": 0.5,
-  "defaultMaxAccel": 0.5,
+  "defaultMaxVel": 1.0,
+  "defaultMaxAccel": 1.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
   "defaultNominalVoltage": 12.0,
-  "robotMass": 51.2559,
+  "robotMass": 74.088,
   "robotMOI": 6.883,
   "robotTrackwidth": 0.546,
   "driveWheelRadius": 0.051,
   "driveGearing": 5.143,
-  "maxDriveSpeed": 5.944,
+  "maxDriveSpeed": 4.7,
   "driveMotorType": "krakenX60",
-  "driveCurrentLimit": 40.0,
+  "driveCurrentLimit": 120.0,
   "wheelCOF": 1.2,
   "flModuleX": 0.3572002,
   "flModuleY": 0.3572002,
