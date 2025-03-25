@@ -44,6 +44,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.VisionCamera;
 import swervelib.SwerveController;
@@ -71,6 +72,7 @@ public class SwerveSubsystem extends SubsystemBase
 
   public SwerveSubsystem(File directory)
   {
+    
 
 
     camerasArray[0] = new VisionCamera(VisionConstants.FL_Module_Camera_Name,
@@ -111,6 +113,7 @@ public class SwerveSubsystem extends SubsystemBase
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
 //    swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
     setupPathPlanner();
+    
 
 
   }

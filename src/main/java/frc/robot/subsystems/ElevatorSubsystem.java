@@ -201,19 +201,6 @@ public class ElevatorSubsystem extends SubsystemBase {
       }
     }
 
-    public Command reduceRobotSpeed() {
-      return Commands.run(() -> {
-        SpeedConstants.kCurrentRobotTranslationSpeed = SpeedConstants.kReducedRobotTranslationSpeed;
-        SpeedConstants.kCurrentRobotRotationSpeed = SpeedConstants.kReducedRobotRotationSpeed;
-      });
-    }
-
-    public Command normalRobotSpeed() {
-      return Commands.runOnce(() -> {
-        SpeedConstants.kCurrentRobotTranslationSpeed = SpeedConstants.kNormalRobotTranslationSpeed;
-        SpeedConstants.kCurrentRobotRotationSpeed = SpeedConstants.kNormalRobotRotationSpeed;
-      });
-    }
 
     @Override
     public void periodic() {

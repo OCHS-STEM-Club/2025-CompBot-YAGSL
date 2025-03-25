@@ -194,7 +194,8 @@ public class RobotContainer
                                                             .deadband(OperatorConstants.kDeadband)
                                                             .scaleTranslation(SpeedConstants.kNormalRobotTranslationSpeed)
                                                             .scaleRotation(SpeedConstants.kNormalRobotRotationSpeed)
-                                                            .allianceRelativeControl(true);
+                                                            .allianceRelativeControl(true)
+                                                            ;
                                                             
 
   /**
@@ -269,6 +270,8 @@ public class RobotContainer
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     m_swerveSubsystem.replaceSwerveModuleFeedforward(OperatorConstants.kSSwerveFeedforward, OperatorConstants.kVSwerveFeedforward, OperatorConstants.kASwerveFeedforward);
+
+    
   }
 
 
@@ -402,17 +405,27 @@ public class RobotContainer
         })
       );
 
-      DRIVER_Y_BUTTON.whileTrue(m_swerveSubsystem.pathFindThenFollowPath_REEF_A());
+    //  DRIVER_LEFT_BUMPER.whileTrue(
+    //     Commands.runOnce(() -> {
+    //         CommandScheduler.getInstance().cancelAll();
+    //         m_HP_Intake_Sequence.schedule();
+    //   })
+    //   ).whileFalse(
+    //     Commands.runOnce(() -> {
+    //       m_HP_Intake_Sequence.cancel();
+    //       m_endEffectorStow.schedule();
+    //     })
+    //   );
 
 
-      // Eject Commands
       DRIVER_RIGHT_TRIGGER.whileTrue(m_groundManualRollersOuttake);
+      // DRIVER_POV_UP.whileTrue(m_endEffectorManualIntake);
+  
       DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
 
-      // Cancel All Commands
       DRIVER_X_BUTTON.onTrue(Commands.runOnce(()->CommandScheduler.getInstance().cancelAll()));
 
-      
+      DRIVER_Y_BUTTON.whileTrue(m_swerveSubsystem.sysIdDriveMotorCommand());
 
 
       m_driverController.start().whileTrue(m_climberManualUp);
@@ -472,8 +485,8 @@ public class RobotContainer
         ).whileFalse(
           Commands.runOnce(() -> {
             m_L3_CMD.cancel();
-            m_GI_Stow_Sequence.schedule();
             m_elevatorManualDown.schedule();
+            m_GI_Stow_Sequence.schedule();
             m_endEffectorStow.schedule();
           })
         );

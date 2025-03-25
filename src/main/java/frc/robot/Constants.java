@@ -39,14 +39,9 @@ public final class Constants
 
   public static class SpeedConstants{
     // Robot Speed
-    public static double kCurrentRobotTranslationSpeed = 0.4;
-    public static double kCurrentRobotRotationSpeed = 1;
 
-    public static final double kNormalRobotTranslationSpeed = 0.4;
+    public static final double kNormalRobotTranslationSpeed = 0.7;
     public static final double kNormalRobotRotationSpeed = 1;
-
-    public static final double kReducedRobotTranslationSpeed = 0.1;
-    public static final double kReducedRobotRotationSpeed = 0.25;
     
     public static final double kRobotNudgeSpeed = 0.15;
   }
@@ -99,12 +94,12 @@ public final class Constants
     public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 1; 
     // Sensor Configs
     public static final double kSensorToMechanismRatio = 1;
-    public static final double kRotorToSensorRatio = 20.5; // TODO: Change Setpoints based on this value
+    public static final double kRotorToSensorRatio = 24.9; // TODO: Change Setpoints based on this value
     // Pivot Current Limits
     public static final double kEndEffectorPivotCurrentLimit = 40;
     //End Effector Motion Magic Values
-    public static final double kEndEffectorPivotMotionMagicCruiseVelocity = 10;
-    public static final double kEndEffectorPivotMotionMagicAcceleration = 3;
+    public static final double kEndEffectorPivotMotionMagicCruiseVelocity = 5;
+    public static final double kEndEffectorPivotMotionMagicAcceleration = 2;
     public static final double kEndEffectorPivotMotionMagicJerk = 1600;
     // Soft Limit Values
     public static final double kEndEffectorFowardSoftLimit = 0.8;
@@ -159,8 +154,8 @@ public final class Constants
 
     public static final double kGroundIntakePivotFeedForward = 0.022094;
     
-    public static final double kGroundIntakePivotMotionMagicCruiseVelocity = 5461;
-    public static final double kGroundIntakePivotMotionMagicAcceleration = 6425;
+    public static final double kGroundIntakePivotMotionMagicCruiseVelocity = 100;
+    public static final double kGroundIntakePivotMotionMagicAcceleration = 10;
     public static final double kGroundIntakePivotMotionMagicJerk = 0;
 
     public static final double kGroundIntakeEncoderOffset = 0;
@@ -185,8 +180,8 @@ public final class Constants
     public static final double kL1ElevatorSetpoint = 0; 
     public static final double kL1EndEffectorSetpoint = 0.296875; 
     // L2
-    public static final double kL2ElevatorSetpoint = 7.166; 
-    public static final double kL2EndEffectorSetpoint = 0.17; 
+    public static final double kL2ElevatorSetpoint = 7.25; 
+    public static final double kL2EndEffectorSetpoint = 0.175; 
     // L3
     public static final double kL3ElevatorSetpoint = 12.18; 
     public static final double kL3EndEffectorSetpoint = 0.175;//17
@@ -210,10 +205,10 @@ public final class Constants
     public static final double kCoralIntakeSetpoint = 0.39;
     // DA2
     public static final double kEndEffectorL2AlgaeRemovalSetpoint = 0.25;
-    public static final double kElevatorL2AlgaeRemovalSetpoint = 4;
+    public static final double kElevatorL2AlgaeRemovalSetpoint = 4.3;
     // DA3
     public static final double kEndEffectorL3AlgaeRemovalSetpoint = 0.25;
-    public static final double kElevatorL3AlgaeRemovalSetpoint = 8;
+    public static final double kElevatorL3AlgaeRemovalSetpoint = 8.3;
     // Climb
     public static final double kElevatorClimbSetpoint = 4;
 
