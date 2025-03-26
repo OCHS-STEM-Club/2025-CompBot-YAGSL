@@ -456,7 +456,10 @@ public class RobotContainer
       DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
 
       // Cancel All Commands
-      DRIVER_X_BUTTON.onTrue(Commands.runOnce(()->CommandScheduler.getInstance().cancelAll()));
+      DRIVER_X_BUTTON.whileTrue(Commands.run(()->CommandScheduler.getInstance().cancelAll()));
+
+      // Override Intake Command
+      DRIVER_LEFT_BUMPER.whileTrue(m_endEffectorManualIntake);
 
       
       // Climber Commands
@@ -492,7 +495,7 @@ public class RobotContainer
       // Operator L2
         m_operatorController1.button(OperatorConstants.kButtonBox_L2_Button_Port1).whileTrue(
           Commands.run(() -> {
-            CommandScheduler.getInstance().cancelAll();
+            m_elevatorManualDown.cancel();
             m_GI_STOW_CMD.schedule();
             m_L2_CMD.schedule();
           })
@@ -508,7 +511,7 @@ public class RobotContainer
         // Operator L3
         m_operatorController1.button(OperatorConstants.kButtonBox_L3_Button_Port1).whileTrue(
           Commands.run(() -> {
-            CommandScheduler.getInstance().cancelAll();
+            m_elevatorManualDown.cancel();
             m_GI_STOW_CMD.schedule();
             m_L3_CMD.schedule();
           })
@@ -525,7 +528,7 @@ public class RobotContainer
         // Operator L4
         m_operatorController2.button(OperatorConstants.kButtonBox_L4_Button_Port2).whileTrue(
           Commands.run(() -> {
-            CommandScheduler.getInstance().cancelAll();
+            m_elevatorManualDown.cancel();
             m_GI_STOW_CMD.schedule();
             m_L4_CMD.schedule();
            
