@@ -12,6 +12,9 @@ import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 
+import edu.wpi.first.hal.simulation.DriverStationDataJNI;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.LEDConstants;
@@ -38,6 +41,7 @@ public class LEDSubsystem extends SubsystemBase {
     GI_Has_Coral,
     Algae_Removal,
     Handoff_Coral,
+    BROWNOUT,
     Stow
     
   }
@@ -89,6 +93,9 @@ public class LEDSubsystem extends SubsystemBase {
       case Stow:
         m_CANdle.animate(new ColorFlowAnimation(0, 57, 162, 255, 0.65, LEDConstants.kLEDCount, Direction.Forward)); // Philippine Blue
         break;
+      case BROWNOUT:
+        m_CANdle.setLEDs(89, 48, 1);
+        break;
     }
   }
 
@@ -102,6 +109,8 @@ public class LEDSubsystem extends SubsystemBase {
       setCANdle(LED_States.Algae_Removal);
     }else if (m_GI_Intake_Sequence.m_handoffCMD.isScheduled() || m_HP_Intake_Sequence.m_handoffCMD.isScheduled()){
       setCANdle(LED_States.Handoff_Coral);
+    }else if(RobotController.isBrownedOut()){
+      setCANdle(LED_States.BROWNOUT);
     }else{
       setCANdle(LED_States.Stow);
     }

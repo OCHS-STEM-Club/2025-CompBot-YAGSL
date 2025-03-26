@@ -12,9 +12,6 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -84,7 +81,26 @@ public class RobotContainer
     L1_INTAKE,
     HP_EE_INTAKE
   }
-  private IntakeMethod intakeMethodValue = IntakeMethod.GI_INTAKE;
+
+ private IntakeMethod intakeMethodValue = IntakeMethod.GI_INTAKE;
+
+  private enum ReefState{
+    Reef_A,
+    Reef_B,
+    Reef_C,
+    Reef_D,
+    Reef_E,
+    Reef_F,
+    Reef_G,
+    Reef_H,
+    Reef_I,
+    Reef_J,
+    Reef_K,
+    Reef_L
+  }
+
+  private ReefState reefStateValue = ReefState.Reef_A;
+ 
 
   // Controller definitions
   public CommandXboxController m_driverController = new CommandXboxController(0);
@@ -197,8 +213,7 @@ public class RobotContainer
                                                             .deadband(OperatorConstants.kDeadband)
                                                             .scaleTranslation(SpeedConstants.kNormalRobotTranslationSpeed)
                                                             .scaleRotation(SpeedConstants.kNormalRobotRotationSpeed)
-                                                            .allianceRelativeControl(true)
-                                                            ;
+                                                            .allianceRelativeControl(true);
                                                             
 
   /**
@@ -249,20 +264,22 @@ public class RobotContainer
     NamedCommands.registerCommand("L2_CMD", new L2_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
     NamedCommands.registerCommand("L3_CMD", new L3_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
     NamedCommands.registerCommand("L4_CMD", m_L4_CMD_AUTO);
+
     NamedCommands.registerCommand("EndEffector_Eject_Coral", new EndEffectorManualOuttake(m_endEffectorSubsystem).withTimeout(1));
     NamedCommands.registerCommand("EndEffector_Stow_Until_L4", new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).until(()->m_L4_CMD_AUTO.isScheduled()));
-    NamedCommands.registerCommand("GI_Stow_Until_L4", new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint));
+    NamedCommands.registerCommand("GI_Stow_Until_L4", new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint).until(()->m_L4_CMD_AUTO.isScheduled()));
+    
     NamedCommands.registerCommand("STOW_CMD", new ParallelCommandGroup(
                                                       new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint),
                                                       new SequentialCommandGroup(
-                                                        new WaitCommand(0.5),
+                                                        new WaitCommand(0.25),
                                                         new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kStowElevatorSetpoint)
                                                       )
                                                       ).withTimeout(2));
+
     NamedCommands.registerCommand("HP_CMD", m_HP_AUTO);
-    NamedCommands.registerCommand("getHopperSensor", new WaitCommand(4).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()));
-    NamedCommands.registerCommand("L4_with_canceAll", m_L4_JK);
-    NamedCommands.registerCommand("HP_EE_INTAKE", new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
+    NamedCommands.registerCommand("HP_EE_INTAKE", new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem).until(()->m_endEffectorSubsystem.hasCoral()));
+
 
 
     configureBindings();
@@ -274,8 +291,6 @@ public class RobotContainer
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     m_swerveSubsystem.replaceSwerveModuleFeedforward(OperatorConstants.kSSwerveFeedforward, OperatorConstants.kVSwerveFeedforward, OperatorConstants.kASwerveFeedforward);
-
-    
   }
 
 
@@ -313,10 +328,36 @@ public class RobotContainer
       case HP_EE_INTAKE -> m_HP_EE_Intake_Sequence;
     };
   }
+
+
+  private Command getDesiredReefState(){
+    return 
+    switch (reefStateValue) {
+      case Reef_A -> m_swerveSubsystem.drive_To_Reef_A();
+      case Reef_B -> m_swerveSubsystem.drive_To_Reef_B();
+      case Reef_C -> m_swerveSubsystem.drive_To_Reef_C();
+      case Reef_D -> m_swerveSubsystem.drive_To_Reef_D();
+      case Reef_E -> m_swerveSubsystem.drive_To_Reef_E();
+      case Reef_F -> m_swerveSubsystem.drive_To_Reef_F();
+      case Reef_G -> m_swerveSubsystem.drive_To_Reef_G();
+      case Reef_H -> m_swerveSubsystem.drive_To_Reef_H();
+      case Reef_I -> m_swerveSubsystem.drive_To_Reef_I();
+      case Reef_J -> m_swerveSubsystem.drive_To_Reef_J();
+      case Reef_K -> m_swerveSubsystem.drive_To_Reef_K();
+      case Reef_L -> m_swerveSubsystem.drive_To_Reef_L();
+    };
+  }
+
   @AutoLogOutput(key = "General/IntakeMethod")
   private String getIntakeMethodString(){
     return intakeMethodValue.toString();
   }
+
+  @AutoLogOutput(key = "General/ReefState")
+  private String getReefStateString(){
+    return reefStateValue.toString();
+  }
+
 
   
 
@@ -409,49 +450,28 @@ public class RobotContainer
         })
       );
 
-    //  DRIVER_LEFT_BUMPER.whileTrue(
-    //     Commands.runOnce(() -> {
-    //         CommandScheduler.getInstance().cancelAll();
-    //         m_HP_Intake_Sequence.schedule();
-    //   })
-    //   ).whileFalse(
-    //     Commands.runOnce(() -> {
-    //       m_HP_Intake_Sequence.cancel();
-    //       m_endEffectorStow.schedule();
-    //     })
-    //   );
 
-
+      // Eject Commands
       DRIVER_RIGHT_TRIGGER.whileTrue(m_groundManualRollersOuttake);
-      // DRIVER_POV_UP.whileTrue(m_endEffectorManualIntake);
-  
       DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
 
-      DRIVER_X_BUTTON.onTrue(Commands.runOnce(()->CommandScheduler.getInstance().cancelAll()));
+      // Cancel All Commands
+      DRIVER_X_BUTTON.whileTrue(Commands.run(()->CommandScheduler.getInstance().cancelAll()));
 
-
+      // Override Intake Command
       DRIVER_LEFT_BUMPER.whileTrue(m_endEffectorManualIntake);
 
-
+      
+      // Climber Commands
       m_driverController.start().whileTrue(m_climberManualUp);
       m_driverController.back().whileTrue(m_climberManualDown);
 
+      // Drive to Reef
+      DRIVER_Y_BUTTON.whileTrue(this.getDesiredReefState());
 
- 
-
-      m_operatorController1.button(8).whileTrue(m_swerveSubsystem.pathFindThenFollowPath_REEF_A());
-
-      m_operatorController1.button(9).whileTrue(m_swerveSubsystem.pathFindThenFollowPath_REEF_B());
-
-      m_operatorController2.button(4).whileTrue(m_swerveSubsystem.pathFindThenFollowPath_REEF_C());
-
-      DRIVER_LEFT_TRIGGER.onTrue(
-        Commands.runOnce(() -> {
-            CommandScheduler.getInstance().cancelAll();
-            getDesiredIntakeCMD().schedule();
-
-      })
-      );
+      // Intake Commands
+      DRIVER_LEFT_TRIGGER.onTrue(getDesiredIntakeCMD());
+      // TODO: Might Need to swap to a runOnce with cancelAll
 
 
 
@@ -475,7 +495,6 @@ public class RobotContainer
       // Operator L2
         m_operatorController1.button(OperatorConstants.kButtonBox_L2_Button_Port1).whileTrue(
           Commands.run(() -> {
-            // CommandScheduler.getInstance().cancelAll();
             m_elevatorManualDown.cancel();
             m_GI_STOW_CMD.schedule();
             m_L2_CMD.schedule();
@@ -499,8 +518,8 @@ public class RobotContainer
         ).whileFalse(
           Commands.runOnce(() -> {
             m_L3_CMD.cancel();
-            m_elevatorManualDown.schedule();
             m_GI_Stow_Sequence.schedule();
+            m_elevatorManualDown.schedule();
             m_endEffectorStow.schedule();
           })
         );
@@ -559,11 +578,6 @@ public class RobotContainer
         );
 
 
-        // m_operatorController2.button(OperatorConstants.kButtonBox_HP_Button_Port2).onTrue(
-        //   new InstantCommand(()->{
-        //     intakeMethodValue = intakeMethodValue.HP_INTAKE;
-        //   }));
-
         m_operatorController2.button(OperatorConstants.kButtonBox_GI_Button_Port2).onTrue(
           new InstantCommand(()->{
             if(intakeMethodValue == intakeMethodValue.GI_INTAKE)
@@ -620,6 +634,73 @@ public class RobotContainer
             m_endEffectorStow.schedule();
           })
         );
+
+
+
+
+      // Reef States
+      m_operatorController1.button(8).onTrue(
+          new InstantCommand(()->{
+            reefStateValue = reefStateValue.Reef_A;
+          }));
+      
+      m_operatorController1.button(9).onTrue(
+          new InstantCommand(()->{
+            reefStateValue = reefStateValue.Reef_B;
+          }));
+
+      m_operatorController2.button(4).onTrue(
+          new InstantCommand(()->{
+            reefStateValue = reefStateValue.Reef_C;
+          }));
+      
+      m_operatorController2.button(3).onTrue(
+          new InstantCommand(()->{
+            reefStateValue = reefStateValue.Reef_D;
+          }));
+          
+      m_operatorController1.button(5).onTrue(
+          new InstantCommand(()->{
+            reefStateValue = reefStateValue.Reef_E;
+          }));
+
+      m_operatorController2.button(1).onTrue(
+          new InstantCommand(()->{
+            reefStateValue = reefStateValue.Reef_F;
+          }));
+        
+      m_operatorController1.button(7).onTrue(
+          new InstantCommand(()->{
+            reefStateValue = reefStateValue.Reef_G;
+          }));
+      
+      m_operatorController1.button(4).onTrue(
+          new InstantCommand(()->{
+            reefStateValue = reefStateValue.Reef_H;
+          }));
+        
+      m_operatorController1.button(11).onTrue(
+          new InstantCommand(()->{
+            reefStateValue = reefStateValue.Reef_I;
+          }));
+        
+      m_operatorController2.button(6).onTrue(
+          new InstantCommand(()->{
+            reefStateValue = reefStateValue.Reef_J;
+          }));
+        
+      m_operatorController2.button(9).onTrue(
+          new InstantCommand(()->{
+            reefStateValue = reefStateValue.Reef_K;
+          }));
+
+      m_operatorController2.button(5).onTrue(
+          new InstantCommand(()->{
+            reefStateValue = reefStateValue.Reef_L;
+          }));
+
+
+
  
       
   }

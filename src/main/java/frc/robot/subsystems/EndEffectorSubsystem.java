@@ -47,6 +47,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.EndEffectorConstants;
 import frc.robot.Constants.GroundIntakeConstants;
 import frc.robot.Constants.SetpointConstants;
+import frc.robot.Elastic;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
 
 public class EndEffectorSubsystem extends SubsystemBase {
@@ -75,6 +76,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
   //MotionMagic Voltage Request
   private MotionMagicVoltage m_motionRequest;
+
+  Elastic.Notification TOF_Disconnected = 
+                      new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR, "TOF_Disconnected", "TOF_Disconnected!!!");
 
 
   public EndEffectorSubsystem() {
@@ -352,13 +356,12 @@ public BooleanSupplier endHP_CMD(){
 
   @Override
   public void periodic() {
-  
-  //   if(hasCoral()){
-  //     m_CANdle.setLEDs(17, 255, 0);//Green
 
-  // }else
-  //   m_CANdle.setLEDs(0, 57, 162);
   // System.out.println(this.intakeSensor.getRange());
+
+  if(intakeSensor.getRange() == 0){
+    Elastic.sendNotification(TOF_Disconnected);
+  }
   
 
 
