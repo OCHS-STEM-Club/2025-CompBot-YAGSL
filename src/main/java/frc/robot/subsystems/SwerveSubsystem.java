@@ -294,12 +294,31 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
 
-  public Command pathFindThenFollowPath_LEFT_HP_EE() {
+  public Command drive_To_Reef_A() {
     PathPlannerPath path = null;
     try {
-      path = PathPlannerPath.fromPathFile("Left HP EE Intake");
+      path = PathPlannerPath.fromPathFile("Reef_A");
     } catch (Exception e) {
-      System.out.println("Path not found");
+      System.out.println("Path not found_A");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_B() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_B");
+    } catch (Exception e) {
+      System.out.println("Path not found_B");
     }
 
     if (path == null) {
@@ -314,31 +333,13 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
 
-  public Command pathFindThenFollowPath_RIGHT_HP() {
-    PathPlannerPath path = null;
-    try {
-      path = PathPlannerPath.fromPathFile("Right HP");
-    } catch (Exception e) {
-      System.out.println("Path not found");
-    }
 
-    if (path == null) {
-      return Commands.none();
-    }
-
-    PathConstraints constraints = new PathConstraints(
-        2, 2,
-        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
-        
-    return AutoBuilder.pathfindThenFollowPath(path, constraints);
-  }
-
-  public Command pathFindThenFollowPath_REEF_C() {
+  public Command drive_To_Reef_C() {
     PathPlannerPath path = null;
     try {
       path = PathPlannerPath.fromPathFile("Reef_C");
     } catch (Exception e) {
-      System.out.println("Path not found");
+      System.out.println("Path not found_C");
     }
 
     if (path == null) {
@@ -346,18 +347,19 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     PathConstraints constraints = new PathConstraints(
-        1, 1,
+        3, 3,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
         
     return AutoBuilder.pathfindThenFollowPath(path, constraints);
   }
 
-  public Command pathFindThenFollowPath_REEF_A() {
+
+  public Command drive_To_Reef_D() {
     PathPlannerPath path = null;
     try {
-      path = PathPlannerPath.fromPathFile("Reef_A");
+      path = PathPlannerPath.fromPathFile("Reef_D");
     } catch (Exception e) {
-      System.out.println("Path not found");
+      System.out.println("Path not found_D");
     }
 
     if (path == null) {
@@ -365,18 +367,18 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     PathConstraints constraints = new PathConstraints(
-        2, 2,
+        3, 3,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
         
     return AutoBuilder.pathfindThenFollowPath(path, constraints);
   }
 
-  public Command pathFindThenFollowPath_REEF_B() {
+  public Command drive_To_Reef_E() {
     PathPlannerPath path = null;
     try {
-      path = PathPlannerPath.fromPathFile("Reef_B");
+      path = PathPlannerPath.fromPathFile("Reef_E");
     } catch (Exception e) {
-      System.out.println("Path not found");
+      System.out.println("Path not found_E");
     }
 
     if (path == null) {
@@ -384,11 +386,147 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     PathConstraints constraints = new PathConstraints(
-        2, 2,
+        3, 3,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
         
     return AutoBuilder.pathfindThenFollowPath(path, constraints);
   }
+
+  public Command drive_To_Reef_F() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_F");
+    } catch (Exception e) {
+      System.out.println("Path not found_F");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_G() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_G");
+    } catch (Exception e) {
+      System.out.println("Path not found_G");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_H() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_H");
+    } catch (Exception e) {
+      System.out.println("Path not found_H");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_I() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_I");
+    } catch (Exception e) {
+      System.out.println("Path not found_I");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_J() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_J");
+    } catch (Exception e) {
+      System.out.println("Path not found_J");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_K() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_K");
+    } catch (Exception e) {
+      System.out.println("Path not found_K");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_L() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_L");
+    } catch (Exception e) {
+      System.out.println("Path not found_L");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+
+
 
 
 
