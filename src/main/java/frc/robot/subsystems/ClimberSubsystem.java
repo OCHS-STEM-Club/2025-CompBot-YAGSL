@@ -43,7 +43,7 @@ public class ClimberSubsystem extends SubsystemBase {
                                         .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder))
                           .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                                                       .withForwardSoftLimitEnable(true)
-                                                      .withForwardSoftLimitThreshold(0.537)
+                                                      .withForwardSoftLimitThreshold(0.566)
                                                       .withReverseSoftLimitEnable(true)
                                                       .withReverseSoftLimitThreshold(0.24));
     climberMotor.getConfigurator().apply(climberConfigs);

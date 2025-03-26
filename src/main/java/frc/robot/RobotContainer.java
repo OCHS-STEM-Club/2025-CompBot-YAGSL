@@ -12,6 +12,9 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -248,7 +251,7 @@ public class RobotContainer
     NamedCommands.registerCommand("L4_CMD", m_L4_CMD_AUTO);
     NamedCommands.registerCommand("EndEffector_Eject_Coral", new EndEffectorManualOuttake(m_endEffectorSubsystem).withTimeout(1));
     NamedCommands.registerCommand("EndEffector_Stow_Until_L4", new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).until(()->m_L4_CMD_AUTO.isScheduled()));
-    NamedCommands.registerCommand("GI_Stow_Until_L4", new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint).until(()->m_L4_CMD_AUTO.isScheduled()));
+    NamedCommands.registerCommand("GI_Stow_Until_L4", new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint));
     NamedCommands.registerCommand("STOW_CMD", new ParallelCommandGroup(
                                                       new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint),
                                                       new SequentialCommandGroup(
@@ -259,6 +262,7 @@ public class RobotContainer
     NamedCommands.registerCommand("HP_CMD", m_HP_AUTO);
     NamedCommands.registerCommand("getHopperSensor", new WaitCommand(4).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()));
     NamedCommands.registerCommand("L4_with_canceAll", m_L4_JK);
+    NamedCommands.registerCommand("HP_EE_INTAKE", new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
 
 
     configureBindings();
@@ -425,12 +429,21 @@ public class RobotContainer
 
       DRIVER_X_BUTTON.onTrue(Commands.runOnce(()->CommandScheduler.getInstance().cancelAll()));
 
-      DRIVER_Y_BUTTON.whileTrue(m_swerveSubsystem.sysIdDriveMotorCommand());
+
+      DRIVER_LEFT_BUMPER.whileTrue(m_endEffectorManualIntake);
 
 
       m_driverController.start().whileTrue(m_climberManualUp);
       m_driverController.back().whileTrue(m_climberManualDown);
 
+
+ 
+
+      m_operatorController1.button(8).whileTrue(m_swerveSubsystem.pathFindThenFollowPath_REEF_A());
+
+      m_operatorController1.button(9).whileTrue(m_swerveSubsystem.pathFindThenFollowPath_REEF_B());
+
+      m_operatorController2.button(4).whileTrue(m_swerveSubsystem.pathFindThenFollowPath_REEF_C());
 
       DRIVER_LEFT_TRIGGER.onTrue(
         Commands.runOnce(() -> {
@@ -462,7 +475,8 @@ public class RobotContainer
       // Operator L2
         m_operatorController1.button(OperatorConstants.kButtonBox_L2_Button_Port1).whileTrue(
           Commands.run(() -> {
-            CommandScheduler.getInstance().cancelAll();
+            // CommandScheduler.getInstance().cancelAll();
+            m_elevatorManualDown.cancel();
             m_GI_STOW_CMD.schedule();
             m_L2_CMD.schedule();
           })
@@ -478,7 +492,7 @@ public class RobotContainer
         // Operator L3
         m_operatorController1.button(OperatorConstants.kButtonBox_L3_Button_Port1).whileTrue(
           Commands.run(() -> {
-            CommandScheduler.getInstance().cancelAll();
+            m_elevatorManualDown.cancel();
             m_GI_STOW_CMD.schedule();
             m_L3_CMD.schedule();
           })
@@ -495,7 +509,7 @@ public class RobotContainer
         // Operator L4
         m_operatorController2.button(OperatorConstants.kButtonBox_L4_Button_Port2).whileTrue(
           Commands.run(() -> {
-            CommandScheduler.getInstance().cancelAll();
+            m_elevatorManualDown.cancel();
             m_GI_STOW_CMD.schedule();
             m_L4_CMD.schedule();
            

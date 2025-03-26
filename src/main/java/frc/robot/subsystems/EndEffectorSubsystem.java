@@ -341,6 +341,11 @@ public BooleanSupplier endHP_CMD(){
   //   return m_CANdle;
   // }
 
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Intake Sensor/TOF Range")
+  public double getTOFRange(){
+    return intakeSensor.getRange();
+  }
+
 
 
   

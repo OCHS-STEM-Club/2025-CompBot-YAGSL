@@ -191,7 +191,7 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(4, 0.0, 0),
+              new PIDConstants(3.8, 0.0, 0),
               // Translation PID constants
               new PIDConstants(5, 0.0, 0.0)
               // Rotation PID constants
@@ -282,7 +282,7 @@ public class SwerveSubsystem extends SubsystemBase
   {
 // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
+        1, 1,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
 // Since AutoBuilder is configured, we can use it to build pathfinding commands
@@ -293,6 +293,64 @@ public class SwerveSubsystem extends SubsystemBase
                                      );
   }
 
+
+  public Command pathFindThenFollowPath_LEFT_HP_EE() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Left HP EE Intake");
+    } catch (Exception e) {
+      System.out.println("Path not found");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+
+  public Command pathFindThenFollowPath_RIGHT_HP() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Right HP");
+    } catch (Exception e) {
+      System.out.println("Path not found");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        2, 2,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command pathFindThenFollowPath_REEF_C() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_C");
+    } catch (Exception e) {
+      System.out.println("Path not found");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        1, 1,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
 
   public Command pathFindThenFollowPath_REEF_A() {
     PathPlannerPath path = null;
@@ -307,32 +365,34 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
+        2, 2,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command pathFindThenFollowPath_REEF_B() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_B");
+    } catch (Exception e) {
+      System.out.println("Path not found");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        2, 2,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
         
     return AutoBuilder.pathfindThenFollowPath(path, constraints);
   }
 
 
-  public Command onTheFlyPathGen_Reef_A(){
-    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-        new Pose2d(2.434, 4.3, Rotation2d.fromDegrees(0)),
-        new Pose2d(3.369, 4.3, Rotation2d.fromDegrees(0)) );
 
-    PathConstraints constraints = new PathConstraints(1, 1, 2 * Math.PI, 4 * Math.PI);
 
-    PathPlannerPath Reef_A_Path = new PathPlannerPath(
-        waypoints,
-        constraints,
-        null,
-        new GoalEndState(0.0, Rotation2d.fromDegrees(0))
-    );
-
-    // Prevent the path from being flipped if the coordinates are already correct
-    Reef_A_Path.preventFlipping = true;
-
-    return AutoBuilder.followPath(Reef_A_Path);
-  }
 
 
   /**

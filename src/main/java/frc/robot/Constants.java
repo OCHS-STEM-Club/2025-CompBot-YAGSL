@@ -79,7 +79,7 @@ public final class Constants
     public static final double kEndEffectorSpeed = 0.50;
     public static final double kPivotSpeed = 0.15;
     // End Effector TOF Detection Value
-    public static final double kEndEffectorTOFDetectionValue = 69;
+    public static final double kEndEffectorTOFDetectionValue = 85;
     // End Effector PID Values
     public static final double kEndEffectorPivotPIDValueP = 38.029;
     public static final double kEndEffectorPivotPIDValueI = 0;
@@ -204,11 +204,11 @@ public final class Constants
     // GI Setpoints
     public static final double kCoralIntakeSetpoint = 0.39;
     // DA2
-    public static final double kEndEffectorL2AlgaeRemovalSetpoint = 0.25;
-    public static final double kElevatorL2AlgaeRemovalSetpoint = 4.3;
+    public static final double kEndEffectorL2AlgaeRemovalSetpoint = 0.3;
+    public static final double kElevatorL2AlgaeRemovalSetpoint = 3.5;
     // DA3
-    public static final double kEndEffectorL3AlgaeRemovalSetpoint = 0.25;
-    public static final double kElevatorL3AlgaeRemovalSetpoint = 8.3;
+    public static final double kEndEffectorL3AlgaeRemovalSetpoint = 0.3;
+    public static final double kElevatorL3AlgaeRemovalSetpoint = 8;
     // Climb
     public static final double kElevatorClimbSetpoint = 4;
 
