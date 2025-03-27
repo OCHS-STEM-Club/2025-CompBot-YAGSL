@@ -14,6 +14,7 @@ import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualIntake;
 import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.GroundIntake_Setpoint_CMD;
+import frc.robot.commands.Setpoints_CMD.Handoff_Elevator_CMD;
 import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
@@ -42,7 +43,7 @@ public class HANDOFF_CMD extends SequentialCommandGroup {
                  new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kHandoffEndEffectorSetpoint).withTimeout(3),
                  new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kBufferCoralGroundIntakeSetpoint).withTimeout(4),
                  new SequentialCommandGroup(new WaitCommand(1),
-                                            new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kHandoffElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()),
+                                            new Handoff_Elevator_CMD(m_elevatorSubsystem).until(m_elevatorSubsystem.isAtSetpoint()),
                                             new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kBufferElevatorSetpoint).until(m_elevatorSubsystem.isAtSetpoint()),
                                             new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint)),
                  new SequentialCommandGroup(new WaitCommand(3.7),

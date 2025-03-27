@@ -94,14 +94,16 @@ public class LEDSubsystem extends SubsystemBase {
         m_CANdle.animate(new ColorFlowAnimation(0, 57, 162, 255, 0.65, LEDConstants.kLEDCount, Direction.Forward)); // Philippine Blue
         break;
       case BROWNOUT:
-        m_CANdle.setLEDs(89, 48, 1);
+        m_CANdle.setLEDs(255, 255, 0); // Brown
         break;
     }
   }
 
   @Override
   public void periodic() {
-    if(m_endEffectorSubsystem.hasCoral()){
+    if(RobotController.getBatteryVoltage() < 9){
+      setCANdle(LED_States.BROWNOUT);
+    }else if(m_endEffectorSubsystem.hasCoral()){
       setCANdle(LED_States.EE_Has_Coral);
     }else if(m_coralGroundIntakeSubsystem.getIntakeSensor()){
       setCANdle(LED_States.GI_Has_Coral);
@@ -109,11 +111,11 @@ public class LEDSubsystem extends SubsystemBase {
       setCANdle(LED_States.Algae_Removal);
     }else if (m_GI_Intake_Sequence.m_handoffCMD.isScheduled() || m_HP_Intake_Sequence.m_handoffCMD.isScheduled()){
       setCANdle(LED_States.Handoff_Coral);
-    }else if(RobotController.isBrownedOut()){
-      setCANdle(LED_States.BROWNOUT);
     }else{
       setCANdle(LED_States.Stow);
     }
+
+    
   }
 }
 

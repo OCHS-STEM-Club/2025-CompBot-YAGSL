@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -241,10 +242,15 @@ public class RobotContainer
     new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem) 
   );
 
-  Command m_GI_Stow_Sequence = new SequentialCommandGroup(
-    new WaitCommand(0.75),
-    new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.65)
-  );
+  Command m_GI_Stow_Sequence = new WaitUntilCommand(()->m_elevatorSubsystem.isAtBottomLimit()).andThen(new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint));
+
+  // Command Stow_Sequence =  new ParallelCommandGroup(
+  //                                                     new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint),
+  //                                                     new SequentialCommandGroup(
+  //                                                       new WaitCommand(0.5),
+  //                                                       m_elevatorManualDown
+  //                                                     )
+  //                                                     ).withTimeout(1.75);
 
   
                                                           
@@ -265,17 +271,18 @@ public class RobotContainer
     NamedCommands.registerCommand("L3_CMD", new L3_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem));
     NamedCommands.registerCommand("L4_CMD", m_L4_CMD_AUTO);
 
-    NamedCommands.registerCommand("EndEffector_Eject_Coral", new EndEffectorManualOuttake(m_endEffectorSubsystem).withTimeout(1));
+    NamedCommands.registerCommand("EndEffector_Eject_Coral", new EndEffectorManualOuttake(m_endEffectorSubsystem).withTimeout(0.5));
     NamedCommands.registerCommand("EndEffector_Stow_Until_L4", new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).until(()->m_L4_CMD_AUTO.isScheduled()));
     NamedCommands.registerCommand("GI_Stow_Until_L4", new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint).until(()->m_L4_CMD_AUTO.isScheduled()));
+    NamedCommands.registerCommand("GI_STOW", new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint));
     
     NamedCommands.registerCommand("STOW_CMD", new ParallelCommandGroup(
                                                       new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint),
                                                       new SequentialCommandGroup(
-                                                        new WaitCommand(0.25),
+                                                        new WaitCommand(0.5),
                                                         new Elevator_Setpoint_CMD(m_elevatorSubsystem, SetpointConstants.kStowElevatorSetpoint)
                                                       )
-                                                      ).withTimeout(2));
+                                                      ).withTimeout(1.75));
 
     NamedCommands.registerCommand("HP_CMD", m_HP_AUTO);
     NamedCommands.registerCommand("HP_EE_INTAKE", new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem).until(()->m_endEffectorSubsystem.hasCoral()));
@@ -467,10 +474,13 @@ public class RobotContainer
       m_driverController.back().whileTrue(m_climberManualDown);
 
       // Drive to Reef
-      DRIVER_Y_BUTTON.whileTrue(this.getDesiredReefState());
+      DRIVER_Y_BUTTON.whileTrue(Commands.runOnce(()->getDesiredReefState().schedule()));
 
       // Intake Commands
-      DRIVER_LEFT_TRIGGER.onTrue(getDesiredIntakeCMD());
+      DRIVER_LEFT_TRIGGER.onTrue(Commands.runOnce(()->{
+        CommandScheduler.getInstance().cancelAll();
+        getDesiredIntakeCMD().schedule();
+      }));
       // TODO: Might Need to swap to a runOnce with cancelAll
 
 
@@ -495,6 +505,7 @@ public class RobotContainer
       // Operator L2
         m_operatorController1.button(OperatorConstants.kButtonBox_L2_Button_Port1).whileTrue(
           Commands.run(() -> {
+          
             m_elevatorManualDown.cancel();
             m_GI_STOW_CMD.schedule();
             m_L2_CMD.schedule();

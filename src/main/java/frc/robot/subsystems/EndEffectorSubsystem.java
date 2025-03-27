@@ -37,6 +37,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -151,7 +152,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
     // Motion Magic motion request
     m_motionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(EndEffectorConstants.kEndEffectorFeedForward);
 
-    new EndEffector_Setpoint_CMD(this,SetpointConstants.kStowEndEffectorSetpoint);
+
+    intakeSensor.setRangingMode(RangingMode.Short, 24);
+
 
 
   }

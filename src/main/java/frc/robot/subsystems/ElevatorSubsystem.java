@@ -16,6 +16,7 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -44,7 +45,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Elevator Follower
   private Follower elevatorFollower;
   // Elevator Position Request
-  private MotionMagicVoltage elevatorPositionRequest;
+  public DynamicMotionMagicVoltage elevatorPositionRequest;
   // Bottom Limit
   private DigitalInput elevatorBottonLimit;
   // Voltage Request
@@ -55,8 +56,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public ElevatorSubsystem() {
     // Elevator Motors
-    elevatorLeftLeaderMotor = new TalonFX(ElevatorConstants.kElevatorLeftMotorID);
-    elevatorRightFollowerMotor = new TalonFX(ElevatorConstants.kElevatorRightMotorID);
+    elevatorLeftLeaderMotor = new TalonFX(ElevatorConstants.kElevatorLeftMotorID,"Drive CANivore");
+    elevatorRightFollowerMotor = new TalonFX(ElevatorConstants.kElevatorRightMotorID,"Drive CANivore");
     // Elevator Follower
     elevatorFollower = new Follower(ElevatorConstants.kElevatorLeftMotorID, false);
     elevatorRightFollowerMotor.setControl(elevatorFollower);
@@ -77,10 +78,6 @@ public class ElevatorSubsystem extends SubsystemBase {
                           .withMotorOutput(new MotorOutputConfigs()
                                               .withInverted(InvertedValue.Clockwise_Positive)
                                               .withNeutralMode(NeutralModeValue.Brake))
-                          .withMotionMagic(new MotionMagicConfigs()
-                                              .withMotionMagicCruiseVelocity(ElevatorConstants.kElevatorMotionMagicCruiseVelocity)
-                                              .withMotionMagicAcceleration(ElevatorConstants.kElevatorMotionMagicAcceleration)
-                                              .withMotionMagicJerk(ElevatorConstants.kElevatorMotionMagicJerk))
                           .withCurrentLimits(new CurrentLimitsConfigs()
                                               .withSupplyCurrentLimit(40));
 
@@ -89,15 +86,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorRightFollowerMotor.getConfigurator().apply(elevatorConfigs);
 
     // Elevator Position Request
-    elevatorPositionRequest = new MotionMagicVoltage(0).withSlot(0);
+    elevatorPositionRequest = new DynamicMotionMagicVoltage(0, 
+                                  ElevatorConstants.kElevatorMotionMagicCruiseVelocity, 
+                                  ElevatorConstants.kElevatorMotionMagicAcceleration, 
+                                  ElevatorConstants.kElevatorMotionMagicJerk).withSlot(0);
     // Voltage Request
     m_voltageRequest = new VoltageOut(0.0);
-
-    // m_bottomLimitTrigger = new Trigger(()-> isAtBottomLimit());
-// 
-    // if (isAtBottomLimit()) {
-    //     elevatorLeftLeaderMotor.setPosition(0);
-    //   }
 
 
     }
@@ -125,6 +119,12 @@ public class ElevatorSubsystem extends SubsystemBase {
       elevatorLeftLeaderMotor.setControl(elevatorPositionRequest.withPosition(height)
           );
       elevatorRightFollowerMotor.setControl(elevatorFollower);
+    }
+
+    public void setElevatorMotionMagic(double Acceleration, double Velocity, double Jerk) {
+      elevatorPositionRequest.Acceleration =  Acceleration;
+      elevatorPositionRequest.Velocity = Velocity;
+      elevatorPositionRequest.Jerk = Jerk;
     }
 
     // Defines SysID Configs

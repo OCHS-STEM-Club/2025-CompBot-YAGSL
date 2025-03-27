@@ -25,19 +25,6 @@
                 "data": {
                   "name": "GI_Stow_Until_L4"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4_CMD"
-                }
               },
               {
                 "type": "sequential",
@@ -52,10 +39,29 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "EndEffector_Eject_Coral"
+                        "name": "L4_CMD"
                       }
                     }
                   ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndEffector_Eject_Coral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4_CMD"
                 }
               }
             ]
@@ -68,35 +74,42 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "sequential",
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "HP_CMD"
-                }
-              },
-              {
-                "type": "sequential",
+                "type": "deadline",
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
+                      "type": "sequential",
                       "data": {
-                        "pathName": "Left HP"
+                        "commands": [
+                          {
+                            "type": "path",
+                            "data": {
+                              "pathName": "Left HP EE Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.5
+                            }
+                          }
+                        ]
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "getHopperSensor"
+                        "name": "HP_EE_INTAKE"
                       }
                     },
                     {
-                      "type": "path",
+                      "type": "named",
                       "data": {
-                        "pathName": "Left HP to K"
+                        "name": "GI_STOW"
                       }
                     }
                   ]
@@ -106,13 +119,25 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
+                "type": "path",
+                "data": {
+                  "pathName": "Left HP to K"
+                }
+              },
+              {
                 "type": "named",
                 "data": {
-                  "name": "L4_with_canceAll"
+                  "name": "EndEffector_Stow_Until_L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GI_Stow_Until_L4"
                 }
               },
               {
@@ -128,13 +153,38 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "EndEffector_Eject_Coral"
+                        "name": "L4_CMD"
                       }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "EndEffector_Eject_Coral"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4_CMD"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "STOW_CMD"
           }
         }
       ]
