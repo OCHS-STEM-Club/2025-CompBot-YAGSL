@@ -6,10 +6,15 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.ColorFlowAnimation;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 import com.ctre.phoenix.led.StrobeAnimation;
+import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 
+import edu.wpi.first.hal.simulation.DriverStationDataJNI;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.LEDConstants;
@@ -29,11 +34,14 @@ public class LEDSubsystem extends SubsystemBase {
 
   private CANdle m_CANdle;
 
+  private CANdleConfiguration m_CANdleConfiguration;
+
   public enum LED_States {
     EE_Has_Coral,
     GI_Has_Coral,
     Algae_Removal,
     Handoff_Coral,
+    BROWNOUT,
     Stow
     
   }
@@ -57,13 +65,21 @@ public class LEDSubsystem extends SubsystemBase {
     m_HP_Intake_Sequence = HP_Intake_Sequence;
 
     m_CANdle = new CANdle(LEDConstants.kCANdiID);
+
+    m_CANdleConfiguration = new CANdleConfiguration();
+
+    m_CANdleConfiguration.vBatOutputMode = VBatOutputMode.Off;
+
+    m_CANdle.getAllConfigs(m_CANdleConfiguration);
+                              
+    
   }
 
   public void setCANdle(LED_States toChange){
 
     switch (toChange) {
       case EE_Has_Coral:
-        m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.1, LEDConstants.kLEDCount)); // White
+        m_CANdle.setLEDs(255, 255, 255); // White
         break;
       case GI_Has_Coral:
         m_CANdle.animate(new StrobeAnimation(247, 181, 0, 255, 0.1, LEDConstants.kLEDCount)); // Traffic Yellow
@@ -77,12 +93,17 @@ public class LEDSubsystem extends SubsystemBase {
       case Stow:
         m_CANdle.animate(new ColorFlowAnimation(0, 57, 162, 255, 0.65, LEDConstants.kLEDCount, Direction.Forward)); // Philippine Blue
         break;
+      case BROWNOUT:
+        m_CANdle.setLEDs(255, 255, 0); // Brown
+        break;
     }
   }
 
   @Override
   public void periodic() {
-    if(m_endEffectorSubsystem.hasCoral()){
+    if(RobotController.getBatteryVoltage() < 9){
+      setCANdle(LED_States.BROWNOUT);
+    }else if(m_endEffectorSubsystem.hasCoral()){
       setCANdle(LED_States.EE_Has_Coral);
     }else if(m_coralGroundIntakeSubsystem.getIntakeSensor()){
       setCANdle(LED_States.GI_Has_Coral);
@@ -93,6 +114,8 @@ public class LEDSubsystem extends SubsystemBase {
     }else{
       setCANdle(LED_States.Stow);
     }
+
+    
   }
 }
 

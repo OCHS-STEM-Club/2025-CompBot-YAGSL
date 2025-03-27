@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Mobility BB"
+            "pathName": "Mobility Right"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Right Autos",
   "choreoAuto": false
 }

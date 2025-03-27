@@ -51,7 +51,7 @@ public class GI_Intake_Sequence extends SequentialCommandGroup {
           new ParallelCommandGroup(
                   new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.67).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()),
                   new SequentialCommandGroup(
-                    new WaitCommand(0.5),
+                    new WaitCommand(0.75),
                     new GroundManualRollersIntake(m_coralGroundIntakeSubsystem).until(m_coralGroundIntakeSubsystem.getHopperSensorSupplier()))),
                     Commands.run(()-> m_handoffCMD.schedule())
                  )));

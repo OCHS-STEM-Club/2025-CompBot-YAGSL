@@ -8,6 +8,8 @@ import java.util.function.BooleanSupplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -63,8 +65,10 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     // Rollers Config
     groundIntakeRollersConfig = new TalonFXConfiguration()
                           .withMotorOutput(new MotorOutputConfigs()
-                                        .withInverted(InvertedValue.CounterClockwise_Positive)
-                                        .withNeutralMode(NeutralModeValue.Brake));
+                                        .withInverted(InvertedValue.Clockwise_Positive)
+                                        .withNeutralMode(NeutralModeValue.Brake))
+                          .withCurrentLimits(new CurrentLimitsConfigs()
+                                          .withSupplyCurrentLimit(20));
                                         
     groundIntakeRollers.getConfigurator().apply(groundIntakeRollersConfig);
 
@@ -84,7 +88,11 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
                                           .withKP(GroundIntakeConstants.kGroundPivotPIDValueP)
                                           .withKI(GroundIntakeConstants.kGroundPivotPIDValueI)
                                           .withKD(GroundIntakeConstants.kGroundPivotPIDValueD)
-                                          .withGravityType(GravityTypeValue.Arm_Cosine));
+                                          .withGravityType(GravityTypeValue.Arm_Cosine))
+                          .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
+                                            .withContinuousWrap(true))
+                          .withCurrentLimits(new CurrentLimitsConfigs()
+                                          .withSupplyCurrentLimit(40)); // TODO: Test is this too little
 
     groundIntakePivot.getConfigurator().apply(groundIntakePivotConfig);
 
@@ -94,7 +102,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
 
   // Roller Intake
   public void groundRollersIntake() {
-    groundIntakeRollers.set(-GroundIntakeConstants.kGroundRollersSpeed);
+    groundIntakeRollers.set(-GroundIntakeConstants.kGroundRollersSpeedIntakeSpeed);
   }
 
   public void groundRollersIntakeSpeed(double speed) {
@@ -102,7 +110,7 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
   }
   // Rollers Outtake
   public void groundRollersOuttake() {
-    groundIntakeRollers.set(GroundIntakeConstants.kGroundRollersSpeed);
+    groundIntakeRollers.set(GroundIntakeConstants.kGroundRollersSpeedOuttakeSpeed);
   }
   // Rollers Stop
   public void groundRollersStop() {
@@ -186,11 +194,11 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     return groundIntakePivot.getMotorVoltage().getValueAsDouble();
   }
 
-  // get Pivot Temp
-  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Pivot/Motor/PivotTemperature")
-  public double getPivotMotorTemp(){
-    return groundIntakePivot.getDeviceTemp().getValueAsDouble();
-  }
+  // // get Pivot Temp
+  // @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Pivot/Motor/PivotTemperature")
+  // public double getPivotMotorTemp(){
+  //   return groundIntakePivot.getDeviceTemp().getValueAsDouble();
+  // }
 
   // get Intake Velocity
   @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeVelocity")
@@ -210,11 +218,11 @@ public class CoralGroundIntakeSubsystem extends SubsystemBase {
     return groundIntakeRollers.getMotorVoltage().getValueAsDouble();
   }
 
-  // get Intake Temp
-  @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeTemperature")
-  public double getIntakeMotorTemp(){
-    return groundIntakeRollers.getDeviceTemp().getValueAsDouble();
-  }
+  // // get Intake Temp
+  // @AutoLogOutput(key  = "Subsystems/CoralGroundIntakeSubsystem/Intake/Motor/IntakeTemperature")
+  // public double getIntakeMotorTemp(){
+  //   return groundIntakeRollers.getDeviceTemp().getValueAsDouble();
+  // }
 
 
 

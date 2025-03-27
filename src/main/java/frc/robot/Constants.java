@@ -39,14 +39,9 @@ public final class Constants
 
   public static class SpeedConstants{
     // Robot Speed
-    public static double kCurrentRobotTranslationSpeed = 0.4;
-    public static double kCurrentRobotRotationSpeed = 1;
 
-    public static final double kNormalRobotTranslationSpeed = 0.4;
+    public static final double kNormalRobotTranslationSpeed = 0.7;
     public static final double kNormalRobotRotationSpeed = 1;
-
-    public static final double kReducedRobotTranslationSpeed = 0.1;
-    public static final double kReducedRobotRotationSpeed = 0.25;
     
     public static final double kRobotNudgeSpeed = 0.15;
   }
@@ -56,9 +51,9 @@ public final class Constants
     public static final double kDeadband = 0.1;
   
     // Swerve Feedforward Values
-    public static final double kSSwerveFeedforward = 0.2612;
-    public static final double kVSwerveFeedforward = 2.1245;
-    public static final double kASwerveFeedforward = 0.28492;
+    public static final double kSSwerveFeedforward = 0.24744;
+    public static final double kVSwerveFeedforward = 1.9568;
+    public static final double kASwerveFeedforward = 0.433;
 
     // ButtonBox Button IDs
     public static final int kButtonBox_L1_Button_Port1 = 2;
@@ -84,7 +79,7 @@ public final class Constants
     public static final double kEndEffectorSpeed = 0.50;
     public static final double kPivotSpeed = 0.15;
     // End Effector TOF Detection Value
-    public static final double kEndEffectorTOFDetectionValue = 81;
+    public static final double kEndEffectorTOFDetectionValue = 85;
     // End Effector PID Values
     public static final double kEndEffectorPivotPIDValueP = 38.029;
     public static final double kEndEffectorPivotPIDValueI = 0;
@@ -99,13 +94,13 @@ public final class Constants
     public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 1; 
     // Sensor Configs
     public static final double kSensorToMechanismRatio = 1;
-    public static final double kRotorToSensorRatio = 24.9;
+    public static final double kRotorToSensorRatio = 24.9; // TODO: Change Setpoints based on this value
     // Pivot Current Limits
     public static final double kEndEffectorPivotCurrentLimit = 40;
     //End Effector Motion Magic Values
-    public static final double kEndEffectorPivotMotionMagicCruiseVelocity = 2185;
-    public static final double kEndEffectorPivotMotionMagicAcceleration = 1000;
-    public static final double kEndEffectorPivotMotionMagicJerk = 1700;
+    public static final double kEndEffectorPivotMotionMagicCruiseVelocity = 5;
+    public static final double kEndEffectorPivotMotionMagicAcceleration = 2;
+    public static final double kEndEffectorPivotMotionMagicJerk = 1600;
     // Soft Limit Values
     public static final double kEndEffectorFowardSoftLimit = 0.8;
     public static final double kEndEffectorReverseSoftLimit = 0.15;
@@ -129,11 +124,11 @@ public final class Constants
     // Sensor To Mechanism Ratio
     public static final double kElevatorSensorToMechRatio = 0.875;
     // Motion Magic Configs
-    public static final double kElevatorMotionMagicAcceleration = 40633;
-    public static final double kElevatorMotionMagicCruiseVelocity = 35633;
-    public static final double kElevatorMotionMagicJerk = 45000;
+    public static final double kElevatorMotionMagicAcceleration = 45;
+    public static final double kElevatorMotionMagicCruiseVelocity = 160;
+    public static final double kElevatorMotionMagicJerk = 1600;
     // Elevator Speed
-    public static final double kElevatorSpeed = 0.15;
+    public static final double kElevatorSpeed = 0.125;
     public static final double kElevatorVoltage = 1.2;
     // Elevator Limits
     public static final int kBottomElevatorLimitPort = 5;
@@ -149,7 +144,8 @@ public final class Constants
     public static final int kGroundIntakeBeamBreakPort = 8;
     public static final int kHopperBeamBreakPort = 9;
     
-    public static final double kGroundRollersSpeed = 0.5;
+    public static final double kGroundRollersSpeedIntakeSpeed = 0.5;
+    public static final double kGroundRollersSpeedOuttakeSpeed = 0.6;
     public static final double kGroundPivotSpeed = 0.3;
 
     public static final double kGroundPivotPIDValueP = 30;
@@ -158,8 +154,8 @@ public final class Constants
 
     public static final double kGroundIntakePivotFeedForward = 0.022094;
     
-    public static final double kGroundIntakePivotMotionMagicCruiseVelocity = 5461;
-    public static final double kGroundIntakePivotMotionMagicAcceleration = 6425;
+    public static final double kGroundIntakePivotMotionMagicCruiseVelocity = 100;
+    public static final double kGroundIntakePivotMotionMagicAcceleration = 10;
     public static final double kGroundIntakePivotMotionMagicJerk = 0;
 
     public static final double kGroundIntakeEncoderOffset = 0;
@@ -169,36 +165,61 @@ public final class Constants
     public static final double kRotorToSensorRatio = 80;
   }
 
-  public static class SetpointConstants{
+  public static class ClimberConstants {
+    public static final int kClimberMotorID = 24;
+    public static final int kClimberEncoderID = 28;
 
+    public static final double kEncoderOffset = 0;
+
+    public static final double kClimberSpeed = 0.35;
+
+  }
+
+  public static class SetpointConstants{ // Change EE Values to match new gear ratio
+    // L1
     public static final double kL1ElevatorSetpoint = 0; 
     public static final double kL1EndEffectorSetpoint = 0.296875; 
-
-    public static final double kL2ElevatorSetpoint = 7.166; 
-    public static final double kL2EndEffectorSetpoint = 0.17; 
-
-    public static final double kL3ElevatorSetpoint = 12.218; 
+    // L2
+    public static final double kL2ElevatorSetpoint = 7.25; 
+    public static final double kL2EndEffectorSetpoint = 0.175; 
+    // L3
+    public static final double kL3ElevatorSetpoint = 12.18; 
     public static final double kL3EndEffectorSetpoint = 0.175;//17
-
+    // L4
     public static final double kL4ElevatorSetpoint = 20.370; 
     public static final double kL4EndEffectorSetpoint = 0.16;//0.1445;
-
+    // HP
     public static final double kHPElevatorSetpoint = 3.05; 
     public static final double kHPEndEffectorSetpoint = 0.643; 
-
+    // STOW
     public static final double kStowElevatorSetpoint = 0; 
     public static final double kStowEndEffectorSetpoint = 0.55; 
     public static final double kStowCoralGroundIntakeSetpoint = 0.65; 
-    
-    public static final double kHandoffElevatorSetpoint = 0.8; 
+    // Handoff
+    public static final double kHandoffElevatorSetpoint = 0.7; 
     public static final double kHandoffEndEffectorSetpoint = 1.01; 
-
+    // Buffer
     public static final double kBufferElevatorSetpoint = 5; 
     public static final double kBufferCoralGroundIntakeSetpoint = 0.5; 
+    // GI Setpoints
+    public static final double kCoralIntakeSetpoint = 0.39;
+    // DA2
+    public static final double kEndEffectorL2AlgaeRemovalSetpoint = 0.3;
+    public static final double kElevatorL2AlgaeRemovalSetpoint = 3.5;
+    // DA3
+    public static final double kEndEffectorL3AlgaeRemovalSetpoint = 0.3;
+    public static final double kElevatorL3AlgaeRemovalSetpoint = 8;
+    // Climb
+    public static final double kElevatorClimbSetpoint = 4;
+
+    // EE HP
+    public static final double kEndEffectorHPIntakeSetpoint = 0.7;
+    public static final double kElevatorHPIntakeSetpoint = 5;
 
 
 
-    public static final double kSetpointThreshold = 0.75;
+
+    public static final double kSetpointThreshold = 0.25;
 
 
     
@@ -209,19 +230,27 @@ public final class Constants
 
         public static final String FL_Module_Camera_Name = "FL-Module";
         public static final Transform3d FL_Module_Camera_Transformed =
-                        new Transform3d(new Translation3d(0.21082, -0.23876, 0.2032), 
+                        new Transform3d(new Translation3d(0.21082, 0.23876, 0.2032), 
                         new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(343)));
-        public static final Matrix<N3, N1> FL_SingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-        public static final Matrix<N3, N1> FL_MultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+        public final static Matrix<N3, N1> FL_SingleTagStdDevs = VecBuilder.fill(6, 6, 8);
+        public final static Matrix<N3, N1> FL_MultiTagStdDevs = VecBuilder.fill(3, 2, 1);
 
 
         public static final String FR_Module_Camera_Name = "FR-Module";
 
         public static final Transform3d FR_Module_Camera_Transformed =
-                        new Transform3d(new Translation3d(0.21082, 0.23876, 0.2032), 
+                        new Transform3d(new Translation3d(0.21082, -0.23876, 0.2032), 
                         new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(17)));
-        public static final Matrix<N3, N1> FR_SingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-        public static final Matrix<N3, N1> FR_MultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+        public final static Matrix<N3, N1> FR_SingleTagStdDevs = VecBuilder.fill(6, 6, 8);
+        public final static Matrix<N3, N1> FR_MultiTagStdDevs = VecBuilder.fill(3, 2, 1);
+
+        public static final String HP_Module_Camera_Name = "HP-Camera";
+
+        public static final Transform3d HP_Module_Camera_Transformed = 
+                        new Transform3d(new Translation3d(Units.inchesToMeters(-6.305),Units.inchesToMeters(1.1426), Units.inchesToMeters(37.24)), 
+                        new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(30), Units.degreesToRadians(180)));
+        public final static Matrix<N3, N1> HP_SingleTagStdDevs = VecBuilder.fill(6, 6, 8);
+        public final static Matrix<N3, N1> HP_MultiTagStdDevs = VecBuilder.fill(3, 2, 1);
 
   }
 

@@ -4,7 +4,17 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.Meter;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
+
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.photonvision.EstimatedRobotPose;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -12,10 +22,12 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
+import com.pathplanner.lib.path.Waypoint;
+
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,6 +35,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -31,21 +44,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-import frc.robot.VisionCamera;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.VisionConstants;
-
-import java.io.File;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.targeting.PhotonPipelineResult;
+import frc.robot.VisionCamera;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
+import swervelib.SwerveInputStream;
 import swervelib.math.SwerveMath;
 import swervelib.parser.SwerveControllerConfiguration;
 import swervelib.parser.SwerveDriveConfiguration;
@@ -58,13 +63,17 @@ public class SwerveSubsystem extends SubsystemBase
 
   private final SwerveDrive swerveDrive;
   
-  private VisionCamera[] camerasArray = new VisionCamera[2];
+  private VisionCamera[] camerasArray = new VisionCamera[3];
 
   private boolean enableVision = true;
+
+  private SwerveInputStream m_swerveInputStream;
 
 
   public SwerveSubsystem(File directory)
   {
+    
+
 
     camerasArray[0] = new VisionCamera(VisionConstants.FL_Module_Camera_Name,
                                        VisionConstants.FL_Module_Camera_Transformed,
@@ -75,9 +84,14 @@ public class SwerveSubsystem extends SubsystemBase
                                        VisionConstants.FR_Module_Camera_Transformed,
                                        VisionConstants.FR_SingleTagStdDevs,
                                        VisionConstants.FR_MultiTagStdDevs);
+
+    camerasArray[2] = new VisionCamera(VisionConstants.HP_Module_Camera_Name,
+                                       VisionConstants.HP_Module_Camera_Transformed,
+                                       VisionConstants.HP_SingleTagStdDevs,
+                                       VisionConstants.HP_MultiTagStdDevs);
     
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.LOW;
     try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED,
@@ -93,12 +107,15 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
     swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(false,
-                                               true,
+                                               false,
                                                0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
     swerveDrive.setModuleEncoderAutoSynchronize(false,
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
 //    swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
     setupPathPlanner();
+    
+
+
   }
 
   /**
@@ -134,6 +151,8 @@ public class SwerveSubsystem extends SubsystemBase
   public void simulationPeriodic()
   {
   }
+
+
 
   /**
    * Setup AutoBuilder for PathPlanner.
@@ -172,9 +191,9 @@ public class SwerveSubsystem extends SubsystemBase
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
               // PPHolonomicController is the built in path following controller for holonomic drive trains
-              new PIDConstants(5.0, 0.0, 0.0),
+              new PIDConstants(3.8, 0.0, 0),
               // Translation PID constants
-              new PIDConstants(5.0, 0.0, 0.0)
+              new PIDConstants(5, 0.0, 0.0)
               // Rotation PID constants
           ),
           config,
@@ -210,24 +229,6 @@ public class SwerveSubsystem extends SubsystemBase
 
   public void setupPhotonCameras(){
 
-    // var FL_VisionEst = FL_Module_Camera.getEstimatedGlobalPose();
-    // FL_VisionEst.ifPresent(
-    //             FL_est -> {
-    //                 // Change our trust in the measurement based on the tags we can see
-    //                 var FL_estDevs = FL_Module_Camera.getEstimationStdDevs();
-
-    //                 swerveDrive.addVisionMeasurement(FL_est.estimatedPose.toPose2d(), FL_est.timestampSeconds, FL_estDevs);
-    //             });
-    
-    // var FR_VisionEst = FR_Module_Camera.getEstimatedGlobalPose();
-    // FR_VisionEst.ifPresent(
-    //             FR_est -> {
-    //                   // Change our trust in the measurement based on the tags we can see
-    //                   var FR_estDevs = FR_Module_Camera.getEstimationStdDevs();
-            
-    //                   swerveDrive.addVisionMeasurement(FR_est.estimatedPose.toPose2d(), FR_est.timestampSeconds, FR_estDevs);
-    //               });
-
     for(VisionCamera camera : camerasArray){
 
       Optional<EstimatedRobotPose> poseEst = camera.getEstimatedGlobalPose();
@@ -238,7 +239,7 @@ public class SwerveSubsystem extends SubsystemBase
 
         var stdDevs = camera.getEstimationStdDevs();
 
-        swerveDrive.addVisionMeasurement(new Pose2d(pose.estimatedPose.getX(),pose.estimatedPose.getY(), this.getHeading()),
+        swerveDrive.addVisionMeasurement(new Pose2d(pose.estimatedPose.getX(),pose.estimatedPose.getY(), pose.estimatedPose.getRotation().toRotation2d()),
                                          pose.timestampSeconds,
                                          stdDevs
                                         );
@@ -249,6 +250,8 @@ public class SwerveSubsystem extends SubsystemBase
 
 
   }
+
+
     
 
 
@@ -279,7 +282,7 @@ public class SwerveSubsystem extends SubsystemBase
   {
 // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
+        1, 1,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
 // Since AutoBuilder is configured, we can use it to build pathfinding commands
@@ -291,12 +294,12 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
 
-  public Command pathFindThenFollowPath_REEF_A() {
+  public Command drive_To_Reef_A() {
     PathPlannerPath path = null;
     try {
       path = PathPlannerPath.fromPathFile("Reef_A");
     } catch (Exception e) {
-      System.out.println("Path not found");
+      System.out.println("Path not found_A");
     }
 
     if (path == null) {
@@ -304,11 +307,230 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 4.0,
+        3, 3,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
         
     return AutoBuilder.pathfindThenFollowPath(path, constraints);
   }
+
+  public Command drive_To_Reef_B() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_B");
+    } catch (Exception e) {
+      System.out.println("Path not found_B");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+
+
+  public Command drive_To_Reef_C() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_C");
+    } catch (Exception e) {
+      System.out.println("Path not found_C");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+
+  public Command drive_To_Reef_D() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_D");
+    } catch (Exception e) {
+      System.out.println("Path not found_D");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_E() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_E");
+    } catch (Exception e) {
+      System.out.println("Path not found_E");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_F() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_F");
+    } catch (Exception e) {
+      System.out.println("Path not found_F");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_G() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_G");
+    } catch (Exception e) {
+      System.out.println("Path not found_G");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_H() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_H");
+    } catch (Exception e) {
+      System.out.println("Path not found_H");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_I() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_I");
+    } catch (Exception e) {
+      System.out.println("Path not found_I");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_J() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_J");
+    } catch (Exception e) {
+      System.out.println("Path not found_J");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_K() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_K");
+    } catch (Exception e) {
+      System.out.println("Path not found_K");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+  public Command drive_To_Reef_L() {
+    PathPlannerPath path = null;
+    try {
+      path = PathPlannerPath.fromPathFile("Reef_L");
+    } catch (Exception e) {
+      System.out.println("Path not found_L");
+    }
+
+    if (path == null) {
+      return Commands.none();
+    }
+
+    PathConstraints constraints = new PathConstraints(
+        3, 3,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+        
+    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+  }
+
+
+
+
+
+
+
 
 
   /**
@@ -322,7 +544,7 @@ public class SwerveSubsystem extends SubsystemBase
         SwerveDriveTest.setDriveSysIdRoutine(
             new Config(),
             this, swerveDrive, 9, true),
-        2.0, 5.0, 3.0);
+        3.0, 5.0, 3.0);
   }
 
   /**

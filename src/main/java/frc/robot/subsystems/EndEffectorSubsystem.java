@@ -37,6 +37,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -47,6 +48,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.EndEffectorConstants;
 import frc.robot.Constants.GroundIntakeConstants;
 import frc.robot.Constants.SetpointConstants;
+import frc.robot.Elastic;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
 
 public class EndEffectorSubsystem extends SubsystemBase {
@@ -75,6 +77,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
   //MotionMagic Voltage Request
   private MotionMagicVoltage m_motionRequest;
+
+  Elastic.Notification TOF_Disconnected = 
+                      new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR, "TOF_Disconnected", "TOF_Disconnected!!!");
 
 
   public EndEffectorSubsystem() {
@@ -109,7 +114,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                               .withInverted(InvertedValue.CounterClockwise_Positive)
                                               .withNeutralMode(NeutralModeValue.Brake))
                         .withCommutation(new CommutationConfigs()
-                                              .withMotorArrangement(MotorArrangementValue.Minion_JST));
+                                              .withMotorArrangement(MotorArrangementValue.Minion_JST))
+                        .withCurrentLimits(new CurrentLimitsConfigs()
+                                              .withSupplyCurrentLimit(15));
 
     // Apply Intake Configs
     endEffectorIntake.getConfigurator().apply(intakeConfigs);
@@ -134,6 +141,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                             .withRotorToSensorRatio(EndEffectorConstants.kRotorToSensorRatio))
                         .withCurrentLimits(new CurrentLimitsConfigs()
                                             .withStatorCurrentLimit(Units.Amps.of(EndEffectorConstants.kEndEffectorPivotCurrentLimit)));
+
                         
                         
     // Apply Pivot Configs
@@ -144,7 +152,9 @@ public class EndEffectorSubsystem extends SubsystemBase {
     // Motion Magic motion request
     m_motionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(EndEffectorConstants.kEndEffectorFeedForward);
 
-    new EndEffector_Setpoint_CMD(this,SetpointConstants.kStowEndEffectorSetpoint);
+
+    intakeSensor.setRangingMode(RangingMode.Short, 24);
+
 
 
   }
@@ -233,10 +243,30 @@ public class EndEffectorSubsystem extends SubsystemBase {
       }
   }
 
+  public BooleanSupplier hasCoralSupplier(){
+    if(intakeSensor.getRange() > EndEffectorConstants.kEndEffectorTOFDetectionValue){
+      return ()-> false;
+    }else{
+      return ()-> true;
+    }
+}
+
+public BooleanSupplier endHP_CMD(){
+  if(hasCoral() && isAtStowSetpoint()){
+    return ()-> true;
+  }else
+    return ()-> false;
+
+}
+
   //Is At Setpoint?
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/IsAtSetpoint?")
   public BooleanSupplier isAtSetpoint(){
     return () -> Math.abs(getPivotPosition() - getPivotSetpoint()) < 0.05;
+  }
+
+  public boolean isAtStowSetpoint(){
+    return Math.abs(getPivotPosition() - SetpointConstants.kStowEndEffectorSetpoint) < 0.05;
   }
 
   // Get Pivot Position
@@ -275,11 +305,11 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return endEffectorPivot.getMotorVoltage().getValueAsDouble();
   }
   
-  // Get Pivot Motor Temp
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotTemperature")
-  public double getPivotMotorTemperature(){
-    return endEffectorPivot.getDeviceTemp().getValueAsDouble();
-  }
+  // // Get Pivot Motor Temp
+  // @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotTemperature")
+  // public double getPivotMotorTemperature(){
+  //   return endEffectorPivot.getDeviceTemp().getValueAsDouble();
+  // }
 
 
   // Get Intake Velocity
@@ -300,11 +330,11 @@ public class EndEffectorSubsystem extends SubsystemBase {
     return endEffectorIntake.getMotorVoltage().getValueAsDouble();
   }
 
-  //Gets Intake Motor Temperature
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeTemperature")
-  public double getIntakeMotorTemperature(){
-    return endEffectorIntake.getExternalMotorTemp().getValueAsDouble();
-  }
+  // //Gets Intake Motor Temperature
+  // @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeTemperature")
+  // public double getIntakeMotorTemperature(){
+  //   return endEffectorIntake.getExternalMotorTemp().getValueAsDouble();
+  // }
 
 
 
@@ -318,19 +348,23 @@ public class EndEffectorSubsystem extends SubsystemBase {
   //   return m_CANdle;
   // }
 
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Intake Sensor/TOF Range")
+  public double getTOFRange(){
+    return intakeSensor.getRange();
+  }
+
 
 
   
 
   @Override
   public void periodic() {
-  
-  //   if(hasCoral()){
-  //     m_CANdle.setLEDs(17, 255, 0);//Green
 
-  // }else
-  //   m_CANdle.setLEDs(0, 57, 162);
   // System.out.println(this.intakeSensor.getRange());
+
+  if(intakeSensor.getRange() == 0){
+    Elastic.sendNotification(TOF_Disconnected);
+  }
   
 
 
