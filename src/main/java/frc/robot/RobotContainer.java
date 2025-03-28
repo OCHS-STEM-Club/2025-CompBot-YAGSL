@@ -470,8 +470,8 @@ public class RobotContainer
 
       
       // Climber Commands
-      m_driverController.start().whileTrue(m_climberManualUp);
-      m_driverController.back().whileTrue(m_climberManualDown);
+      m_driverController.back().whileTrue(m_climberManualUp);
+      m_driverController.start().whileTrue(m_climberManualDown);
 
       // Drive to Reef
       DRIVER_Y_BUTTON.whileTrue(Commands.runOnce(()->getDesiredReefState().schedule()));

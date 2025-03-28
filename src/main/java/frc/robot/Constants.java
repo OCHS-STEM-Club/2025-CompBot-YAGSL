@@ -79,7 +79,7 @@ public final class Constants
     public static final double kEndEffectorSpeed = 0.50;
     public static final double kPivotSpeed = 0.15;
     // End Effector TOF Detection Value
-    public static final double kEndEffectorTOFDetectionValue = 85;
+    public static final double kEndEffectorTOFDetectionValue = 75;
     // End Effector PID Values
     public static final double kEndEffectorPivotPIDValueP = 38.029;
     public static final double kEndEffectorPivotPIDValueI = 0;
@@ -197,7 +197,7 @@ public final class Constants
     public static final double kStowCoralGroundIntakeSetpoint = 0.65; 
     // Handoff
     public static final double kHandoffElevatorSetpoint = 0.7; 
-    public static final double kHandoffEndEffectorSetpoint = 1.01; 
+    public static final double kHandoffEndEffectorSetpoint = 1; 
     // Buffer
     public static final double kBufferElevatorSetpoint = 5; 
     public static final double kBufferCoralGroundIntakeSetpoint = 0.5; 
