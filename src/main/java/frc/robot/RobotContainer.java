@@ -509,6 +509,8 @@ public class RobotContainer
             m_elevatorManualDown.cancel();
             m_GI_STOW_CMD.schedule();
             m_L2_CMD.schedule();
+            m_endEffectorStow.cancel();
+            getDesiredIntakeCMD().cancel();
           })
         ).whileFalse(
           Commands.runOnce(() -> {
@@ -525,6 +527,8 @@ public class RobotContainer
             m_elevatorManualDown.cancel();
             m_GI_STOW_CMD.schedule();
             m_L3_CMD.schedule();
+            m_endEffectorStow.cancel();
+            getDesiredIntakeCMD().cancel();
           })
         ).whileFalse(
           Commands.runOnce(() -> {
@@ -542,6 +546,8 @@ public class RobotContainer
             m_elevatorManualDown.cancel();
             m_GI_STOW_CMD.schedule();
             m_L4_CMD.schedule();
+            m_endEffectorStow.cancel();
+            getDesiredIntakeCMD().cancel();
            
           })
         ).whileFalse(
