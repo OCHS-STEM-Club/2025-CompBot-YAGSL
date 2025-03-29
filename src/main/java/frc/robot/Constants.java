@@ -43,7 +43,7 @@ public final class Constants
     public static final double kNormalRobotTranslationSpeed = 0.7;
     public static final double kNormalRobotRotationSpeed = 1;
     
-    public static final double kRobotNudgeSpeed = 0.15;
+    public static final double kRobotNudgeSpeed = 0.1;
   }
   public static class OperatorConstants
   {
@@ -145,7 +145,7 @@ public final class Constants
     public static final int kHopperBeamBreakPort = 9;
     
     public static final double kGroundRollersSpeedIntakeSpeed = 0.5;
-    public static final double kGroundRollersSpeedOuttakeSpeed = 0.6;
+    public static final double kGroundRollersSpeedOuttakeSpeed = 0.45;
     public static final double kGroundPivotSpeed = 0.3;
 
     public static final double kGroundPivotPIDValueP = 30;
