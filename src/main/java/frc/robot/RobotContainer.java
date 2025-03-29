@@ -202,6 +202,8 @@ public class RobotContainer
 
   CLIMB_CMD m_climb_CMD = new CLIMB_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem);
 
+  REEF_CMD m_L1_ALT_CMD = new REEF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem, 0.3, 0);
+
 
 
   /**
@@ -500,6 +502,25 @@ public class RobotContainer
             m_endEffectorStow.schedule();
           })
         );
+
+        // Operator L1 ALT
+        m_operatorController1.button(6).whileTrue(
+          Commands.run(() -> {
+            m_elevatorManualDown.cancel();
+            m_GI_STOW_CMD.schedule();
+            m_L1_ALT_CMD.schedule();
+            m_endEffectorStow.cancel();
+            getDesiredIntakeCMD().cancel();
+          })
+        ).whileFalse(
+          Commands.runOnce(() -> {
+            m_L1_ALT_CMD.cancel();
+            m_elevatorManualDown.schedule();
+            m_GI_Stow_Sequence.schedule();
+            m_endEffectorStow.schedule();
+          })
+        );
+
 
 
       // Operator L2

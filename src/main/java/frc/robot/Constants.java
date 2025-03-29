@@ -179,6 +179,8 @@ public final class Constants
     // L1
     public static final double kL1ElevatorSetpoint = 0; 
     public static final double kL1EndEffectorSetpoint = 0.296875; 
+
+    public static final double kL1EndEffectorSetpointAlt = 0.5;
     // L2
     public static final double kL2ElevatorSetpoint = 7.25; 
     public static final double kL2EndEffectorSetpoint = 0.175; 
