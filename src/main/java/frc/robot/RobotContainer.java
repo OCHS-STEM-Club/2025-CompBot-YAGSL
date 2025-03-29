@@ -65,6 +65,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import swervelib.SwerveDrive;
 import swervelib.SwerveInputStream;
 
 /**
@@ -217,6 +218,15 @@ public class RobotContainer
                                                             .scaleTranslation(SpeedConstants.kNormalRobotTranslationSpeed)
                                                             .scaleRotation(SpeedConstants.kNormalRobotRotationSpeed)
                                                             .allianceRelativeControl(true);
+
+  SwerveInputStream driveAngularVelocity_SLOW = SwerveInputStream.of(m_swerveSubsystem.getSwerveDrive(),
+                                                                () -> m_driverController.getLeftY() * -1,
+                                                                () -> m_driverController.getLeftX() * -1)
+                                                            .withControllerRotationAxis(() -> m_driverController.getRightX() * -1)
+                                                            .deadband(OperatorConstants.kDeadband)
+                                                            .scaleTranslation(0.25)
+                                                            .scaleRotation(0.25)
+                                                            .allianceRelativeControl(true);
                                                             
 
   /**
@@ -231,7 +241,7 @@ public class RobotContainer
                                                             getXAxisPOV())
                                                             .withControllerRotationAxis(getRotAxis())
                                                             .scaleTranslation(SpeedConstants.kRobotNudgeSpeed)
-                                                           .allianceRelativeControl(false)
+                                                            .allianceRelativeControl(false)
                                                             .robotRelative(true); 
 
   L4_CMD m_L4_CMD_AUTO = new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, m_coralGroundIntakeSubsystem); 
@@ -318,6 +328,7 @@ public class RobotContainer
       if(DRIVER_POV_UP.getAsBoolean()) return 0;
       return 0;
     };
+
   }
 
   private DoubleSupplier getRotAxis(){
@@ -368,6 +379,7 @@ public class RobotContainer
   }
 
 
+
   
 
   // Method to configure bindings
@@ -377,6 +389,7 @@ public class RobotContainer
     Command driveFieldOrientedDirectAngle = m_swerveSubsystem.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = m_swerveSubsystem.driveFieldOriented(driveAngularVelocity); 
     Command driveRobotOrientedNudge = m_swerveSubsystem.driveFieldOriented(driveRobotOriented);
+    Command driveFieldOrientedAnglularVelocity_SLOW = m_swerveSubsystem.driveFieldOriented(driveAngularVelocity_SLOW);
 
 
 
@@ -459,6 +472,8 @@ public class RobotContainer
         })
       );
 
+    
+
 
       // Eject Commands
       DRIVER_RIGHT_TRIGGER.whileTrue(m_groundManualRollersOuttake);
@@ -476,7 +491,7 @@ public class RobotContainer
       m_driverController.start().whileTrue(m_climberManualDown);
 
       // Drive to Reef
-      DRIVER_Y_BUTTON.whileTrue(Commands.runOnce(()->getDesiredReefState().schedule()));
+      DRIVER_Y_BUTTON.whileTrue(driveFieldOrientedAnglularVelocity_SLOW);
 
       // Intake Commands
       DRIVER_LEFT_TRIGGER.onTrue(Commands.runOnce(()->{
@@ -532,6 +547,9 @@ public class RobotContainer
             m_L2_CMD.schedule();
             m_endEffectorStow.cancel();
             getDesiredIntakeCMD().cancel();
+            m_GI_Intake_Sequence.cancel();
+            m_HP_Intake_Sequence.cancel();
+            m_HP_EE_Intake_Sequence.cancel();
           })
         ).whileFalse(
           Commands.runOnce(() -> {
@@ -550,6 +568,9 @@ public class RobotContainer
             m_L3_CMD.schedule();
             m_endEffectorStow.cancel();
             getDesiredIntakeCMD().cancel();
+            m_GI_Intake_Sequence.cancel();
+            m_HP_Intake_Sequence.cancel();
+            m_HP_EE_Intake_Sequence.cancel();
           })
         ).whileFalse(
           Commands.runOnce(() -> {
@@ -569,6 +590,9 @@ public class RobotContainer
             m_L4_CMD.schedule();
             m_endEffectorStow.cancel();
             getDesiredIntakeCMD().cancel();
+            m_GI_Intake_Sequence.cancel();
+            m_HP_Intake_Sequence.cancel();
+            m_HP_EE_Intake_Sequence.cancel();
            
           })
         ).whileFalse(
@@ -672,6 +696,10 @@ public class RobotContainer
             m_endEffectorStow.schedule();
           })
         );
+
+
+
+
 
 
 
