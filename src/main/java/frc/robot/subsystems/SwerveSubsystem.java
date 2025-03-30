@@ -619,6 +619,20 @@ public class SwerveSubsystem extends SubsystemBase
     });
   }
 
+
+  public Command driveRobotOriented(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
+  {
+    return run(() -> {
+      // Make the robot move
+      swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
+                            translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
+                            translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 0.8),
+                        Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity(),
+                        false,
+                        false);
+    });
+  }
+
   /**
    * Command to drive the robot using translative values and heading as a setpoint.
    *

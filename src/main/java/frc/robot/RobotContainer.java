@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SetpointConstants;
 import frc.robot.Constants.SpeedConstants;
+import frc.robot.commands.Auto_Align_CMD.Left_Auto_Align_CMD;
 import frc.robot.commands.Functions.Coral_Intake_CMD;
 import frc.robot.commands.Manual.Climber.ClimberManualDown;
 import frc.robot.commands.Manual.Climber.ClimberManualUp;
@@ -491,7 +492,7 @@ public class RobotContainer
       m_driverController.start().whileTrue(m_climberManualDown);
 
       // Drive to Reef
-      DRIVER_Y_BUTTON.whileTrue(driveFieldOrientedAnglularVelocity_SLOW);
+      DRIVER_Y_BUTTON.whileTrue(new Left_Auto_Align_CMD(m_swerveSubsystem));
 
       // Intake Commands
       DRIVER_LEFT_TRIGGER.onTrue(Commands.runOnce(()->{
