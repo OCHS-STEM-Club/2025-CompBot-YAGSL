@@ -178,7 +178,7 @@ public final class Constants
   public static class SetpointConstants{ // Change EE Values to match new gear ratio
     // L1
     public static final double kL1ElevatorSetpoint = 0; 
-    public static final double kL1EndEffectorSetpoint = 0.296875; 
+    public static final double kL1EndEffectorSetpoint = 0.3; 
 
     public static final double kL1EndEffectorSetpointAlt = 0.5;
     // L2

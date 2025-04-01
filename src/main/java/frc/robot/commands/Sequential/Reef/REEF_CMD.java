@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.SetpointConstants;
 import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
-import frc.robot.commands.Setpoints_CMD.GroundIntake_Setpoint_CMD;
-import frc.robot.subsystems.CoralGroundIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 
@@ -22,22 +20,19 @@ public class REEF_CMD extends SequentialCommandGroup {
   /** Creates a new REEF_CMD. */
   EndEffectorSubsystem m_endEffectorSubsystem;
   ElevatorSubsystem m_elevatorSubsystem;
-  CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem;
   double m_endEffectorSetpoint;
   double m_elevatorSetpoint;
-  public REEF_CMD(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem,CoralGroundIntakeSubsystem coralGroundIntakeSubsystem, double endEffectorSetpoint, double elevatorSetpoint) {
+  public REEF_CMD(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem, double endEffectorSetpoint, double elevatorSetpoint) {
     // Add REEF_CMD commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_elevatorSubsystem = elevatorSubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
     m_endEffectorSetpoint = endEffectorSetpoint;
-    m_coralGroundIntakeSubsystem = coralGroundIntakeSubsystem;
     m_elevatorSetpoint = elevatorSetpoint;
 
     addCommands(
     new ParallelCommandGroup(
                  new Elevator_Setpoint_CMD(m_elevatorSubsystem, m_elevatorSetpoint), 
-                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, m_endEffectorSetpoint),
-                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, 0.6)));
+                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, m_endEffectorSetpoint)));
   }
 }
