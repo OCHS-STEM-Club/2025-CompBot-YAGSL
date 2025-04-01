@@ -20,7 +20,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class Right_Auto_Align_CMD extends Command {
   /** Creates a new Right_Auto_Align_CMD. */
 
-  private PhotonCamera m_ReefCamera = new PhotonCamera("Reef_CAM");
+  private PhotonCamera m_ReefCamera = new PhotonCamera("Reef-CAM");
 
   private SwerveSubsystem m_swerveSubsystem;
 

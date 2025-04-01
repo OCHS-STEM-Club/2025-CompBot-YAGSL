@@ -21,12 +21,6 @@
                 }
               },
               {
-                "type": "named",
-                "data": {
-                  "name": "GI_Stow_Until_L4"
-                }
-              },
-              {
                 "type": "sequential",
                 "data": {
                   "commands": [
@@ -105,12 +99,6 @@
                       "data": {
                         "name": "HP_EE_INTAKE"
                       }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GI_STOW"
-                      }
                     }
                   ]
                 }
@@ -132,12 +120,6 @@
                 "type": "named",
                 "data": {
                   "name": "EndEffector_Stow_Until_L4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GI_Stow_Until_L4"
                 }
               },
               {
