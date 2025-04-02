@@ -43,7 +43,7 @@ public final class Constants
     public static final double kNormalRobotTranslationSpeed = 0.7;
     public static final double kNormalRobotRotationSpeed = 1;
     
-    public static final double kRobotNudgeSpeed = 0.15;
+    public static final double kRobotNudgeSpeed = 0.1;
   }
   public static class OperatorConstants
   {
@@ -79,7 +79,7 @@ public final class Constants
     public static final double kEndEffectorSpeed = 0.50;
     public static final double kPivotSpeed = 0.15;
     // End Effector TOF Detection Value
-    public static final double kEndEffectorTOFDetectionValue = 85;
+    public static final double kEndEffectorTOFDetectionValue = 80;
     // End Effector PID Values
     public static final double kEndEffectorPivotPIDValueP = 38.029;
     public static final double kEndEffectorPivotPIDValueI = 0;
@@ -145,7 +145,7 @@ public final class Constants
     public static final int kHopperBeamBreakPort = 9;
     
     public static final double kGroundRollersSpeedIntakeSpeed = 0.5;
-    public static final double kGroundRollersSpeedOuttakeSpeed = 0.6;
+    public static final double kGroundRollersSpeedOuttakeSpeed = 0.45;
     public static final double kGroundPivotSpeed = 0.3;
 
     public static final double kGroundPivotPIDValueP = 30;
@@ -179,6 +179,8 @@ public final class Constants
     // L1
     public static final double kL1ElevatorSetpoint = 0; 
     public static final double kL1EndEffectorSetpoint = 0.296875; 
+
+    public static final double kL1EndEffectorSetpointAlt = 0.5;
     // L2
     public static final double kL2ElevatorSetpoint = 7.25; 
     public static final double kL2EndEffectorSetpoint = 0.175; 
@@ -197,7 +199,7 @@ public final class Constants
     public static final double kStowCoralGroundIntakeSetpoint = 0.65; 
     // Handoff
     public static final double kHandoffElevatorSetpoint = 0.7; 
-    public static final double kHandoffEndEffectorSetpoint = 1.01; 
+    public static final double kHandoffEndEffectorSetpoint = 1; 
     // Buffer
     public static final double kBufferElevatorSetpoint = 5; 
     public static final double kBufferCoralGroundIntakeSetpoint = 0.5; 

@@ -43,9 +43,9 @@ public class ClimberSubsystem extends SubsystemBase {
                                         .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder))
                           .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                                                       .withForwardSoftLimitEnable(true)
-                                                      .withForwardSoftLimitThreshold(0.558)
+                                                      .withForwardSoftLimitThreshold(0.714)
                                                       .withReverseSoftLimitEnable(true)
-                                                      .withReverseSoftLimitThreshold(0.24));
+                                                      .withReverseSoftLimitThreshold(0.414));
     climberMotor.getConfigurator().apply(climberConfigs);
 
     climberEncoder = new CANcoder(ClimberConstants.kClimberEncoderID,"Drive CANivore");
