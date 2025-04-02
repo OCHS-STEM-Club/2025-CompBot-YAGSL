@@ -33,9 +33,7 @@ public class LEDSubsystem extends SubsystemBase {
 
   public enum LED_States {
     EE_Has_Coral,
-    GI_Has_Coral,
     Algae_Removal,
-    Handoff_Coral,
     BROWNOUT,
     Stow
     
@@ -71,14 +69,8 @@ public class LEDSubsystem extends SubsystemBase {
       case EE_Has_Coral:
         m_CANdle.setLEDs(255, 255, 255); // White
         break;
-      case GI_Has_Coral:
-        m_CANdle.animate(new StrobeAnimation(247, 181, 0, 255, 0.1, LEDConstants.kLEDCount)); // Traffic Yellow
-        break;
       case Algae_Removal:
         m_CANdle.setLEDs(0, 220, 100); // Algae Color
-        break;
-      case Handoff_Coral:
-        m_CANdle.animate(new StrobeAnimation(54, 1, 63, 255, 0.1, LEDConstants.kLEDCount)); // Purple
         break;
       case Stow:
         m_CANdle.animate(new ColorFlowAnimation(0, 57, 162, 255, 0.65, LEDConstants.kLEDCount, Direction.Forward)); // Philippine Blue

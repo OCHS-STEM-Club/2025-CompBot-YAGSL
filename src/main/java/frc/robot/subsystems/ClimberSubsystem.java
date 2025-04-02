@@ -43,8 +43,8 @@ public class ClimberSubsystem extends SubsystemBase {
                                         .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder))
                           .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                                                       .withForwardSoftLimitEnable(true)
-                                                      .withForwardSoftLimitThreshold(0.714)
-                                                      .withReverseSoftLimitEnable(true)
+                                                      .withForwardSoftLimitThreshold(0.767)
+                                                      .withReverseSoftLimitEnable(false)
                                                       .withReverseSoftLimitThreshold(0.414));
     climberMotor.getConfigurator().apply(climberConfigs);
 
@@ -53,7 +53,7 @@ public class ClimberSubsystem extends SubsystemBase {
                               .withMagnetSensor(new MagnetSensorConfigs()
                                                 .withMagnetOffset(ClimberConstants.kEncoderOffset)
                                                 .withSensorDirection(SensorDirectionValue.Clockwise_Positive)
-                                                .withAbsoluteSensorDiscontinuityPoint(0.75)); 
+                                                .withAbsoluteSensorDiscontinuityPoint(0.9)); 
     climberEncoder.getConfigurator().apply(climberEncoderConfigs);
   }
 

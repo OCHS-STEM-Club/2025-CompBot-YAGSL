@@ -7,37 +7,40 @@ package frc.robot.commands.Auto_Align_CMD;
 import java.util.function.DoubleSupplier;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Left_Auto_Align_CMD extends Command {
   /** Creates a new Left_Auto_Align_CMD. */
 
-  private PhotonCamera m_ReefCamera = new PhotonCamera("Reef-CAM");
+  private PhotonCamera m_ReefCamera = new PhotonCamera(VisionConstants.FL_Module_Camera_Name);
 
   private SwerveSubsystem m_swerveSubsystem;
 
-  private DoubleSupplier m_Translation_X;
-  private DoubleSupplier m_Translation_Y;
-  private DoubleSupplier m_Rotation;
+  private double m_Translation_X;
+  private double m_Translation_Y;
+  private double m_Rotation;
 
-  private double m_Target_YAW = 0;//TODO: Set this to the target yaw find setpoint
+  private double m_Target_YAW = -0.288;//TODO: Set this to the target yaw find setpoint
   private double m_Current_YAW;
   private double m_Error_YAW;
 
-  private ProfiledPIDController m_ProfiledPIDController = 
-                                new ProfiledPIDController(
+  private PIDController m_PidController = 
+                                new PIDController(
+                                 0.5,
                                  0,
-                                 0,
-                                 0,
-                                 new TrapezoidProfile.Constraints(1, 0.05));   
+                                 0);   
                                  
   private CommandXboxController m_driverController = new CommandXboxController(0);
 
@@ -61,7 +64,9 @@ public class Left_Auto_Align_CMD extends Command {
         if(latestResult.hasTargets()){
           var bestTarget = latestResult.getBestTarget();
 
-          m_Current_YAW = bestTarget.getYaw();
+          m_Current_YAW = bestTarget.getBestCameraToTarget().getTranslation().getY();
+
+         
 
         }
       }
@@ -69,11 +74,12 @@ public class Left_Auto_Align_CMD extends Command {
 
       m_Error_YAW = m_Current_YAW - m_Target_YAW;
 
-      m_Translation_X = ()-> m_ProfiledPIDController.calculate(-m_Error_YAW);
-      m_Translation_Y= ()-> 0.4;
-      m_Rotation = ()-> m_driverController.getRightX() * -1;
+      m_Translation_X = -m_PidController.calculate(m_Error_YAW);
+      m_Translation_Y= 0;
+      m_Rotation = m_driverController.getRightX() * -1;
 
-      m_swerveSubsystem.driveRobotOriented(m_Translation_Y, m_Translation_X, m_Rotation);
+      m_swerveSubsystem.drive(new Translation2d(m_Translation_Y, m_Translation_X), m_Rotation, false);
+      System.out.println(m_Current_YAW);
   }
 
   // Called once the command ends or is interrupted.

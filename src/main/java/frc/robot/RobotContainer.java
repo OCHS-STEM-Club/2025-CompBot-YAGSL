@@ -15,6 +15,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -195,6 +196,15 @@ public class RobotContainer
                                                             .scaleTranslation(0.25)
                                                             .scaleRotation(0.25)
                                                             .allianceRelativeControl(true);
+
+    SwerveInputStream driveAngularVelocity_Elevator_Creep = SwerveInputStream.of(m_swerveSubsystem.getSwerveDrive(),
+                                                                () -> m_driverController.getLeftY() * -1,
+                                                                () -> m_driverController.getLeftX() * -1)
+                                                            .withControllerRotationAxis(() -> m_driverController.getRightX() * -1)
+                                                            .deadband(OperatorConstants.kDeadband)
+                                                            .scaleTranslation(0.1)
+                                                            .scaleRotation(0.1)
+                                                            .allianceRelativeControl(true);
                                                             
 
   /**
@@ -214,6 +224,8 @@ public class RobotContainer
 
   L4_CMD m_L4_CMD_AUTO = new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem); 
 
+  Trigger m_elevatorCreep_CMD = new Trigger(()-> m_elevatorSubsystem.getElevatorPositionRotations() > SetpointConstants.kL2ElevatorSetpoint);
+
 
 
 
@@ -228,7 +240,7 @@ public class RobotContainer
   { 
 
     
-    NamedCommands.registerCommand("L4_CMD", m_L4_CMD_AUTO);
+    NamedCommands.registerCommand("L4_CMD", new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem));
 
     NamedCommands.registerCommand("EndEffector_Eject_Coral", new EndEffectorManualOuttake(m_endEffectorSubsystem).withTimeout(0.5));
     NamedCommands.registerCommand("EndEffector_Stow_Until_L4", new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).until(()->m_L4_CMD_AUTO.isScheduled()));
@@ -245,6 +257,9 @@ public class RobotContainer
 
 
     configureBindings();
+
+
+
     DriverStation.silenceJoystickConnectionWarning(true);
 
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -321,6 +336,8 @@ public class RobotContainer
     Command driveFieldOrientedAnglularVelocity = m_swerveSubsystem.driveFieldOriented(driveAngularVelocity); 
     Command driveRobotOrientedNudge = m_swerveSubsystem.driveFieldOriented(driveRobotOriented);
     Command driveFieldOrientedAnglularVelocity_SLOW = m_swerveSubsystem.driveFieldOriented(driveAngularVelocity_SLOW);
+    
+    Command driveFieldOrientedAnglularVelocity_Elevator_Creep = m_swerveSubsystem.driveFieldOriented(driveAngularVelocity_Elevator_Creep);
 
 
 
@@ -344,6 +361,12 @@ public class RobotContainer
 
     } else
     {
+
+
+      if(RobotState.isTeleop()){
+        m_elevatorCreep_CMD.whileTrue(driveFieldOrientedAnglularVelocity_Elevator_Creep);
+      }
+      
     // Driver Controls
 
       DRIVER_A_BUTTON.onTrue(
@@ -385,26 +408,36 @@ public class RobotContainer
 
     
 
+      DRIVER_LEFT_TRIGGER.onTrue(
+        Commands.run(() -> {
+          m_elevatorManualDown.cancel();
+          m_HP_EE_Intake_Sequence.schedule();
+          m_endEffectorStow.cancel();
+        }).until(()->m_endEffectorSubsystem.hasCoral())
+      );
 
-      // Eject Commands
-      DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
+      DRIVER_RIGHT_TRIGGER.whileTrue(m_endEffectorManualOuttake);
+
+      
 
       // Cancel All Commands
       DRIVER_X_BUTTON.whileTrue(Commands.run(()->CommandScheduler.getInstance().cancelAll()));
 
       // Override Intake Command
       DRIVER_LEFT_BUMPER.whileTrue(m_endEffectorManualIntake);
-
+      DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
       
       // Climber Commands
       m_driverController.back().whileTrue(m_climberManualUp);
-      m_driverController.start().whileTrue(m_climberManualDown);
+      m_operatorController2.button(10).whileTrue(m_climberManualDown);
 
-      // Drive to Reef
-      DRIVER_Y_BUTTON.whileTrue(new Left_Auto_Align_CMD(m_swerveSubsystem));
 
-      // Intake Commands
-      DRIVER_LEFT_TRIGGER.onTrue(m_HP_EE_Intake_Sequence);
+
+      DRIVER_Y_BUTTON.whileTrue(driveFieldOrientedAnglularVelocity_SLOW);
+
+
+
+
 
 
 
@@ -482,14 +515,17 @@ public class RobotContainer
         // Operator De-Algae at L2
         m_operatorController1.button(OperatorConstants.kButtonBox_L2_Button_Port1).and(m_operatorController2.button(7)).whileTrue(
           Commands.run(() -> {
-            CommandScheduler.getInstance().cancelAll();
+            m_elevatorManualDown.cancel();
+            m_endEffectorStow.cancel();
+            m_HP_EE_Intake_Sequence.cancel();
             m_endEffectorManualIntake.schedule();
             m_L2_Algae_Removal.schedule();
             
           })
         ).whileFalse(
           Commands.runOnce(() -> {
-            CommandScheduler.getInstance().cancelAll();
+            m_endEffectorManualIntake.cancel();
+            m_L2_Algae_Removal.cancel();
             m_elevatorManualDown.schedule();
             m_endEffectorStow.schedule();
           })
@@ -498,14 +534,17 @@ public class RobotContainer
         // Operator De-Algae at L3
         m_operatorController1.button(OperatorConstants.kButtonBox_L3_Button_Port1).and(m_operatorController2.button(7)).whileTrue(
           Commands.run(() -> {
-            CommandScheduler.getInstance().cancelAll();
+            m_elevatorManualDown.cancel();
+            m_endEffectorStow.cancel();
+            m_HP_EE_Intake_Sequence.cancel();
             m_endEffectorManualIntake.schedule();
             m_L3_Algae_Removal.schedule();
             
           })
         ).whileFalse(
           Commands.runOnce(() -> {
-            CommandScheduler.getInstance().cancelAll();
+            m_endEffectorManualIntake.cancel();
+            m_L2_Algae_Removal.cancel();
             m_elevatorManualDown.schedule();
             m_endEffectorStow.schedule();
           })

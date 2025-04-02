@@ -14,13 +14,14 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class Right_Auto_Align_CMD extends Command {
   /** Creates a new Right_Auto_Align_CMD. */
 
-  private PhotonCamera m_ReefCamera = new PhotonCamera("Reef-CAM");
+  private PhotonCamera m_ReefCamera = new PhotonCamera(VisionConstants.FL_Module_Camera_Name);
 
   private SwerveSubsystem m_swerveSubsystem;
 

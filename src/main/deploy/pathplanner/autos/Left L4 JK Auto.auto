@@ -5,7 +5,7 @@
     "data": {
       "commands": [
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -43,19 +43,32 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "race",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "EndEffector_Eject_Coral"
+                  "name": "L4_CMD"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "L4_CMD"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "EndEffector_Eject_Coral"
+                      }
+                    }
+                  ]
                 }
               }
             ]

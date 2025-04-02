@@ -128,7 +128,7 @@ public final class Constants
     public static final double kElevatorMotionMagicCruiseVelocity = 160;
     public static final double kElevatorMotionMagicJerk = 1600;
     // Elevator Speed
-    public static final double kElevatorSpeed = 0.125;
+    public static final double kElevatorSpeed = 0.15;
     public static final double kElevatorVoltage = 1.2;
     // Elevator Limits
     public static final int kBottomElevatorLimitPort = 5;
@@ -171,7 +171,7 @@ public final class Constants
 
     public static final double kEncoderOffset = 0;
 
-    public static final double kClimberSpeed = 0.35;
+    public static final double kClimberSpeed = 0.45;
 
   }
 
@@ -249,8 +249,8 @@ public final class Constants
         public static final String HP_Module_Camera_Name = "HP-Camera";
 
         public static final Transform3d HP_Module_Camera_Transformed = 
-                        new Transform3d(new Translation3d(Units.inchesToMeters(-6.305),Units.inchesToMeters(1.1426), Units.inchesToMeters(37.24)), 
-                        new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(30), Units.degreesToRadians(180)));
+                        new Transform3d(new Translation3d(Units.inchesToMeters(-6.305),Units.inchesToMeters(1.1426), Units.inchesToMeters(37.542)), 
+                        new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(40), Units.degreesToRadians(180)));
         public final static Matrix<N3, N1> HP_SingleTagStdDevs = VecBuilder.fill(6, 6, 8);
         public final static Matrix<N3, N1> HP_MultiTagStdDevs = VecBuilder.fill(3, 2, 1);
 

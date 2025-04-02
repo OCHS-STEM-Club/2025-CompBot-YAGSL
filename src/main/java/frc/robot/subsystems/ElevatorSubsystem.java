@@ -77,9 +77,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                                         .withGravityType(GravityTypeValue.Elevator_Static))
                           .withMotorOutput(new MotorOutputConfigs()
                                               .withInverted(InvertedValue.Clockwise_Positive)
-                                              .withNeutralMode(NeutralModeValue.Brake))
-                          .withCurrentLimits(new CurrentLimitsConfigs()
-                                              .withSupplyCurrentLimit(40));
+                                              .withNeutralMode(NeutralModeValue.Brake));
 
     // Apply elevatorConfigs
     elevatorLeftLeaderMotor.getConfigurator().apply(elevatorConfigs);
