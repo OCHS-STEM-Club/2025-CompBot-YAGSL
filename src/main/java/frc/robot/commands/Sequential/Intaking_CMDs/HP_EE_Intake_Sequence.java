@@ -23,20 +23,17 @@ public class HP_EE_Intake_Sequence extends SequentialCommandGroup {
   /** Creates a new L1_CMD. */
   EndEffectorSubsystem m_endEffectorSubsystem;
   ElevatorSubsystem m_elevatorSubsystem;
-  CoralGroundIntakeSubsystem m_coralGroundIntakeSubsystem;
   
-  public HP_EE_Intake_Sequence(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem, CoralGroundIntakeSubsystem coralGroundIntakeSubsystem) {
+  public HP_EE_Intake_Sequence(ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     m_elevatorSubsystem = elevatorSubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
-    m_coralGroundIntakeSubsystem = coralGroundIntakeSubsystem;
 
     addCommands(
     new ParallelCommandGroup(
                 m_endEffectorSubsystem.intakeWithTOF(),
                  new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, 0.66),
-                 new GroundIntake_Setpoint_CMD(m_coralGroundIntakeSubsystem, SetpointConstants.kStowCoralGroundIntakeSetpoint)).until(()->m_endEffectorSubsystem.hasCoral()),
-                 new WaitUntilCommand(()->m_endEffectorSubsystem.hasCoral()).andThen(new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint)));
+                 new WaitUntilCommand(()->m_endEffectorSubsystem.hasCoral()).andThen(new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint))));
   }
 }
