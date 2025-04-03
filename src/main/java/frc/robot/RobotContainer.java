@@ -430,7 +430,7 @@ public class RobotContainer
       DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
       
       // Climber Commands
-      m_driverController.back().whileTrue(m_climberManualUp);
+      m_driverController.start().whileTrue(m_climberManualUp);
       m_operatorController2.button(10).whileTrue(m_climberManualDown);
 
 
