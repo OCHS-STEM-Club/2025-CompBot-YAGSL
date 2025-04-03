@@ -19,12 +19,6 @@
                 "data": {
                   "name": "EndEffector_Stow_Until_L4"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GI_Stow_Until_L4"
-                }
               }
             ]
           }

@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left to J"
+                  "pathName": "Right to E"
                 }
               },
               {
@@ -74,7 +74,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left HP EE Intake"
+                  "pathName": "Right HP EE Intake"
                 }
               }
             ]
@@ -87,7 +87,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Left HP to K"
+                  "pathName": "Right HP to D"
                 }
               },
               {
@@ -141,6 +141,6 @@
     }
   },
   "resetOdom": false,
-  "folder": "Left Autos",
+  "folder": "Right Autos",
   "choreoAuto": false
 }

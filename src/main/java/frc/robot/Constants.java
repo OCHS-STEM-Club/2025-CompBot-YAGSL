@@ -80,7 +80,7 @@ public final class Constants
     public static final double kEndEffectorSpeed = 0.50;
     public static final double kPivotSpeed = 0.15;
     // End Effector TOF Detection Value
-    public static final double kEndEffectorTOFDetectionValue = 80;
+    public static final double kEndEffectorTOFDetectionValue = 80.5;
     // End Effector PID Values
     public static final double kEndEffectorPivotPIDValueP = 38.029;
     public static final double kEndEffectorPivotPIDValueI = 0;
