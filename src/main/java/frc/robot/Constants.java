@@ -71,6 +71,7 @@ public final class Constants
 
   public static class EndEffectorConstants 
   {
+    // Merge Change
     // End Effector IDs
     public static final int kEndEffectorIntakeID = 23;
     public static final int kEndEffectorPivotID = 22;
