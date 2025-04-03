@@ -426,7 +426,7 @@ public class RobotContainer
       DRIVER_X_BUTTON.whileTrue(Commands.run(()->CommandScheduler.getInstance().cancelAll()));
 
       // Override Intake Command
-      DRIVER_LEFT_BUMPER.whileTrue(m_endEffectorManualIntake);
+      DRIVER_Y_BUTTON.whileTrue(m_endEffectorManualIntake);
       DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
       
       // Climber Commands
@@ -435,7 +435,7 @@ public class RobotContainer
 
 
 
-      DRIVER_Y_BUTTON.whileTrue(driveFieldOrientedAnglularVelocity_SLOW);
+      DRIVER_LEFT_BUMPER.whileTrue(driveFieldOrientedAnglularVelocity_SLOW);
 
 
 

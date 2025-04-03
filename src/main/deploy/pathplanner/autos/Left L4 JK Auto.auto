@@ -5,19 +5,32 @@
     "data": {
       "commands": [
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "2 Piece Auto - Left to J"
+                  "pathName": "Left to J"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "EndEffector_Stow_Until_L4"
+                  "name": "EndEffector_Stow_1_Timeout"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "L4_CMD"
                 }
               },
               {
@@ -27,35 +40,16 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 2.0
+                        "waitTime": 0.1
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "L4_CMD"
+                        "name": "EndEffector_Eject_Coral"
                       }
                     }
                   ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "EndEffector_Eject_Coral"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4_CMD"
                 }
               }
             ]
@@ -68,52 +62,26 @@
           }
         },
         {
-          "type": "sequential",
+          "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "deadline",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "sequential",
-                      "data": {
-                        "commands": [
-                          {
-                            "type": "path",
-                            "data": {
-                              "pathName": "Left HP EE Intake"
-                            }
-                          },
-                          {
-                            "type": "wait",
-                            "data": {
-                              "waitTime": 0.5
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "HP_EE_INTAKE"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "GI_STOW"
-                      }
-                    }
-                  ]
+                  "name": "HP_EE_INTAKE"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Left HP EE Intake"
                 }
               }
             ]
           }
         },
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -125,13 +93,20 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "EndEffector_Stow_Until_L4"
+                  "name": "EndEffector_Stow_1.5_Timeout"
                 }
-              },
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "GI_Stow_Until_L4"
+                  "name": "L4_CMD"
                 }
               },
               {
@@ -141,35 +116,16 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 2.0
+                        "waitTime": 0.25
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "L4_CMD"
+                        "name": "EndEffector_Eject_Coral"
                       }
                     }
                   ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "EndEffector_Eject_Coral"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "L4_CMD"
                 }
               }
             ]

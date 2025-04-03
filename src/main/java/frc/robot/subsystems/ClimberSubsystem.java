@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -30,6 +31,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private CANcoder climberEncoder;
   private CANcoderConfiguration climberEncoderConfigs;
+  
 
   public ClimberSubsystem() {
 
@@ -43,9 +45,11 @@ public class ClimberSubsystem extends SubsystemBase {
                                         .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder))
                           .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                                                       .withForwardSoftLimitEnable(true)
-                                                      .withForwardSoftLimitThreshold(0.714)
+                                                      .withForwardSoftLimitThreshold(-0.235)
                                                       .withReverseSoftLimitEnable(true)
-                                                      .withReverseSoftLimitThreshold(0.414));
+                                                      .withReverseSoftLimitThreshold(-0.515))
+                          .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()
+                                                      .withContinuousWrap(true));
     climberMotor.getConfigurator().apply(climberConfigs);
 
     climberEncoder = new CANcoder(ClimberConstants.kClimberEncoderID,"Drive CANivore");

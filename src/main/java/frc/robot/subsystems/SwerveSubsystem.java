@@ -63,7 +63,7 @@ public class SwerveSubsystem extends SubsystemBase
 
   private final SwerveDrive swerveDrive;
   
-  private VisionCamera[] camerasArray = new VisionCamera[3];
+  private VisionCamera[] camerasArray = new VisionCamera[2];
 
   private boolean enableVision = true;
 
@@ -80,12 +80,8 @@ public class SwerveSubsystem extends SubsystemBase
                                        VisionConstants.FL_SingleTagStdDevs,
                                        VisionConstants.FL_MultiTagStdDevs);
                                        
-    camerasArray[1] = new VisionCamera(VisionConstants.FR_Module_Camera_Name,
-                                       VisionConstants.FR_Module_Camera_Transformed,
-                                       VisionConstants.FR_SingleTagStdDevs,
-                                       VisionConstants.FR_MultiTagStdDevs);
 
-    camerasArray[2] = new VisionCamera(VisionConstants.HP_Module_Camera_Name,
+    camerasArray[1] = new VisionCamera(VisionConstants.HP_Module_Camera_Name,
                                        VisionConstants.HP_Module_Camera_Transformed,
                                        VisionConstants.HP_SingleTagStdDevs,
                                        VisionConstants.HP_MultiTagStdDevs);
