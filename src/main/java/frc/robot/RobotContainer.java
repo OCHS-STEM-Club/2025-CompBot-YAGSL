@@ -38,6 +38,7 @@ import frc.robot.commands.Manual.Elevator.ElevatorManualDown;
 import frc.robot.commands.Manual.Elevator.ElevatorManualUp;
 import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualIntake;
 import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualOuttake;
+import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualOuttake_L1;
 import frc.robot.commands.Manual.EndEffector.Pivot.EndEffectorManualPivotDown;
 import frc.robot.commands.Manual.EndEffector.Pivot.EndEffectorManualPivotUp;
 import frc.robot.commands.Sequential.CLIMB_CMD;
@@ -131,6 +132,8 @@ public class RobotContainer
   //End Effector Manual Commands
   EndEffectorManualIntake m_endEffectorManualIntake = new EndEffectorManualIntake(m_endEffectorSubsystem);
   EndEffectorManualOuttake m_endEffectorManualOuttake = new EndEffectorManualOuttake(m_endEffectorSubsystem);
+  EndEffectorManualOuttake_L1 m_EndEffectorManualOuttake_L1 = new EndEffectorManualOuttake_L1(m_endEffectorSubsystem);
+
   EndEffectorManualPivotDown m_endEffectorManualPivotDown = new EndEffectorManualPivotDown(m_endEffectorSubsystem);
   EndEffectorManualPivotUp m_endEffectorManualPivotUp = new EndEffectorManualPivotUp(m_endEffectorSubsystem);
 
@@ -325,6 +328,14 @@ public class RobotContainer
   }
 
 
+  // private Command getDesiredOuttakeCMD(){
+  //   if(m_L1_CMD.isScheduled()){
+  //     return Commands.run(()->m_EndEffectorManualOuttake_L1.schedule());
+  //   }else
+  //     return Commands.run(()->m_endEffectorManualOuttake.schedule());
+  // }
+
+
 
   
 
@@ -426,10 +437,15 @@ public class RobotContainer
         }).until(()->m_endEffectorSubsystem.hasCoral())
       );
 
-      DRIVER_RIGHT_TRIGGER.whileTrue(m_endEffectorManualOuttake
-      );
-      DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake
-      );
+      // DRIVER_LEFT_TRIGGER.onTrue(m_HP_EE_Intake_Sequence.until(()->m_endEffectorSubsystem.hasCoral())
+      // .andThen(new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint)));
+
+      DRIVER_RIGHT_TRIGGER.whileTrue(m_EndEffectorManualOuttake_L1);
+
+      DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
+
+
+
       
 
       // Cancel All Commands
@@ -527,9 +543,10 @@ public class RobotContainer
         // Operator De-Algae at L2
         m_operatorController2.button(11).whileTrue(
           Commands.run(() -> {
-            m_elevatorManualDown.cancel();
-            m_endEffectorStow.cancel();
-            m_HP_EE_Intake_Sequence.cancel();
+            // m_elevatorManualDown.cancel();
+            // m_endEffectorStow.cancel();
+            // m_HP_EE_Intake_Sequence.cancel();
+            CommandScheduler.getInstance().cancelAll();
             m_endEffectorManualIntake.schedule();
             m_L2_Algae_Removal.schedule();
             

@@ -45,7 +45,7 @@ public class ClimberSubsystem extends SubsystemBase {
                                         .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder))
                           .withSoftwareLimitSwitch(new SoftwareLimitSwitchConfigs()
                                                       .withForwardSoftLimitEnable(true)
-                                                      .withForwardSoftLimitThreshold(-0.235) //0.765
+                                                      .withForwardSoftLimitThreshold(-0.23) //0.765
                                                       .withReverseSoftLimitEnable(true)
                                                       .withReverseSoftLimitThreshold(-0.515)) // 0.485
                           .withClosedLoopGeneral(new ClosedLoopGeneralConfigs()

@@ -172,7 +172,7 @@ public final class Constants
 
     public static final double kEncoderOffset = 0;
 
-    public static final double kClimberSpeed = 0.35;
+    public static final double kClimberSpeed = 0.65;
 
   }
 

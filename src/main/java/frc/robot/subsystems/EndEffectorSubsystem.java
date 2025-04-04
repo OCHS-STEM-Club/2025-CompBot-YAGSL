@@ -165,6 +165,10 @@ public class EndEffectorSubsystem extends SubsystemBase {
     endEffectorIntake.set(EndEffectorConstants.kEndEffectorSpeed);
   }
 
+  public void rollersOuttake_L1() {
+    endEffectorIntake.set(-0.25);
+  }
+
   // End Effector Outtake
   public void rollersOuttake() {
     endEffectorIntake.set(-EndEffectorConstants.kEndEffectorSpeed);
@@ -199,6 +203,16 @@ public class EndEffectorSubsystem extends SubsystemBase {
               }else
                 rollersStop();
     });
+  }
+
+  public Command intakeWithCurrent(){
+    return Commands.run(()-> {
+      if(getIntakeSupplyCurrent() > 10){
+        rollersStop();
+      }else
+        rollersIntake();
+    }
+    );
   }
 
   // Set Pivot Postion
