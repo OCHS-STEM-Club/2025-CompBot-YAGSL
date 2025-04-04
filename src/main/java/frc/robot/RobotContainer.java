@@ -405,6 +405,8 @@ public class RobotContainer
           driveRobotOrientedNudge.cancel();
         })
       );
+// Lucas Holl is lead programmer
+      DRIVER_POV_UP.whileTrue(getDesiredReefState());
 
 
 
@@ -412,14 +414,22 @@ public class RobotContainer
 
       DRIVER_LEFT_TRIGGER.onTrue(
         Commands.run(() -> {
-          m_elevatorManualDown.cancel();
+          m_elevatorManualDown.schedule();
           m_HP_EE_Intake_Sequence.schedule();
           m_endEffectorStow.cancel();
+          m_L1_CMD.cancel();
+          m_L2_CMD.cancel();
+          m_L3_CMD.cancel();
+          m_L4_CMD.cancel();
+          m_L2_Algae_Removal.cancel();
+          m_L3_Algae_Removal.cancel();
         }).until(()->m_endEffectorSubsystem.hasCoral())
       );
 
-      DRIVER_RIGHT_TRIGGER.whileTrue(m_endEffectorManualOuttake);
-
+      DRIVER_RIGHT_TRIGGER.whileTrue(m_endEffectorManualOuttake
+      );
+      DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake
+      );
       
 
       // Cancel All Commands
@@ -427,7 +437,7 @@ public class RobotContainer
 
       // Override Intake Command
       DRIVER_Y_BUTTON.whileTrue(m_endEffectorManualIntake);
-      DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
+      
       
       // Climber Commands
       m_driverController.start().whileTrue(m_climberManualUp);
@@ -515,7 +525,7 @@ public class RobotContainer
         );
 
         // Operator De-Algae at L2
-        m_operatorController1.button(OperatorConstants.kButtonBox_L2_Button_Port1).and(m_operatorController2.button(7)).whileTrue(
+        m_operatorController2.button(11).whileTrue(
           Commands.run(() -> {
             m_elevatorManualDown.cancel();
             m_endEffectorStow.cancel();
@@ -534,7 +544,7 @@ public class RobotContainer
         );
 
         // Operator De-Algae at L3
-        m_operatorController1.button(OperatorConstants.kButtonBox_L3_Button_Port1).and(m_operatorController2.button(7)).whileTrue(
+        m_operatorController1.button(10).whileTrue(
           Commands.run(() -> {
             m_elevatorManualDown.cancel();
             m_endEffectorStow.cancel();
@@ -546,7 +556,7 @@ public class RobotContainer
         ).whileFalse(
           Commands.runOnce(() -> {
             m_endEffectorManualIntake.cancel();
-            m_L2_Algae_Removal.cancel();
+            m_L3_Algae_Removal.cancel();
             m_elevatorManualDown.schedule();
             m_endEffectorStow.schedule();
           })
