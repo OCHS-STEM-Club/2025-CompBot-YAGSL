@@ -87,6 +87,14 @@ public class RobotContainer
   }
 
   private ReefState reefStateValue = ReefState.Reef_A;
+
+
+  private enum EjectMethod{
+    Normal_Eject,
+    L1_Eject
+  }
+
+  private EjectMethod ejectMethodValue = EjectMethod.Normal_Eject;
  
 
   // Controller definitions
@@ -327,13 +335,16 @@ public class RobotContainer
     return reefStateValue.toString();
   }
 
+ 
+  private Command getDesiredOuttakeCMD(){
+    return
+    switch (ejectMethodValue) {
+      case Normal_Eject -> m_endEffectorManualOuttake;
+      case L1_Eject -> m_EndEffectorManualOuttake_L1;
+    };
+  }
 
-  // private Command getDesiredOuttakeCMD(){
-  //   if(m_L1_CMD.isScheduled()){
-  //     return Commands.run(()->m_EndEffectorManualOuttake_L1.schedule());
-  //   }else
-  //     return Commands.run(()->m_endEffectorManualOuttake.schedule());
-  // }
+   
 
 
 
@@ -440,9 +451,9 @@ public class RobotContainer
       // DRIVER_LEFT_TRIGGER.onTrue(m_HP_EE_Intake_Sequence.until(()->m_endEffectorSubsystem.hasCoral())
       // .andThen(new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint)));
 
-      DRIVER_RIGHT_TRIGGER.whileTrue(m_EndEffectorManualOuttake_L1);
+      DRIVER_RIGHT_TRIGGER.whileTrue(m_endEffectorManualOuttake);
 
-      DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
+      DRIVER_RIGHT_BUMPER.whileTrue(Commands.runOnce(()->getDesiredOuttakeCMD().schedule())).whileFalse(Commands.runOnce(()->getDesiredOuttakeCMD().cancel()));
 
 
 
@@ -479,14 +490,24 @@ public class RobotContainer
             m_L1_CMD.schedule();
             m_endEffectorStow.cancel();
             m_HP_EE_Intake_Sequence.cancel();
+            new InstantCommand(()->ejectMethodValue = EjectMethod.L1_Eject).schedule();
           })
         ).whileFalse(
           Commands.runOnce(() -> {
             m_L1_CMD.cancel();
             m_elevatorManualDown.schedule();
             m_endEffectorStow.schedule();
+            m_EndEffectorManualOuttake_L1.cancel();
+            new InstantCommand(()->ejectMethodValue = EjectMethod.Normal_Eject).schedule();
           })
         );
+
+        // m_operatorController1.button(OperatorConstants.kButtonBox_L1_Button_Port1).onTrue(
+        //   new InstantCommand(()->ejectMethodValue = EjectMethod.Normal_Eject)
+        // ).onFalse(
+        //   new InstantCommand(()->ejectMethodValue = EjectMethod.L1_Eject)
+        // );
+
 
 
 

@@ -129,7 +129,7 @@ public final class Constants
     public static final double kElevatorMotionMagicCruiseVelocity = 160;
     public static final double kElevatorMotionMagicJerk = 1600;
     // Elevator Speed
-    public static final double kElevatorSpeed = 0.125;
+    public static final double kElevatorSpeed = 0.15; //0.125
     public static final double kElevatorVoltage = 1.2;
     // Elevator Limits
     public static final int kBottomElevatorLimitPort = 5;
