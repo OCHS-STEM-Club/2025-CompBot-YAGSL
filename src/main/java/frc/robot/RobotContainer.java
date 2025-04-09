@@ -38,11 +38,13 @@ import frc.robot.commands.Manual.Elevator.ElevatorManualDown;
 import frc.robot.commands.Manual.Elevator.ElevatorManualUp;
 import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualIntake;
 import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualOuttake;
+import frc.robot.commands.Manual.EndEffector.Intake.EndEffectorManualOuttake_L1;
 import frc.robot.commands.Manual.EndEffector.Pivot.EndEffectorManualPivotDown;
 import frc.robot.commands.Manual.EndEffector.Pivot.EndEffectorManualPivotUp;
 import frc.robot.commands.Sequential.CLIMB_CMD;
 import frc.robot.commands.Sequential.STOW_CMD;
 import frc.robot.commands.Sequential.Intaking_CMDs.HP_EE_Intake_Sequence;
+import frc.robot.commands.Sequential.Intaking_CMDs.HP_EE_Intake_Sequence_Reverse;
 import frc.robot.commands.Sequential.Reef.L1_CMD;
 import frc.robot.commands.Sequential.Reef.L2_CMD;
 import frc.robot.commands.Sequential.Reef.L3_CMD;
@@ -86,6 +88,14 @@ public class RobotContainer
   }
 
   private ReefState reefStateValue = ReefState.Reef_A;
+
+
+  private enum EjectMethod{
+    Normal_Eject,
+    L1_Eject
+  }
+
+  private EjectMethod ejectMethodValue = EjectMethod.Normal_Eject;
  
 
   // Controller definitions
@@ -131,6 +141,8 @@ public class RobotContainer
   //End Effector Manual Commands
   EndEffectorManualIntake m_endEffectorManualIntake = new EndEffectorManualIntake(m_endEffectorSubsystem);
   EndEffectorManualOuttake m_endEffectorManualOuttake = new EndEffectorManualOuttake(m_endEffectorSubsystem);
+  EndEffectorManualOuttake_L1 m_EndEffectorManualOuttake_L1 = new EndEffectorManualOuttake_L1(m_endEffectorSubsystem);
+
   EndEffectorManualPivotDown m_endEffectorManualPivotDown = new EndEffectorManualPivotDown(m_endEffectorSubsystem);
   EndEffectorManualPivotUp m_endEffectorManualPivotUp = new EndEffectorManualPivotUp(m_endEffectorSubsystem);
 
@@ -153,6 +165,8 @@ public class RobotContainer
   // Sequence Commands
 
   HP_EE_Intake_Sequence m_HP_EE_Intake_Sequence = new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem);
+
+  HP_EE_Intake_Sequence_Reverse m_HP_EE_Intake_Sequence_Reverse = new HP_EE_Intake_Sequence_Reverse(m_elevatorSubsystem, m_endEffectorSubsystem);
 
   STOW_CMD m_STOW_CMD = new STOW_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   L1_CMD m_L1_CMD = new L1_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
@@ -324,6 +338,17 @@ public class RobotContainer
     return reefStateValue.toString();
   }
 
+ 
+  private Command getDesiredOuttakeCMD(){
+    return
+    switch (ejectMethodValue) {
+      case Normal_Eject -> m_endEffectorManualOuttake;
+      case L1_Eject -> m_EndEffectorManualOuttake_L1;
+    };
+  }
+
+   
+
 
 
   
@@ -405,6 +430,8 @@ public class RobotContainer
           driveRobotOrientedNudge.cancel();
         })
       );
+// Lucas Holl is lead programmer
+      DRIVER_POV_UP.whileTrue(Commands.runOnce(()->getDesiredReefState().schedule()));
 
 
 
@@ -412,13 +439,41 @@ public class RobotContainer
 
       DRIVER_LEFT_TRIGGER.onTrue(
         Commands.run(() -> {
-          m_elevatorManualDown.cancel();
+          m_elevatorManualDown.schedule();
           m_HP_EE_Intake_Sequence.schedule();
           m_endEffectorStow.cancel();
-        }).until(()->m_endEffectorSubsystem.hasCoral())
+          m_L1_CMD.cancel();
+          m_L2_CMD.cancel();
+          m_L3_CMD.cancel();
+          m_L4_CMD.cancel();
+          m_L2_Algae_Removal.cancel();
+          m_L3_Algae_Removal.cancel();
+        }).until(()->m_endEffectorSubsystem.hasCoral()).andThen(Commands.run(()->CommandScheduler.getInstance().cancelAll()).withTimeout(0.1))
       );
 
+      DRIVER_POV_DOWN.onTrue(
+        Commands.run(() -> {
+          m_elevatorManualDown.schedule();
+          m_HP_EE_Intake_Sequence_Reverse.schedule();
+          m_endEffectorStow.cancel();
+          m_L1_CMD.cancel();
+          m_L2_CMD.cancel();
+          m_L3_CMD.cancel();
+          m_L4_CMD.cancel();
+          m_L2_Algae_Removal.cancel();
+          m_L3_Algae_Removal.cancel();
+        }).until(()->m_endEffectorSubsystem.hasCoral()).andThen(Commands.run(()->CommandScheduler.getInstance().cancelAll()).withTimeout(0.1)
+        )
+      );
+
+      // DRIVER_LEFT_TRIGGER.onTrue(m_HP_EE_Intake_Sequence.until(()->m_endEffectorSubsystem.hasCoral())
+      // .andThen(new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint)));
+
       DRIVER_RIGHT_TRIGGER.whileTrue(m_endEffectorManualOuttake);
+
+      DRIVER_RIGHT_BUMPER.whileTrue(Commands.runOnce(()->getDesiredOuttakeCMD().schedule())).whileFalse(Commands.runOnce(()->getDesiredOuttakeCMD().cancel()));
+
+
 
       
 
@@ -427,7 +482,7 @@ public class RobotContainer
 
       // Override Intake Command
       DRIVER_Y_BUTTON.whileTrue(m_endEffectorManualIntake);
-      DRIVER_RIGHT_BUMPER.whileTrue(m_endEffectorManualOuttake);
+      
       
       // Climber Commands
       m_driverController.start().whileTrue(m_climberManualUp);
@@ -453,14 +508,24 @@ public class RobotContainer
             m_L1_CMD.schedule();
             m_endEffectorStow.cancel();
             m_HP_EE_Intake_Sequence.cancel();
+            new InstantCommand(()->ejectMethodValue = EjectMethod.L1_Eject).schedule();
           })
         ).whileFalse(
           Commands.runOnce(() -> {
             m_L1_CMD.cancel();
             m_elevatorManualDown.schedule();
             m_endEffectorStow.schedule();
+            m_EndEffectorManualOuttake_L1.cancel();
+            new InstantCommand(()->ejectMethodValue = EjectMethod.Normal_Eject).schedule();
           })
         );
+
+        // m_operatorController1.button(OperatorConstants.kButtonBox_L1_Button_Port1).onTrue(
+        //   new InstantCommand(()->ejectMethodValue = EjectMethod.Normal_Eject)
+        // ).onFalse(
+        //   new InstantCommand(()->ejectMethodValue = EjectMethod.L1_Eject)
+        // );
+
 
 
 
@@ -515,11 +580,12 @@ public class RobotContainer
         );
 
         // Operator De-Algae at L2
-        m_operatorController1.button(OperatorConstants.kButtonBox_L2_Button_Port1).and(m_operatorController2.button(7)).whileTrue(
+        m_operatorController2.button(11).whileTrue(
           Commands.run(() -> {
-            m_elevatorManualDown.cancel();
-            m_endEffectorStow.cancel();
-            m_HP_EE_Intake_Sequence.cancel();
+            // m_elevatorManualDown.cancel();
+            // m_endEffectorStow.cancel();
+            // m_HP_EE_Intake_Sequence.cancel();
+            CommandScheduler.getInstance().cancelAll();
             m_endEffectorManualIntake.schedule();
             m_L2_Algae_Removal.schedule();
             
@@ -534,7 +600,7 @@ public class RobotContainer
         );
 
         // Operator De-Algae at L3
-        m_operatorController1.button(OperatorConstants.kButtonBox_L3_Button_Port1).and(m_operatorController2.button(7)).whileTrue(
+        m_operatorController1.button(10).whileTrue(
           Commands.run(() -> {
             m_elevatorManualDown.cancel();
             m_endEffectorStow.cancel();
@@ -546,7 +612,7 @@ public class RobotContainer
         ).whileFalse(
           Commands.runOnce(() -> {
             m_endEffectorManualIntake.cancel();
-            m_L2_Algae_Removal.cancel();
+            m_L3_Algae_Removal.cancel();
             m_elevatorManualDown.schedule();
             m_endEffectorStow.schedule();
           })

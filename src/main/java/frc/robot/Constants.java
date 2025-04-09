@@ -41,7 +41,7 @@ public final class Constants
     // Robot Speed
 
     public static final double kNormalRobotTranslationSpeed = 0.7;
-    public static final double kNormalRobotRotationSpeed = 1;
+    public static final double kNormalRobotRotationSpeed = 0.8;
     
     public static final double kRobotNudgeSpeed = 0.1;
   }
@@ -80,7 +80,7 @@ public final class Constants
     public static final double kEndEffectorSpeed = 0.50;
     public static final double kPivotSpeed = 0.15;
     // End Effector TOF Detection Value
-    public static final double kEndEffectorTOFDetectionValue = 80.5;
+    public static final double kEndEffectorTOFDetectionValue = 95;//85
     // End Effector PID Values
     public static final double kEndEffectorPivotPIDValueP = 38.029;
     public static final double kEndEffectorPivotPIDValueI = 0;
@@ -129,7 +129,7 @@ public final class Constants
     public static final double kElevatorMotionMagicCruiseVelocity = 160;
     public static final double kElevatorMotionMagicJerk = 1600;
     // Elevator Speed
-    public static final double kElevatorSpeed = 0.125;
+    public static final double kElevatorSpeed = 0.15; //0.125
     public static final double kElevatorVoltage = 1.2;
     // Elevator Limits
     public static final int kBottomElevatorLimitPort = 5;
@@ -172,7 +172,7 @@ public final class Constants
 
     public static final double kEncoderOffset = 0;
 
-    public static final double kClimberSpeed = 0.35;
+    public static final double kClimberSpeed = 0.65;
 
   }
 

@@ -55,7 +55,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   /** Creates a new EndEffector. */
 
   // End Effector Intake
-  private TalonFXS endEffectorIntake;
+  public TalonFXS endEffectorIntake;
   // End Effector Pivot
   private TalonFX endEffectorPivot;
 
@@ -165,6 +165,10 @@ public class EndEffectorSubsystem extends SubsystemBase {
     endEffectorIntake.set(EndEffectorConstants.kEndEffectorSpeed);
   }
 
+  public void rollersOuttake_L1() {
+    endEffectorIntake.set(-0.25);
+  }
+
   // End Effector Outtake
   public void rollersOuttake() {
     endEffectorIntake.set(-EndEffectorConstants.kEndEffectorSpeed);
@@ -198,7 +202,17 @@ public class EndEffectorSubsystem extends SubsystemBase {
                 rollersIntake();
               }else
                 rollersStop();
-    });
+    }).until(()->hasCoral());
+  }
+
+  public Command intakeWithCurrent(){
+    return Commands.run(()->{ 
+      if(this.endEffectorIntake.getStatorCurrent().getValueAsDouble() > 55){
+        rollersStop();
+      }else
+        rollersIntake();
+    }
+    ).until(() -> this.endEffectorIntake.getStatorCurrent().getValueAsDouble() > 55);
   }
 
   // Set Pivot Postion
@@ -365,6 +379,8 @@ public BooleanSupplier endHP_CMD(){
   if(intakeSensor.getRange() == 0){
     Elastic.sendNotification(TOF_Disconnected);
   }
+
+  // System.out.println(endEffectorIntake.getStatorCurrent().getValueAsDouble());
   
 
 
