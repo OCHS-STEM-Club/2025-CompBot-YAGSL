@@ -44,6 +44,7 @@ import frc.robot.commands.Manual.EndEffector.Pivot.EndEffectorManualPivotUp;
 import frc.robot.commands.Sequential.CLIMB_CMD;
 import frc.robot.commands.Sequential.STOW_CMD;
 import frc.robot.commands.Sequential.Intaking_CMDs.HP_EE_Intake_Sequence;
+import frc.robot.commands.Sequential.Intaking_CMDs.HP_EE_Intake_Sequence_Reverse;
 import frc.robot.commands.Sequential.Reef.L1_CMD;
 import frc.robot.commands.Sequential.Reef.L2_CMD;
 import frc.robot.commands.Sequential.Reef.L3_CMD;
@@ -164,6 +165,8 @@ public class RobotContainer
   // Sequence Commands
 
   HP_EE_Intake_Sequence m_HP_EE_Intake_Sequence = new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem);
+
+  HP_EE_Intake_Sequence_Reverse m_HP_EE_Intake_Sequence_Reverse = new HP_EE_Intake_Sequence_Reverse(m_elevatorSubsystem, m_endEffectorSubsystem);
 
   STOW_CMD m_STOW_CMD = new STOW_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   L1_CMD m_L1_CMD = new L1_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
@@ -428,7 +431,7 @@ public class RobotContainer
         })
       );
 // Lucas Holl is lead programmer
-      DRIVER_POV_UP.whileTrue(getDesiredReefState());
+      DRIVER_POV_UP.whileTrue(Commands.runOnce(()->getDesiredReefState().schedule()));
 
 
 
@@ -445,7 +448,22 @@ public class RobotContainer
           m_L4_CMD.cancel();
           m_L2_Algae_Removal.cancel();
           m_L3_Algae_Removal.cancel();
-        }).until(()->m_endEffectorSubsystem.hasCoral())
+        }).until(()->m_endEffectorSubsystem.hasCoral()).andThen(Commands.run(()->CommandScheduler.getInstance().cancelAll()).withTimeout(0.1))
+      );
+
+      DRIVER_POV_DOWN.onTrue(
+        Commands.run(() -> {
+          m_elevatorManualDown.schedule();
+          m_HP_EE_Intake_Sequence_Reverse.schedule();
+          m_endEffectorStow.cancel();
+          m_L1_CMD.cancel();
+          m_L2_CMD.cancel();
+          m_L3_CMD.cancel();
+          m_L4_CMD.cancel();
+          m_L2_Algae_Removal.cancel();
+          m_L3_Algae_Removal.cancel();
+        }).until(()->m_endEffectorSubsystem.hasCoral()).andThen(Commands.run(()->CommandScheduler.getInstance().cancelAll()).withTimeout(0.1)
+        )
       );
 
       // DRIVER_LEFT_TRIGGER.onTrue(m_HP_EE_Intake_Sequence.until(()->m_endEffectorSubsystem.hasCoral())
