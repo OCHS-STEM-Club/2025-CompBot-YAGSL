@@ -8,12 +8,14 @@ import static edu.wpi.first.units.Units.Meter;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -27,9 +29,11 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -68,6 +72,8 @@ public class SwerveSubsystem extends SubsystemBase
   private boolean enableVision = true;
 
   private SwerveInputStream m_swerveInputStream;
+
+  List<Pose3d> tagPoses = new LinkedList<>();
 
 
   public SwerveSubsystem(File directory)
@@ -138,6 +144,7 @@ public class SwerveSubsystem extends SubsystemBase
   { 
     if(enableVision){
       setupPhotonCameras();
+      logTags();
     }
     
 
@@ -147,6 +154,8 @@ public class SwerveSubsystem extends SubsystemBase
   public void simulationPeriodic()
   {
   }
+
+
 
 
 
@@ -240,13 +249,42 @@ public class SwerveSubsystem extends SubsystemBase
                                          stdDevs
                                         );
       }
+
+
     }
-                  
-
-
-
+                
   }
 
+  public void logTags(){
+    if(camerasArray[1].camera.getLatestResult().hasTargets()){
+      int  HP_BestTarget = camerasArray[1].camera.getLatestResult().getBestTarget().getFiducialId();
+
+      var HP_tagPose = Constants.VisionConstants.kTagLayout.getTagPose(HP_BestTarget);
+
+      if(HP_tagPose.isPresent()){
+      tagPoses.add(HP_tagPose.get());
+    }
+    }
+
+
+
+    if(camerasArray[0].camera.getLatestResult().hasTargets()){
+      int  FL_BestTarget = camerasArray[0].camera.getLatestResult().getBestTarget().getFiducialId();
+
+      var FL_tagPose = Constants.VisionConstants.kTagLayout.getTagPose(FL_BestTarget);
+
+      if(FL_tagPose.isPresent()){
+      tagPoses.add(FL_tagPose.get());
+    }
+    }
+
+
+
+
+
+    Logger.recordOutput("Best_Targets", tagPoses.toArray(new Pose3d[tagPoses.size()]));
+
+  }
 
     
 
