@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants.EndEffectorConstants;
 import frc.robot.Constants.SetpointConstants;
 import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
-import frc.robot.commands.Setpoints_CMD.GroundIntake_Setpoint_CMD;
-import frc.robot.subsystems.CoralGroundIntakeSubsystem;
+
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 
@@ -32,8 +32,8 @@ public class HP_EE_Intake_Sequence extends SequentialCommandGroup {
 
     addCommands(
     new ParallelCommandGroup(
-                m_endEffectorSubsystem.intakeWithTOF(),
-                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, 0.66),
-                 new WaitUntilCommand(()->m_endEffectorSubsystem.hasCoral()).andThen(new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint))));
+                  m_endEffectorSubsystem.intakeWithCurrent(),
+                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, 0.642),
+                 new WaitUntilCommand(()->m_endEffectorSubsystem.endEffectorIntake.getStatorCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike).andThen(new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint))));
   }
 }

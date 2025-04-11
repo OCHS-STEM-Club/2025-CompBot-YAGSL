@@ -14,11 +14,13 @@ import org.littletonrobotics.junction.AutoLogOutput;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CANdiConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.CommutationConfigs;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.FeedbackConfigs;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.PWM1Configs;
@@ -29,6 +31,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.CANdi;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
@@ -36,6 +39,7 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 
@@ -45,6 +49,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.EndEffectorConstants;
 import frc.robot.Constants.GroundIntakeConstants;
 import frc.robot.Constants.SetpointConstants;
@@ -59,15 +64,12 @@ public class EndEffectorSubsystem extends SubsystemBase {
   // End Effector Pivot
   private TalonFX endEffectorPivot;
 
-  // CANdi
-  private CANdi canDi;
+
 
   // End Effector Configs
   private TalonFXSConfiguration intakeConfigs;
   // Pivot Configs
   private TalonFXConfiguration pivotConfigs;
-  // CANdi Configs
-  private CANdiConfiguration canDiConfigs;
 
   // Intake Beam Break
   private TimeOfFlight intakeSensor;
@@ -77,6 +79,10 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
   //MotionMagic Voltage Request
   private MotionMagicVoltage m_motionRequest;
+
+  //Throughbore
+  private CANcoder endEffectorEncoder;
+  private CANcoderConfiguration endEffectorEncoderConfigs;
 
   Elastic.Notification TOF_Disconnected = 
                       new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR, "TOF_Disconnected", "TOF_Disconnected!!!");
@@ -91,22 +97,19 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
     // Intake Beam Break
     intakeSensor = new TimeOfFlight(EndEffectorConstants.kEndEffectorTOFID);
+    
+    
+    endEffectorEncoder = new CANcoder(EndEffectorConstants.kEndEffectorEncoderID);
+    endEffectorEncoderConfigs = new CANcoderConfiguration()
+                          .withMagnetSensor(new MagnetSensorConfigs()
+                                            .withMagnetOffset(EndEffectorConstants.kEncoderOffset)
+                                            .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+                                            .withAbsoluteSensorDiscontinuityPoint(1)
+                                            ); 
+    endEffectorEncoder.getConfigurator().apply(endEffectorEncoderConfigs);
 
-    // CANdi 
-    canDi = new CANdi(EndEffectorConstants.kCANdiID);
 
-    // CANdi Configs
-    canDiConfigs = new CANdiConfiguration()
-                        .withPWM1(new PWM1Configs()
-                                      .withAbsoluteSensorOffset(EndEffectorConstants.kPWM1AbsoluteEncoderOffset)
-                                      .withAbsoluteSensorDiscontinuityPoint(EndEffectorConstants.kPWM1AbsoluteEncoderDiscontinuityPoint))
-                        .withPWM2(new PWM2Configs()
-                                      .withAbsoluteSensorOffset(GroundIntakeConstants.kGroundIntakeEncoderOffset)
-                                      // .withAbsoluteSensorDiscontinuityPoint(GroundIntakeConstants.kGroundIntakeDiscontinuityPoint)
-                                      .withSensorDirection(false));
 
-    // Apply CANdi Configs
-    canDi.getConfigurator().apply(canDiConfigs);
 
     // Intake Configs
     intakeConfigs = new TalonFXSConfiguration()
@@ -135,8 +138,8 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                             .withMotionMagicAcceleration(EndEffectorConstants.kEndEffectorPivotMotionMagicAcceleration)
                                             .withMotionMagicJerk(EndEffectorConstants.kEndEffectorPivotMotionMagicJerk))
                         .withFeedback(new FeedbackConfigs()
-                                            .withFeedbackRemoteSensorID(EndEffectorConstants.kCANdiID)
-                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANdiPWM1)
+                                            .withFeedbackRemoteSensorID(EndEffectorConstants.kEndEffectorEncoderID)
+                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
                                             .withSensorToMechanismRatio(EndEffectorConstants.kSensorToMechanismRatio)
                                             .withRotorToSensorRatio(EndEffectorConstants.kRotorToSensorRatio))
                         .withCurrentLimits(new CurrentLimitsConfigs()
@@ -154,8 +157,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
 
     intakeSensor.setRangingMode(RangingMode.Short, 24);
-
-
 
   }
 
@@ -207,12 +208,12 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
   public Command intakeWithCurrent(){
     return Commands.run(()->{ 
-      if(this.endEffectorIntake.getStatorCurrent().getValueAsDouble() > 55){
+      if(this.endEffectorIntake.getStatorCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike){
         rollersStop();
       }else
         rollersIntake();
     }
-    ).until(() -> this.endEffectorIntake.getStatorCurrent().getValueAsDouble() > 55);
+    ).until(() -> this.endEffectorIntake.getStatorCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike);
   }
 
   // Set Pivot Postion
@@ -295,11 +296,7 @@ public BooleanSupplier endHP_CMD(){
     return m_motionRequest.Position;
   }
 
-  //Get CANdi End Effector Position
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/PWM1 Postion")
-  public double getCANDIPWM1(){
-    return canDi.getPWM1Position().getValueAsDouble();
-  }
+
 
   // Get Pivot Velocity
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotVelocity")
@@ -318,12 +315,7 @@ public BooleanSupplier endHP_CMD(){
   public double getPivotMotorVoltage(){
     return endEffectorPivot.getMotorVoltage().getValueAsDouble();
   }
-  
-  // // Get Pivot Motor Temp
-  // @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotTemperature")
-  // public double getPivotMotorTemperature(){
-  //   return endEffectorPivot.getDeviceTemp().getValueAsDouble();
-  // }
+
 
 
   // Get Intake Velocity
@@ -344,23 +336,11 @@ public BooleanSupplier endHP_CMD(){
     return endEffectorIntake.getMotorVoltage().getValueAsDouble();
   }
 
-  // //Gets Intake Motor Temperature
-  // @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeTemperature")
-  // public double getIntakeMotorTemperature(){
-  //   return endEffectorIntake.getExternalMotorTemp().getValueAsDouble();
-  // }
-
-
-
-  //Get CANdi GI Position
-  @AutoLogOutput(key = "Subsystems/CoralGroundIntakeSubsystem/Pivot/Position/PWM2 Postion")
-  public double getCANDIPWM2(){
-    return canDi.getPWM2Position().getValueAsDouble();
+  //Get EE Encoder Position
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Position/EndEffectorEncoderPosition")
+  public double getEndEffectorEncoderPivotPosition(){
+    return endEffectorEncoder.getPosition().getValueAsDouble();
   }
-
-  // public CANdle getCANdle(){
-  //   return m_CANdle;
-  // }
 
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Intake Sensor/TOF Range")
   public double getTOFRange(){
@@ -368,19 +348,18 @@ public BooleanSupplier endHP_CMD(){
   }
 
 
-
-  
-
   @Override
   public void periodic() {
 
-  // System.out.println(this.intakeSensor.getRange());
+
 
   if(intakeSensor.getRange() == 0){
     Elastic.sendNotification(TOF_Disconnected);
   }
 
-  // System.out.println(endEffectorIntake.getStatorCurrent().getValueAsDouble());
+  System.out.println(endEffectorIntake.getStatorCurrent().getValueAsDouble());
+
+
   
 
 

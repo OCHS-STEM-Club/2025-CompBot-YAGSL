@@ -437,19 +437,23 @@ public class RobotContainer
 
     
 
-      DRIVER_LEFT_TRIGGER.onTrue(
-        Commands.run(() -> {
-          m_elevatorManualDown.schedule();
-          m_HP_EE_Intake_Sequence.schedule();
-          m_endEffectorStow.cancel();
-          m_L1_CMD.cancel();
-          m_L2_CMD.cancel();
-          m_L3_CMD.cancel();
-          m_L4_CMD.cancel();
-          m_L2_Algae_Removal.cancel();
-          m_L3_Algae_Removal.cancel();
-        }).until(()->m_endEffectorSubsystem.hasCoral()).andThen(Commands.run(()->CommandScheduler.getInstance().cancelAll()).withTimeout(0.1))
-      );
+      // DRIVER_LEFT_TRIGGER.onTrue(
+      //   Commands.run(() -> {
+      //     m_endEffectorStow.cancel();
+      //     m_elevatorManualDown.schedule();
+      //     m_HP_EE_Intake_Sequence.schedule();
+          
+      //     m_L1_CMD.cancel();
+      //     m_L2_CMD.cancel();
+      //     m_L3_CMD.cancel();
+      //     m_L4_CMD.cancel();
+      //     m_L2_Algae_Removal.cancel();
+      //     m_L3_Algae_Removal.cancel();
+      //   })
+      //   // ).until(()->m_endEffectorSubsystem.endEffectorIntake.getStatorCurrent().getValueAsDouble() > 55).andThen(Commands.run(()->CommandScheduler.getInstance().cancelAll()).withTimeout(0.1))
+      // );
+
+      DRIVER_LEFT_TRIGGER.onTrue(m_HP_EE_Intake_Sequence);
 
       DRIVER_POV_DOWN.onTrue(
         Commands.run(() -> {
@@ -462,7 +466,8 @@ public class RobotContainer
           m_L4_CMD.cancel();
           m_L2_Algae_Removal.cancel();
           m_L3_Algae_Removal.cancel();
-        }).until(()->m_endEffectorSubsystem.hasCoral()).andThen(Commands.run(()->CommandScheduler.getInstance().cancelAll()).withTimeout(0.1)
+        })
+        .until(()->m_endEffectorSubsystem.endEffectorIntake.getStatorCurrent().getValueAsDouble() > 55).andThen(Commands.run(()->CommandScheduler.getInstance().cancelAll()).withTimeout(0.1)
         )
       );
 
