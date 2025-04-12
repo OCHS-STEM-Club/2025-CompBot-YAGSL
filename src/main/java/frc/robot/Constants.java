@@ -36,7 +36,7 @@ public final class Constants
   public static class SpeedConstants{
     // Robot Speed
 
-    public static final double kNormalRobotTranslationSpeed = 0;
+    public static final double kNormalRobotTranslationSpeed = 0.7;
     public static final double kNormalRobotRotationSpeed = 0.8;
     
     public static final double kRobotNudgeSpeed = 0.1;
@@ -167,7 +167,7 @@ public final class Constants
 
     public static final double kEncoderOffset = 0;
 
-    public static final double kClimberSpeed = 0.65;
+    public static final double kClimberSpeed = 0.8;
 
   }
 
