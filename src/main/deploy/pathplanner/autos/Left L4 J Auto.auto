@@ -5,7 +5,7 @@
     "data": {
       "commands": [
         {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
               {
@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "EndEffector_Stow_Until_L4"
+                  "name": "EndEffector_Stow_1_Timeout"
                 }
               }
             ]

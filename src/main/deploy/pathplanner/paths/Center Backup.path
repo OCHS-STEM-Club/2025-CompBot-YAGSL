@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 6.701127049180327,
-        "y": 4.09093237704918
+        "x": 5.382,
+        "y": 3.927
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.1245944611475025,
-        "y": 4.09093237704918
+        "x": 5.958532588032824,
+        "y": 3.927
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.38247950819672,
-        "y": 4.09093237704918
+        "x": 6.2692499999999995,
+        "y": 3.927
       },
       "prevControl": {
-        "x": 5.857471043539055,
-        "y": 4.09093237704918
+        "x": 5.7942584646576645,
+        "y": 3.927
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "L4",
-      "waypointRelativePos": 0.3507194244604344,
+      "name": "DA_2",
+      "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "L4_CMD"
+          "name": "DA2"
         }
       }
     }

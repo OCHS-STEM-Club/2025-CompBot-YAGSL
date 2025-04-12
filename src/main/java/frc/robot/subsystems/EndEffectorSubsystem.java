@@ -11,6 +11,7 @@ import java.util.function.BooleanSupplier;
 import javax.swing.plaf.RootPaneUI;
 
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.opencv.features2d.FlannBasedMatcher;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix6.SignalLogger;
@@ -167,7 +168,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   }
 
   public void rollersOuttake_L1() {
-    endEffectorIntake.set(-0.25);
+    endEffectorIntake.set(-0.15);
   }
 
   // End Effector Outtake
@@ -251,18 +252,18 @@ public class EndEffectorSubsystem extends SubsystemBase {
   // Do we have coral?
   @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/HasCoral?")
   public boolean hasCoral(){
-      if(intakeSensor.getRange() > EndEffectorConstants.kEndEffectorTOFDetectionValue){
-        return false;
-      }else{
+      if(this.endEffectorIntake.getStatorCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike){
         return true;
+      }else{
+        return false;
       }
   }
 
   public BooleanSupplier hasCoralSupplier(){
-    if(intakeSensor.getRange() > EndEffectorConstants.kEndEffectorTOFDetectionValue){
-      return ()-> false;
-    }else{
+    if(this.endEffectorIntake.getStatorCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike){
       return ()-> true;
+    }else{
+      return ()-> false;
     }
 }
 
@@ -357,7 +358,7 @@ public BooleanSupplier endHP_CMD(){
     Elastic.sendNotification(TOF_Disconnected);
   }
 
-  System.out.println(endEffectorIntake.getStatorCurrent().getValueAsDouble());
+  // System.out.println(endEffectorIntake.getStatorCurrent().getValueAsDouble());
 
 
   

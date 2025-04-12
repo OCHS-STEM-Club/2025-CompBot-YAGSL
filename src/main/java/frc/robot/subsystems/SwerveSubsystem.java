@@ -144,7 +144,7 @@ public class SwerveSubsystem extends SubsystemBase
   { 
     if(enableVision){
       setupPhotonCameras();
-      logTags();
+      // logTags();
     }
     
 
@@ -255,36 +255,36 @@ public class SwerveSubsystem extends SubsystemBase
                 
   }
 
-  public void logTags(){
-    if(camerasArray[1].camera.getLatestResult().hasTargets()){
-      int  HP_BestTarget = camerasArray[1].camera.getLatestResult().getBestTarget().getFiducialId();
+  // public void logTags(){
+  //   if(camerasArray[1].camera.getLatestResult().hasTargets()){
+  //     int  HP_BestTarget = camerasArray[1].camera.getLatestResult().getBestTarget().getFiducialId();
 
-      var HP_tagPose = Constants.VisionConstants.kTagLayout.getTagPose(HP_BestTarget);
+  //     var HP_tagPose = Constants.VisionConstants.kTagLayout.getTagPose(HP_BestTarget);
 
-      if(HP_tagPose.isPresent()){
-      tagPoses.add(HP_tagPose.get());
-    }
-    }
-
-
-
-    if(camerasArray[0].camera.getLatestResult().hasTargets()){
-      int  FL_BestTarget = camerasArray[0].camera.getLatestResult().getBestTarget().getFiducialId();
-
-      var FL_tagPose = Constants.VisionConstants.kTagLayout.getTagPose(FL_BestTarget);
-
-      if(FL_tagPose.isPresent()){
-      tagPoses.add(FL_tagPose.get());
-    }
-    }
+  //     if(HP_tagPose.isPresent()){
+  //     tagPoses.add(HP_tagPose.get());
+  //   }
+  //   }
 
 
 
+  //   if(camerasArray[0].camera.getLatestResult().hasTargets()){
+  //     int  FL_BestTarget = camerasArray[0].camera.getLatestResult().getBestTarget().getFiducialId();
+
+  //     var FL_tagPose = Constants.VisionConstants.kTagLayout.getTagPose(FL_BestTarget);
+
+  //     if(FL_tagPose.isPresent()){
+  //     tagPoses.add(FL_tagPose.get());
+  //   }
+  //   }
 
 
-    Logger.recordOutput("Best_Targets", tagPoses.toArray(new Pose3d[tagPoses.size()]));
 
-  }
+
+
+  //   Logger.recordOutput("Best_Targets", tagPoses.toArray(new Pose3d[tagPoses.size()]));
+
+  // }
 
     
 

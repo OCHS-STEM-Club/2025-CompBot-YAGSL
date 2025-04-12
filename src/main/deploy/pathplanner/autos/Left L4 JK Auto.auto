@@ -34,31 +34,12 @@
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.1
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "EndEffector_Eject_Coral"
-                      }
-                    }
-                  ]
+                  "name": "EndEffector_Eject_Coral"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "STOW_CMD"
           }
         },
         {
@@ -68,7 +49,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "HP_EE_INTAKE"
+                  "name": "Stow_&_EE_Intake"
                 }
               },
               {

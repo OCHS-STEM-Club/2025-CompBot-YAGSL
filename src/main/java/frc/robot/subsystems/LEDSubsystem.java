@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.EndEffectorConstants;
 import frc.robot.Constants.LEDConstants;
 // import frc.robot.commands.Sequential.Intaking_CMDs.GI_Intake_Sequence;
 // import frc.robot.commands.Sequential.Intaking_CMDs.HP_Intake_Sequence;
@@ -77,7 +78,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     switch (toChange) {
       case EE_Has_Coral:
-        m_CANdle.setLEDs(255, 255, 255); // White
+      m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.1, LEDConstants.kLEDCount)); // White
         break;
       case GI_Has_Coral:
         m_CANdle.animate(new StrobeAnimation(247, 181, 0, 255, 0.1, LEDConstants.kLEDCount)); // Traffic Yellow
@@ -101,7 +102,7 @@ public class LEDSubsystem extends SubsystemBase {
   public void periodic() {
     if(RobotController.getBatteryVoltage() < 9){
       setCANdle(LED_States.BROWNOUT);
-    }else if(m_endEffectorSubsystem.hasCoral()){
+    }else if(m_endEffectorSubsystem.endEffectorIntake.getStatorCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike){
       setCANdle(LED_States.EE_Has_Coral);
     
     }else if(m_robotContainer.m_L2_Algae_Removal.isScheduled() || m_robotContainer.m_L3_Algae_Removal.isScheduled()){

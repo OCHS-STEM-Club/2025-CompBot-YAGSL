@@ -33,7 +33,7 @@ public class HP_EE_Intake_Sequence extends SequentialCommandGroup {
     addCommands(
     new ParallelCommandGroup(
                   m_endEffectorSubsystem.intakeWithCurrent(),
-                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, 0.642),
+                 new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, 0.637),
                  new WaitUntilCommand(()->m_endEffectorSubsystem.endEffectorIntake.getStatorCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike).andThen(new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint))));
   }
 }
