@@ -60,6 +60,18 @@
           "data": {
             "name": "STOW_CMD"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center DA2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Center Backup"
+          }
         }
       ]
     }

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -268,6 +269,18 @@ public class RobotContainer
                                                       ).withTimeout(1.5));
     NamedCommands.registerCommand("HP_EE_INTAKE", new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem).until(()->m_endEffectorSubsystem.hasCoral()));
 
+    NamedCommands.registerCommand("Stow_&_EE_Intake", new STOW_CMD(m_elevatorSubsystem, m_endEffectorSubsystem)
+    .withTimeout(1)
+    .andThen(
+                                                        new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem).until(()->m_endEffectorSubsystem.hasCoral())
+                                                      ));
+
+
+    NamedCommands.registerCommand("DA2", new ParallelCommandGroup(
+      new REEF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, SetpointConstants.kEndEffectorL2AlgaeRemovalSetpoint, SetpointConstants.kElevatorL2AlgaeRemovalSetpoint),
+      new EndEffectorManualIntake(m_endEffectorSubsystem)
+    ));
+
 
 
     configureBindings();
@@ -431,43 +444,21 @@ public class RobotContainer
         })
       );
 // Lucas Holl is lead programmer
-      DRIVER_POV_UP.whileTrue(Commands.runOnce(()->getDesiredReefState().schedule()));
+      DRIVER_POV_DOWN.whileTrue(Commands.runOnce(()->getDesiredReefState().schedule()));
+
+      m_operatorController1.button(6).whileTrue(Commands.run(()->m_driverController.setRumble(RumbleType.kBothRumble, 1)))
+      .whileFalse(Commands.run(()->m_driverController.setRumble(RumbleType.kBothRumble, 0)));
 
 
 
     
 
-      DRIVER_LEFT_TRIGGER.onTrue(
-        Commands.run(() -> {
-          m_elevatorManualDown.schedule();
-          m_HP_EE_Intake_Sequence.schedule();
-          m_endEffectorStow.cancel();
-          m_L1_CMD.cancel();
-          m_L2_CMD.cancel();
-          m_L3_CMD.cancel();
-          m_L4_CMD.cancel();
-          m_L2_Algae_Removal.cancel();
-          m_L3_Algae_Removal.cancel();
-        }).until(()->m_endEffectorSubsystem.hasCoral()).andThen(Commands.run(()->CommandScheduler.getInstance().cancelAll()).withTimeout(0.1))
-      );
 
-      DRIVER_POV_DOWN.onTrue(
-        Commands.run(() -> {
-          m_elevatorManualDown.schedule();
-          m_HP_EE_Intake_Sequence_Reverse.schedule();
-          m_endEffectorStow.cancel();
-          m_L1_CMD.cancel();
-          m_L2_CMD.cancel();
-          m_L3_CMD.cancel();
-          m_L4_CMD.cancel();
-          m_L2_Algae_Removal.cancel();
-          m_L3_Algae_Removal.cancel();
-        }).until(()->m_endEffectorSubsystem.hasCoral()).andThen(Commands.run(()->CommandScheduler.getInstance().cancelAll()).withTimeout(0.1)
-        )
-      );
+      DRIVER_LEFT_TRIGGER.onTrue(m_HP_EE_Intake_Sequence);
 
-      // DRIVER_LEFT_TRIGGER.onTrue(m_HP_EE_Intake_Sequence.until(()->m_endEffectorSubsystem.hasCoral())
-      // .andThen(new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint)));
+      DRIVER_POV_UP.onTrue(m_HP_EE_Intake_Sequence_Reverse);
+
+
 
       DRIVER_RIGHT_TRIGGER.whileTrue(m_endEffectorManualOuttake);
 

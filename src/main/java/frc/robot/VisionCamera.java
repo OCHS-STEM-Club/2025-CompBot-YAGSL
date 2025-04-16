@@ -28,7 +28,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 /** Add your docs here. */
 public class VisionCamera {
 
-    private PhotonCamera camera;
+    public PhotonCamera camera;
     private PhotonPoseEstimator photonPoseEstimator;
     private Matrix<N3, N1> curStdDevs;
 

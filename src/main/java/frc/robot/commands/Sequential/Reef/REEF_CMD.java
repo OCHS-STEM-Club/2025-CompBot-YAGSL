@@ -10,8 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.SetpointConstants;
 import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
-import frc.robot.commands.Setpoints_CMD.GroundIntake_Setpoint_CMD;
-import frc.robot.subsystems.CoralGroundIntakeSubsystem;
+
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 

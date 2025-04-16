@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.*;
-
-import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -76,6 +72,8 @@ public final class Constants
     public static final int kEndEffectorIntakeID = 23;
     public static final int kEndEffectorPivotID = 22;
     public static final int kEndEffectorTOFID = 27;
+    public static final int kEndEffectorEncoderID = 29;
+
     // End Effector Speeds
     public static final double kEndEffectorSpeed = 0.50;
     public static final double kPivotSpeed = 0.15;
@@ -88,14 +86,11 @@ public final class Constants
     public static final double kEndEffectorFeedForward = 0.280975;
     // End Effector Beam Break ID
     public static final int kEndEffectorBeamBreakPort = 3;
-    // CANdi ID
-    public static final int kCANdiID = 26;
-    // CANdi Cofigs
-    public static final double kPWM1AbsoluteEncoderOffset = -0.13; 
-    public static final double kPWM1AbsoluteEncoderDiscontinuityPoint = 1; 
     // Sensor Configs
     public static final double kSensorToMechanismRatio = 1;
     public static final double kRotorToSensorRatio = 24.9; // TODO: Change Setpoints based on this value
+    public static final double kEncoderOffset = 0.345;
+
     // Pivot Current Limits
     public static final double kEndEffectorPivotCurrentLimit = 40;
     //End Effector Motion Magic Values
@@ -106,7 +101,7 @@ public final class Constants
     public static final double kEndEffectorFowardSoftLimit = 0.8;
     public static final double kEndEffectorReverseSoftLimit = 0.15;
 
-
+    public static final double kEndEffectorCurrentSpike = 55;
   }
 
   public static class ElevatorConstants{
@@ -172,31 +167,31 @@ public final class Constants
 
     public static final double kEncoderOffset = 0;
 
-    public static final double kClimberSpeed = 0.65;
+    public static final double kClimberSpeed = 0.8;
 
   }
 
   public static class SetpointConstants{ // Change EE Values to match new gear ratio
     // L1
     public static final double kL1ElevatorSetpoint = 0; 
-    public static final double kL1EndEffectorSetpoint = 0.296875; 
+    public static final double kL1EndEffectorSetpoint = 0.266875; 
 
     public static final double kL1EndEffectorSetpointAlt = 0.5;
     // L2
     public static final double kL2ElevatorSetpoint = 7.25; 
-    public static final double kL2EndEffectorSetpoint = 0.175; 
+    public static final double kL2EndEffectorSetpoint = 0.152; 
     // L3
     public static final double kL3ElevatorSetpoint = 12.18; 
-    public static final double kL3EndEffectorSetpoint = 0.175;//17
+    public static final double kL3EndEffectorSetpoint = 0.15;//17
     // L4
     public static final double kL4ElevatorSetpoint = 20.370; 
-    public static final double kL4EndEffectorSetpoint = 0.16;//0.1445;
+    public static final double kL4EndEffectorSetpoint = 0.13;//0.1445;
     // HP
     public static final double kHPElevatorSetpoint = 3.05; 
-    public static final double kHPEndEffectorSetpoint = 0.643; 
+    public static final double kHPEndEffectorSetpoint = 0.613; 
     // STOW
     public static final double kStowElevatorSetpoint = 0; 
-    public static final double kStowEndEffectorSetpoint = 0.55; 
+    public static final double kStowEndEffectorSetpoint = 0.52; 
     public static final double kStowCoralGroundIntakeSetpoint = 0.65; 
     // Handoff
     public static final double kHandoffElevatorSetpoint = 0.7; 
@@ -216,7 +211,7 @@ public final class Constants
     public static final double kElevatorClimbSetpoint = 4;
 
     // EE HP
-    public static final double kEndEffectorHPIntakeSetpoint = 0.7;
+    public static final double kEndEffectorHPIntakeSetpoint = 0.646;
     public static final double kElevatorHPIntakeSetpoint = 5;
 
 

@@ -15,12 +15,16 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.RainbowAnimation;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -34,6 +38,9 @@ public class Robot extends LoggedRobot
   private        Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+
+  CommandXboxController m_driverController = new CommandXboxController(0);
+  CommandJoystick m_operatorController1 = new CommandJoystick(1);
 
 
   
@@ -106,6 +113,7 @@ public class Robot extends LoggedRobot
     m_robotContainer.setMotorBrake(true);
     // disabledTimer.reset();
     // disabledTimer.start();
+    
   }
 
   @Override
@@ -113,6 +121,9 @@ public class Robot extends LoggedRobot
   {
       // m_robotContainer.setMotorBrake(false);
       // disabledTimer.stop();
+
+      // m_operatorController1.button(6).whileTrue(Commands.run(()->m_driverController.setRumble(RumbleType.kBothRumble, 1)))
+      // .whileFalse(Commands.run(()->m_driverController.setRumble(RumbleType.kBothRumble, 0)));
   }
 
   /**
