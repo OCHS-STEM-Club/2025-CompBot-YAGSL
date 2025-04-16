@@ -73,7 +73,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
   private TalonFXConfiguration pivotConfigs;
 
   // Intake Beam Break
-  private TimeOfFlight intakeSensor;
+  // private TimeOfFlight intakeSensor;
 
   // Voltage Request
   private VoltageOut m_voltageRequest;
@@ -85,9 +85,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
   private CANcoder endEffectorEncoder;
   private CANcoderConfiguration endEffectorEncoderConfigs;
 
-  Elastic.Notification TOF_Disconnected = 
-                      new Elastic.Notification(Elastic.Notification.NotificationLevel.ERROR, "TOF_Disconnected", "TOF_Disconnected!!!");
-
 
   public EndEffectorSubsystem() {
     
@@ -96,8 +93,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
     // End Effector Pivot
     endEffectorPivot = new TalonFX(EndEffectorConstants.kEndEffectorPivotID);
 
-    // Intake Beam Break
-    intakeSensor = new TimeOfFlight(EndEffectorConstants.kEndEffectorTOFID);
+
     
     
     endEffectorEncoder = new CANcoder(EndEffectorConstants.kEndEffectorEncoderID);
@@ -157,7 +153,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
     m_motionRequest = new MotionMagicVoltage(0).withSlot(0).withFeedForward(EndEffectorConstants.kEndEffectorFeedForward);
 
 
-    intakeSensor.setRangingMode(RangingMode.Short, 24);
+
 
   }
 
@@ -197,15 +193,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
     endEffectorPivot.set(0);
   } 
 
-  // Intake with TOF Sensor
-  public Command intakeWithTOF(){
-    return Commands.run(()-> {
-              if(intakeSensor.getRange() > EndEffectorConstants.kEndEffectorTOFDetectionValue){
-                rollersIntake();
-              }else
-                rollersStop();
-    }).until(()->hasCoral());
-  }
+
 
   public Command intakeWithCurrent(){
     return Commands.run(()->{ 
@@ -300,19 +288,19 @@ public BooleanSupplier endHP_CMD(){
 
 
   // Get Pivot Velocity
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotVelocity")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/PivotVelocity")
   public double getPivotVelocity() {
     return endEffectorPivot.get();
   }
 
   // Get Pivot Current
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotCurrent")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/PivotCurrent")
   public double getPivotCurrent() {
     return endEffectorPivot.getSupplyCurrent().getValueAsDouble();
   }
 
   // Get Pivot Voltage
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/Motor/PivotVoltage")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Pivot/PivotVoltage")
   public double getPivotMotorVoltage(){
     return endEffectorPivot.getMotorVoltage().getValueAsDouble();
   }
@@ -320,19 +308,19 @@ public BooleanSupplier endHP_CMD(){
 
 
   // Get Intake Velocity
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeVelocity")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/IntakeVelocity")
   public double getIntakeVelocity() {
     return endEffectorIntake.get();
   }
 
  // Get Intake Current
- @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeCurrent")
+ @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/IntakeCurrent")
  public double getIntakeSupplyCurrent() {
    return endEffectorIntake.getSupplyCurrent().getValueAsDouble();
  }
 
   // Get Intake Voltage
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Motor/IntakeVoltage")
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/IntakeVoltage")
   public double getIntakeVoltage() {
     return endEffectorIntake.getMotorVoltage().getValueAsDouble();
   }
@@ -343,9 +331,9 @@ public BooleanSupplier endHP_CMD(){
     return endEffectorEncoder.getPosition().getValueAsDouble();
   }
 
-  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/Intake/Intake Sensor/TOF Range")
-  public double getTOFRange(){
-    return intakeSensor.getRange();
+  @AutoLogOutput(key = "Subsystems/EndEffectorSubsystem/IntakeIntakeStatorCurrent")
+  public double getIntakeStatorCurrent(){
+    return endEffectorIntake.getStatorCurrent().getValueAsDouble();
   }
 
 
@@ -354,9 +342,6 @@ public BooleanSupplier endHP_CMD(){
 
 
 
-  if(intakeSensor.getRange() == 0){
-    Elastic.sendNotification(TOF_Disconnected);
-  }
 
   // System.out.println(endEffectorIntake.getStatorCurrent().getValueAsDouble());
 
