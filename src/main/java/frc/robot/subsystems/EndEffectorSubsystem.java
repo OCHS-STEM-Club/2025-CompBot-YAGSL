@@ -136,7 +136,7 @@ public class EndEffectorSubsystem extends SubsystemBase {
                                             .withMotionMagicJerk(EndEffectorConstants.kEndEffectorPivotMotionMagicJerk))
                         .withFeedback(new FeedbackConfigs()
                                             .withFeedbackRemoteSensorID(EndEffectorConstants.kEndEffectorEncoderID)
-                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.RemoteCANcoder)
+                                            .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
                                             .withSensorToMechanismRatio(EndEffectorConstants.kSensorToMechanismRatio)
                                             .withRotorToSensorRatio(EndEffectorConstants.kRotorToSensorRatio))
                         .withCurrentLimits(new CurrentLimitsConfigs()
