@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.lang.constant.DirectMethodHandleDesc;
+
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleConfiguration;
@@ -43,6 +45,7 @@ public class LEDSubsystem extends SubsystemBase {
     Algae_Removal,
     Handoff_Coral,
     BROWNOUT,
+    ENDGAME,
     Stow
     
   }
@@ -95,16 +98,19 @@ public class LEDSubsystem extends SubsystemBase {
       case BROWNOUT:
         m_CANdle.setLEDs(255, 255, 0); // Brown
         break;
+      case ENDGAME:
+      m_CANdle.animate(new StrobeAnimation(255, 0, 0, 255, 0.1, LEDConstants.kLEDCount)); // Red
     }
   }
 
   @Override
   public void periodic() {
-    if(RobotController.getBatteryVoltage() < 9){
+    if( DriverStation.isEnabled() && DriverStation.isTeleop()  &&  DriverStation.getMatchTime() <= 25){
+      setCANdle(LED_States.ENDGAME);
+    }else if(RobotController.getBatteryVoltage() < 9){
       setCANdle(LED_States.BROWNOUT);
     }else if(m_endEffectorSubsystem.endEffectorIntake.getStatorCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike){
       setCANdle(LED_States.EE_Has_Coral);
-    
     }else if(m_robotContainer.m_L2_Algae_Removal.isScheduled() || m_robotContainer.m_L3_Algae_Removal.isScheduled()){
       setCANdle(LED_States.Algae_Removal);
     }else{
