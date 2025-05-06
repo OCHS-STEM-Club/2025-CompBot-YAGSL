@@ -414,15 +414,16 @@ public class RobotContainer
       );
       
       // Driver Elevator Stow
-      DRIVER_B_BUTTON.whileTrue(
-        Commands.run(() -> {
-          m_endEffectorStow.schedule();
-        })
-      ).whileFalse(
-        Commands.runOnce(() -> {
-          m_endEffectorStow.cancel();
-        })
-      );
+      // DRIVER_B_BUTTON.whileTrue(
+      //   Commands.run(() -> {
+      //     m_endEffectorStow.schedule();
+      //   })
+      // ).whileFalse(
+      //   Commands.runOnce(() -> {
+      //     m_endEffectorStow.cancel();
+      //   })
+      // );
+      DRIVER_B_BUTTON.whileTrue(m_swerveSubsystem.sysIdDriveMotorCommand());
 
       DRIVER_POV_RIGHT.whileTrue(
         Commands.runOnce(() -> {
