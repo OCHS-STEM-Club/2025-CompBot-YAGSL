@@ -182,10 +182,10 @@ public final class Constants
     public static final double kL2EndEffectorSetpoint = 0.152; 
     // L3
     public static final double kL3ElevatorSetpoint = 12.18; 
-    public static final double kL3EndEffectorSetpoint = 0.15;//17
+    public static final double kL3EndEffectorSetpoint = 0.148;//17
     // L4
     public static final double kL4ElevatorSetpoint = 20.370; 
-    public static final double kL4EndEffectorSetpoint = 0.13;//0.1445;
+    public static final double kL4EndEffectorSetpoint = 0.123;//0.1445;
     // HP
     public static final double kHPElevatorSetpoint = 3.05; 
     public static final double kHPEndEffectorSetpoint = 0.613; 
