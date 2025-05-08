@@ -47,9 +47,9 @@ public final class Constants
     public static final double kDeadband = 0.1;
   
     // Swerve Feedforward Values
-    public static final double kSSwerveFeedforward = 0.11304;
-    public static final double kVSwerveFeedforward = 2.0445;
-    public static final double kASwerveFeedforward = 0.38705;
+    public static final double kSSwerveFeedforward = 0.2612;
+    public static final double kVSwerveFeedforward = 2.1245;
+    public static final double kASwerveFeedforward = 0.28492;
 
     // ButtonBox Button IDs
     public static final int kButtonBox_L1_Button_Port1 = 2;
