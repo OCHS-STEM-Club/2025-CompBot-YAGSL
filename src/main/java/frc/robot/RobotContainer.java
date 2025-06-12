@@ -255,9 +255,12 @@ public class RobotContainer
 
     
     NamedCommands.registerCommand("L4_CMD", new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem));
+    NamedCommands.registerCommand("L3_CMD", new L3_CMD(m_elevatorSubsystem, m_endEffectorSubsystem));
 
     NamedCommands.registerCommand("EndEffector_Eject_Coral", new EndEffectorManualOuttake(m_endEffectorSubsystem).withTimeout(0.4));
+    NamedCommands.registerCommand("EndEffector_Eject_Coral_L3", new EndEffectorManualOuttake(m_endEffectorSubsystem).withTimeout(0.65));
     NamedCommands.registerCommand("EndEffector_Stow_1_Timeout", new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).withTimeout(1));
+    NamedCommands.registerCommand("EndEffector_Stow_0.5_Timeout", new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).withTimeout(0.6));
     NamedCommands.registerCommand("EndEffector_Stow_1.5_Timeout", new EndEffector_Setpoint_CMD(m_endEffectorSubsystem, SetpointConstants.kStowEndEffectorSetpoint).withTimeout(1.5));
     
     NamedCommands.registerCommand("STOW_CMD", new ParallelCommandGroup(
@@ -423,6 +426,7 @@ public class RobotContainer
           m_endEffectorStow.cancel();
         })
       );
+      // DRIVER_B_BUTTON.whileTrue(m_swerveSubsystem.sysIdDriveMotorCommand());
 
       DRIVER_POV_RIGHT.whileTrue(
         Commands.runOnce(() -> {
@@ -448,6 +452,7 @@ public class RobotContainer
 
       m_operatorController1.button(6).whileTrue(Commands.run(()->m_driverController.setRumble(RumbleType.kBothRumble, 1)))
       .whileFalse(Commands.run(()->m_driverController.setRumble(RumbleType.kBothRumble, 0)));
+
 
 
 

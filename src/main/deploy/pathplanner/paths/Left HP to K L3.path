@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "L4",
+      "name": "L3_CMD",
       "waypointRelativePos": 0.3564748201438909,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "L4_CMD"
+          "name": "L3_CMD"
         }
       }
     }

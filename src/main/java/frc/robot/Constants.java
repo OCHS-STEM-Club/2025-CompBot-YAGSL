@@ -36,8 +36,8 @@ public final class Constants
   public static class SpeedConstants{
     // Robot Speed
 
-    public static final double kNormalRobotTranslationSpeed = 0.7;
-    public static final double kNormalRobotRotationSpeed = 0.8;
+    public static final double kNormalRobotTranslationSpeed = 0.55;
+    public static final double kNormalRobotRotationSpeed = 0.65;
     
     public static final double kRobotNudgeSpeed = 0.1;
   }
@@ -47,9 +47,9 @@ public final class Constants
     public static final double kDeadband = 0.1;
   
     // Swerve Feedforward Values
-    public static final double kSSwerveFeedforward = 0.24744;
-    public static final double kVSwerveFeedforward = 1.9568;
-    public static final double kASwerveFeedforward = 0.433;
+    public static final double kSSwerveFeedforward = 0.2612;
+    public static final double kVSwerveFeedforward = 2.1245;
+    public static final double kASwerveFeedforward = 0.28492;
 
     // ButtonBox Button IDs
     public static final int kButtonBox_L1_Button_Port1 = 2;
