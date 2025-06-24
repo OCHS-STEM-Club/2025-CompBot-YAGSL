@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import java.lang.constant.DirectMethodHandleDesc;
+import java.util.Map;
+import java.awt.Color;
 
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
@@ -16,6 +18,7 @@ import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 
 import edu.wpi.first.hal.simulation.DriverStationDataJNI;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
@@ -78,8 +81,20 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   public void setCANdle(LED_States toChange){
+    Color red = new Color(179, 25, 66);
+    Color white = new Color(255, 255, 255);
+    Color blue = new Color(10, 49, 97);
 
-    switch (toChange) {
+    Map<Double, Color> colorMap = Map.of(
+      0.0, red,
+      0.3333, white,
+      0.6667, blue
+    );
+
+    LEDPattern usFlag = LEDPattern.steps(colorMap);
+    LEDPattern scroll = usFlag.scrollAtAbsoluteSpeed(Centimenters.per(Second).of(1), Meters.of(1/120.0));
+    m_CANdle.setLEDs(scroll.getPattern(), scroll.getLength(), scroll.getOffset());
+    /*switch (toChange) {
       case EE_Has_Coral:
       m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.1, LEDConstants.kLEDCount)); // White
         break;
@@ -100,7 +115,7 @@ public class LEDSubsystem extends SubsystemBase {
         break;
       case ENDGAME:
       m_CANdle.animate(new StrobeAnimation(255, 0, 0, 255, 0.1, LEDConstants.kLEDCount)); // Red
-    }
+    }*/
   }
 
   @Override
