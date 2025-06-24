@@ -17,6 +17,7 @@ import com.ctre.phoenix.led.StrobeAnimation;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 
 import edu.wpi.first.hal.simulation.DriverStationDataJNI;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.RobotController;
@@ -81,20 +82,7 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   public void setCANdle(LED_States toChange){
-    Color red = new Color(179, 25, 66);
-    Color white = new Color(255, 255, 255);
-    Color blue = new Color(10, 49, 97);
-
-    Map<Double, Color> colorMap = Map.of(
-      0.0, red,
-      0.3333, white,
-      0.6667, blue
-    );
-
-    LEDPattern usFlag = LEDPattern.steps(colorMap);
-    LEDPattern scroll = usFlag.scrollAtAbsoluteSpeed(Centimenters.per(Second).of(1), Meters.of(1/120.0));
-    m_CANdle.setLEDs(scroll.getPattern(), scroll.getLength(), scroll.getOffset());
-    /*switch (toChange) {
+    switch (toChange) {
       case EE_Has_Coral:
       m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.1, LEDConstants.kLEDCount)); // White
         break;
@@ -115,24 +103,36 @@ public class LEDSubsystem extends SubsystemBase {
         break;
       case ENDGAME:
       m_CANdle.animate(new StrobeAnimation(255, 0, 0, 255, 0.1, LEDConstants.kLEDCount)); // Red
-    }*/
+    }
   }
 
   @Override
   public void periodic() {
-    if( DriverStation.isEnabled() && DriverStation.isTeleop()  &&  DriverStation.getMatchTime() <= 25){
-      setCANdle(LED_States.ENDGAME);
-    }else if(RobotController.getBatteryVoltage() < 9){
-      setCANdle(LED_States.BROWNOUT);
-    }else if(m_endEffectorSubsystem.endEffectorIntake.getStatorCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike){
-      setCANdle(LED_States.EE_Has_Coral);
-    }else if(m_robotContainer.m_L2_Algae_Removal.isScheduled() || m_robotContainer.m_L3_Algae_Removal.isScheduled()){
-      setCANdle(LED_States.Algae_Removal);
-    }else{
-      setCANdle(LED_States.Stow);
-    }
+    Color red = new Color(179, 25, 66);
+    Color white = new Color(255, 255, 255);
+    Color blue = new Color(10, 49, 97);
 
+    Map<Double, Color> colorMap = Map.of(
+      0.0, red,
+      0.3333, white,
+      0.6667, blue
+    );
+
+    LEDPattern usFlag = LEDPattern.steps(Map.of(0.00, red, 0.33, white, 0.67, blue));
+    LEDPattern scroll = usFlag.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), Meters.of(1 / 120.0));
+    scroll.applyTo(m_CANdle);
     
+    // if( DriverStation.isEnabled() && DriverStation.isTeleop()  &&  DriverStation.getMatchTime() <= 25){
+    //   setCANdle(LED_States.ENDGAME);
+    // }else if(RobotController.getBatteryVoltage() < 9){
+    //   setCANdle(LED_States.BROWNOUT);
+    // }else if(m_endEffectorSubsystem.endEffectorIntake.getStatorCurrent().getValueAsDouble() > EndEffectorConstants.kEndEffectorCurrentSpike){
+    //   setCANdle(LED_States.EE_Has_Coral);
+    // }else if(m_robotContainer.m_L2_Algae_Removal.isScheduled() || m_robotContainer.m_L3_Algae_Removal.isScheduled()){
+    //   setCANdle(LED_States.Algae_Removal);
+    // }else{
+    //   setCANdle(LED_States.Stow);
+    // }
   }
 }
 
