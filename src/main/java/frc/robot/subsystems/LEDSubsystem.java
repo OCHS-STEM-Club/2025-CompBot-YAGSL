@@ -4,9 +4,12 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import edu.wpi.first.wpilibj.util.Color;
+
 import java.lang.constant.DirectMethodHandleDesc;
 import java.util.Map;
-import java.awt.Color;
 
 import com.ctre.phoenix.led.Animation;
 import com.ctre.phoenix.led.CANdle;
@@ -44,6 +47,7 @@ public class LEDSubsystem extends SubsystemBase {
   private CANdleConfiguration m_CANdleConfiguration;
 
   public enum LED_States {
+    Red_White_Blue,
     EE_Has_Coral,
     GI_Has_Coral,
     Algae_Removal,
@@ -83,44 +87,36 @@ public class LEDSubsystem extends SubsystemBase {
 
   public void setCANdle(LED_States toChange){
     switch (toChange) {
-      case EE_Has_Coral:
-      m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.1, LEDConstants.kLEDCount)); // White
-        break;
-      case GI_Has_Coral:
-        m_CANdle.animate(new StrobeAnimation(247, 181, 0, 255, 0.1, LEDConstants.kLEDCount)); // Traffic Yellow
-        break;
-      case Algae_Removal:
-        m_CANdle.setLEDs(0, 220, 100); // Algae Color
-        break;
-      case Handoff_Coral:
-        m_CANdle.animate(new StrobeAnimation(54, 1, 63, 255, 0.1, LEDConstants.kLEDCount)); // Purple
-        break;
-      case Stow:
-        m_CANdle.animate(new ColorFlowAnimation(0, 57, 162, 255, 0.65, LEDConstants.kLEDCount, Direction.Forward)); // Philippine Blue
-        break;
-      case BROWNOUT:
-        m_CANdle.setLEDs(255, 255, 0); // Brown
-        break;
-      case ENDGAME:
-      m_CANdle.animate(new StrobeAnimation(255, 0, 0, 255, 0.1, LEDConstants.kLEDCount)); // Red
+      case Red_White_Blue:
+      m_CANdle.animate(new StrobeAnimation(179, 25, 66, 255, 0.1, LEDConstants.kLEDCount, 0));
+      m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.1, LEDConstants.kLEDCount, (int) 0.33));
+      m_CANdle.animate(new StrobeAnimation(10, 49, 97, 255, 0.1, LEDConstants.kLEDCount, (int) 0.67));
+      // case EE_Has_Coral:
+      // m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.1, LEDConstants.kLEDCount)); // White
+      //   break;
+      // case GI_Has_Coral:
+      //   m_CANdle.animate(new StrobeAnimation(247, 181, 0, 255, 0.1, LEDConstants.kLEDCount)); // Traffic Yellow
+      //   break;
+      // case Algae_Removal:
+      //   m_CANdle.setLEDs(0, 220, 100); // Algae Color
+      //   break;
+      // case Handoff_Coral:
+      //   m_CANdle.animate(new StrobeAnimation(54, 1, 63, 255, 0.1, LEDConstants.kLEDCount)); // Purple
+      //   break;
+      // case Stow:
+      //   m_CANdle.animate(new ColorFlowAnimation(0, 57, 162, 255, 0.65, LEDConstants.kLEDCount, Direction.Forward)); // Philippine Blue
+      //   break;
+      // case BROWNOUT:
+      //   m_CANdle.setLEDs(255, 255, 0); // Brown
+      //   break;
+      // case ENDGAME:
+      // m_CANdle.animate(new StrobeAnimation(255, 0, 0, 255, 0.1, LEDConstants.kLEDCount)); // Red
     }
   }
 
   @Override
   public void periodic() {
-    Color red = new Color(179, 25, 66);
-    Color white = new Color(255, 255, 255);
-    Color blue = new Color(10, 49, 97);
-
-    Map<Double, Color> colorMap = Map.of(
-      0.0, red,
-      0.3333, white,
-      0.6667, blue
-    );
-
-    LEDPattern usFlag = LEDPattern.steps(Map.of(0.00, red, 0.33, white, 0.67, blue));
-    LEDPattern scroll = usFlag.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), Meters.of(1 / 120.0));
-    scroll.applyTo(m_CANdle);
+    setCANdle(LED_States.Red_White_Blue);
     
     // if( DriverStation.isEnabled() && DriverStation.isTeleop()  &&  DriverStation.getMatchTime() <= 25){
     //   setCANdle(LED_States.ENDGAME);
