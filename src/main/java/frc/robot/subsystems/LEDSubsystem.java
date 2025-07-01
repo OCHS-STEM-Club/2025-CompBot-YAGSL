@@ -86,11 +86,13 @@ public class LEDSubsystem extends SubsystemBase {
   }
 
   public void setCANdle(LED_States toChange){
+    int thirdOfLEDs = (int) (LEDConstants.kLEDCount / 3);
+    int twoThirdsOfLEDs = 2 * thirdOfLEDs;
     switch (toChange) {
       case Red_White_Blue:
       m_CANdle.animate(new StrobeAnimation(179, 25, 66, 255, 0.1, LEDConstants.kLEDCount, 0));
-      m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.1, LEDConstants.kLEDCount, (int) 0.33));
-      m_CANdle.animate(new StrobeAnimation(10, 49, 97, 255, 0.1, LEDConstants.kLEDCount, (int) 0.67));
+      m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.1, LEDConstants.kLEDCount, thirdOfLEDs));
+      m_CANdle.animate(new StrobeAnimation(10, 49, 97, 255, 0.1, LEDConstants.kLEDCount, twoThirdsOfLEDs));
       // case EE_Has_Coral:
       // m_CANdle.animate(new StrobeAnimation(255, 255, 255, 255, 0.1, LEDConstants.kLEDCount)); // White
       //   break;
