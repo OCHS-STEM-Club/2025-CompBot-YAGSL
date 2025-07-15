@@ -69,7 +69,7 @@ import swervelib.SwerveInputStream;
 public class RobotContainer
 {
   private final SendableChooser<Command> autoChooser;
-
+  private SendableChooser<Double> speedChooser;
 
 
 
@@ -188,7 +188,7 @@ public class RobotContainer
 
   CLIMB_CMD m_climb_CMD = new CLIMB_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
 
-
+  
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -201,7 +201,13 @@ public class RobotContainer
                                                             .scaleTranslation(SpeedConstants.kNormalRobotTranslationSpeed)
                                                             .scaleRotation(SpeedConstants.kNormalRobotRotationSpeed)
                                                             .allianceRelativeControl(true);
-
+  // Trigger m_speedTrigger = new Trigger(() -> {
+  //   Double selectedSpeed = speedChooser.getSelected();
+  //   if (selectedSpeed != 0.7) {
+  //     driveAngularVelocity.scaleTranslation(selectedSpeed);
+  //   }
+  //   return false; // Adjust logic as needed for the trigger condition
+  // });
   SwerveInputStream driveAngularVelocity_SLOW = SwerveInputStream.of(m_swerveSubsystem.getSwerveDrive(),
                                                                 () -> m_driverController.getLeftY() * -1,
                                                                 () -> m_driverController.getLeftX() * -1)
@@ -252,7 +258,19 @@ public class RobotContainer
   public RobotContainer()
 
   { 
-
+    speedChooser = new SendableChooser<Double>();
+    speedChooser.setDefaultOption("70%", 0.7);
+    speedChooser.addOption("95%", 0.95);
+    speedChooser.addOption("90%", 0.9);
+    speedChooser.addOption("85%", 0.85);
+    speedChooser.addOption("80%", 0.8);
+    speedChooser.addOption("75%", 0.75);
+    speedChooser.addOption("60%", 0.6);
+    speedChooser.addOption("50%", 0.5);
+    speedChooser.addOption("40%", 0.4);
+    speedChooser.addOption("30%", 0.3);
+    speedChooser.addOption("25%", 0.25);
+    SmartDashboard.putData("Speed Chooser", speedChooser);
     
     NamedCommands.registerCommand("L4_CMD", new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem));
     NamedCommands.registerCommand("L3_CMD", new L3_CMD(m_elevatorSubsystem, m_endEffectorSubsystem));
@@ -278,6 +296,7 @@ public class RobotContainer
                                                         new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem).until(()->m_endEffectorSubsystem.hasCoral())
                                                       ));
 
+    // driveAngularVelocity.scaleTranslation(speedChooser.getSelected());
 
     NamedCommands.registerCommand("DA2", new ParallelCommandGroup(
       new REEF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, SetpointConstants.kEndEffectorL2AlgaeRemovalSetpoint, SetpointConstants.kElevatorL2AlgaeRemovalSetpoint),
@@ -361,6 +380,10 @@ public class RobotContainer
       case Normal_Eject -> m_endEffectorManualOuttake;
       case L1_Eject -> m_EndEffectorManualOuttake_L1;
     };
+  }
+
+  public void scaleTranslation() {
+    driveAngularVelocity.scaleTranslation(speedChooser.getSelected());
   }
 
    
