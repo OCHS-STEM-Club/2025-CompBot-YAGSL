@@ -267,7 +267,7 @@ public class RobotContainer
     speedChooser.addOption("75%", 0.75);
     speedChooser.addOption("60%", 0.6);
     speedChooser.addOption("50%", 0.5);
-    speedChooser.addOption("40%", 0.4);
+    speedChooser.addOption("MROC 40%", 0.4);
     speedChooser.addOption("30%", 0.3);
     speedChooser.addOption("25%", 0.25);
     SmartDashboard.putData("Speed Chooser", speedChooser);
