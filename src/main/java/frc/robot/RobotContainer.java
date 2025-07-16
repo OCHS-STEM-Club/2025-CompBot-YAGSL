@@ -250,14 +250,7 @@ public class RobotContainer
 
 
 
-
- 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
-  public RobotContainer()
-
-  { 
+  private void speedChooserSetup() {
     speedChooser = new SendableChooser<Double>();
     speedChooser.setDefaultOption("70%", 0.7);
     speedChooser.addOption("95%", 0.95);
@@ -271,6 +264,16 @@ public class RobotContainer
     speedChooser.addOption("30%", 0.3);
     speedChooser.addOption("25%", 0.25);
     SmartDashboard.putData("Speed Chooser", speedChooser);
+
+    speedChooser.onChange(driveAngularVelocity::scaleTranslation);
+  }
+ 
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
+  public RobotContainer() 
+  { 
+    speedChooserSetup();
     
     NamedCommands.registerCommand("L4_CMD", new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem));
     NamedCommands.registerCommand("L3_CMD", new L3_CMD(m_elevatorSubsystem, m_endEffectorSubsystem));
