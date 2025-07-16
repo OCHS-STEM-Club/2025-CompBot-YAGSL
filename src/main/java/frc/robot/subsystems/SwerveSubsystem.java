@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import java.io.File;
 import java.util.Arrays;
@@ -25,6 +26,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
@@ -41,6 +43,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -362,9 +365,19 @@ public class SwerveSubsystem extends SubsystemBase
     PathConstraints constraints = new PathConstraints(
         3, 3,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
+    
+     PathPlannerPath path1 = new PathPlannerPath(
+            path.getWaypoints(), 
+            constraints,
+            new IdealStartingState(getVelocityMagnitude(swerveDrive.getFieldVelocity()), swerveDrive.getOdometryHeading()), 
+            new GoalEndState(0.0, path.getGoalEndState().rotation())
+        );
         
-    return AutoBuilder.pathfindThenFollowPath(path, constraints);
+    return AutoBuilder.followPath(path);
   }
+  private LinearVelocity getVelocityMagnitude(ChassisSpeeds cs){
+        return MetersPerSecond.of(new Translation2d(cs.vxMetersPerSecond, cs.vyMetersPerSecond).getNorm());
+    }
 
 
 
