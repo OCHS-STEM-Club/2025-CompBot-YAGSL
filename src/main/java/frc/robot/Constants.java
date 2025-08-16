@@ -36,8 +36,8 @@ public final class Constants
   public static class SpeedConstants{
     // Robot Speed
 
-    public static final double kNormalRobotTranslationSpeed = 0.55;
-    public static final double kNormalRobotRotationSpeed = 0.65;
+    public static final double kNormalRobotTranslationSpeed = 0.7;
+    public static final double kNormalRobotRotationSpeed = 0.8;
     
     public static final double kRobotNudgeSpeed = 0.1;
   }
@@ -179,10 +179,11 @@ public final class Constants
     public static final double kL1EndEffectorSetpointAlt = 0.5;
     // L2
     public static final double kL2ElevatorSetpoint = 7.25; 
-    public static final double kL2EndEffectorSetpoint = 0.152; 
+    public static final double kL2EndEffectorSetpoint = 0.148; 
     // L3
     public static final double kL3ElevatorSetpoint = 12.18; 
-    public static final double kL3EndEffectorSetpoint = 0.148;//17
+    public static final double kL3EndEffectorSetpoint = 0.140
+    ;//17
     // L4
     public static final double kL4ElevatorSetpoint = 20.370; 
     public static final double kL4EndEffectorSetpoint = 0.123;//0.1445;
@@ -224,7 +225,7 @@ public final class Constants
   }
 
   public static class VisionConstants {
-        public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+        public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
 
         public static final String FL_Module_Camera_Name = "FL-Module";
         public static final Transform3d FL_Module_Camera_Transformed =

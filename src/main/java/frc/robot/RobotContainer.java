@@ -478,7 +478,7 @@ public class RobotContainer
         })
       );
 // Lucas Holl is lead programmer
-      DRIVER_POV_DOWN.whileTrue(Commands.runOnce(m_swerveSubsystem::lock, m_swerveSubsystem).repeatedly());
+      //DRIVER_POV_DOWN.whileTrue(Commands.runOnce(m_swerveSubsystem::lock, m_swerveSubsystem).repeatedly());
 
       m_operatorController1.button(6).whileTrue(Commands.run(()->m_driverController.setRumble(RumbleType.kBothRumble, 1)))
       .whileFalse(Commands.run(()->m_driverController.setRumble(RumbleType.kBothRumble, 0)));
@@ -491,7 +491,7 @@ public class RobotContainer
 
       DRIVER_LEFT_TRIGGER.onTrue(m_HP_EE_Intake_Sequence);
 
-      DRIVER_POV_UP.onTrue(m_HP_EE_Intake_Sequence_Reverse);
+     //DRIVER_POV_UP.onTrue(m_HP_EE_Intake_Sequence_Reverse);
 
 
 
