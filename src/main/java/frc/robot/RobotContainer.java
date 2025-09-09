@@ -438,13 +438,13 @@ public class RobotContainer
       
     // Driver Controls
 
-      DRIVER_A_BUTTON.onTrue(
-        Commands.runOnce(m_swerveSubsystem :: zeroGyroWithAlliance)
-      );
-
       // DRIVER_A_BUTTON.onTrue(
-      //   m_swerveSubsystem.drive_To_Reef_B()
+      //   Commands.runOnce(m_swerveSubsystem :: zeroGyroWithAlliance)
       // );
+
+      DRIVER_A_BUTTON.onTrue(
+        m_swerveSubsystem.drive_To_Reef_A()
+      );
       
       // Driver Elevator Stow
       DRIVER_B_BUTTON.whileTrue(

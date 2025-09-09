@@ -225,32 +225,11 @@ public final class Constants
   }
 
   public static class VisionConstants {
-        public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeAndyMark);
+    public static final String kLimeLight_Reef_Name = "limelight-reef";
 
-        public static final String FL_Module_Camera_Name = "FL-Module";
-        public static final Transform3d FL_Module_Camera_Transformed =
-                        new Transform3d(new Translation3d(0.21082, 0.23876, 0.2032), 
-                        new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(343)));
-        public final static Matrix<N3, N1> FL_SingleTagStdDevs = VecBuilder.fill(6, 6, 8);
-        public final static Matrix<N3, N1> FL_MultiTagStdDevs = VecBuilder.fill(3, 2, 1);
-
-
-        public static final String FR_Module_Camera_Name = "FR-Module";
-
-        public static final Transform3d FR_Module_Camera_Transformed =
-                        new Transform3d(new Translation3d(0.21082, -0.23876, 0.2032), 
-                        new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(0), Units.degreesToRadians(17)));
-        public final static Matrix<N3, N1> FR_SingleTagStdDevs = VecBuilder.fill(6, 6, 8);
-        public final static Matrix<N3, N1> FR_MultiTagStdDevs = VecBuilder.fill(3, 2, 1);
-
-        public static final String HP_Module_Camera_Name = "HP-Camera";
-
-        public static final Transform3d HP_Module_Camera_Transformed = 
-                        new Transform3d(new Translation3d(Units.inchesToMeters(-6.305),Units.inchesToMeters(1.1426), Units.inchesToMeters(37.24)), 
-                        new Rotation3d(Units.degreesToRadians(0), Units.degreesToRadians(30), Units.degreesToRadians(180)));
-        public final static Matrix<N3, N1> HP_SingleTagStdDevs = VecBuilder.fill(6, 6, 8);
-        public final static Matrix<N3, N1> HP_MultiTagStdDevs = VecBuilder.fill(3, 2, 1);
-
+    // MegaTag 1 Std Devs
+    public static final Matrix<N3, N1> kSingleTagStdDevsMT1 = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, 4);
+    public static final Matrix<N3, N1> kMultiTagStdDevsMT1 = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, 3);
   }
 
   public static class LEDConstants {

@@ -32,6 +32,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.path.Waypoint;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -40,6 +42,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -53,7 +57,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.VisionConstants;
-import frc.robot.VisionCamera;
+import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.PoseEstimate;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -70,30 +75,13 @@ public class SwerveSubsystem extends SubsystemBase
 
   private final SwerveDrive swerveDrive;
   
-  private VisionCamera[] camerasArray = new VisionCamera[2];
-
-  private boolean enableVision = true;
-
-  private SwerveInputStream m_swerveInputStream;
-
-  List<Pose3d> tagPoses = new LinkedList<>();
-
+  //Booleans to enable/disable
+  boolean useLLmt1 = true;
+  boolean useLLmt2 = true;
 
   public SwerveSubsystem(File directory)
   {
-    
 
-
-    camerasArray[0] = new VisionCamera(VisionConstants.FL_Module_Camera_Name,
-                                       VisionConstants.FL_Module_Camera_Transformed,
-                                       VisionConstants.FL_SingleTagStdDevs,
-                                       VisionConstants.FL_MultiTagStdDevs);
-                                       
-
-    camerasArray[1] = new VisionCamera(VisionConstants.HP_Module_Camera_Name,
-                                       VisionConstants.HP_Module_Camera_Transformed,
-                                       VisionConstants.HP_SingleTagStdDevs,
-                                       VisionConstants.HP_MultiTagStdDevs);
     
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.LOW;
@@ -145,12 +133,12 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   { 
-    if(enableVision){
-      setupPhotonCameras();
-      // logTags();
+    if (useLLmt1) {
+      setUpLimeLightMegaTag1();
     }
-    
-
+    if (useLLmt2) {
+      setUpLimeLightMegaTag2();
+    }
   }
 
   @Override
@@ -158,9 +146,93 @@ public class SwerveSubsystem extends SubsystemBase
   {
   }
 
+  public void setUpLimeLightMegaTag1() {
+    boolean mt1ValidPose = true;
 
+    LimelightHelpers.PoseEstimate mt1Result = LimelightHelpers.getBotPoseEstimate_wpiBlue(VisionConstants.kLimeLight_Reef_Name);
 
+    if(mt1Result != null) {
+      if (mt1Result.tagCount == 0) {
+        mt1ValidPose = false;
+      }
 
+      Logger.recordOutput("Subsystems/VisionSubsystem/MegaTag1/Pose2D", mt1Result.pose);
+
+      if (mt1ValidPose) {
+        swerveDrive.addVisionMeasurement(mt1Result.pose, mt1Result.timestampSeconds, getMegaTag1StdDevs(mt1Result));
+      }
+    }
+  }
+  
+  public void setUpLimeLightMegaTag2() {
+    boolean mt2ValidPose = true;
+
+    LimelightHelpers.SetRobotOrientation(VisionConstants.kLimeLight_Reef_Name, getPose().getRotation().getDegrees(), 0, 0, 0, 0, 0);
+
+    LimelightHelpers.PoseEstimate mt2Result = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(VisionConstants.kLimeLight_Reef_Name);
+
+    if(mt2Result != null) {
+      if (mt2Result.tagCount == 0 || Math.abs(getRobotVelocity().omegaRadiansPerSecond) > (4 * Math.PI )) {
+        mt2ValidPose = false;
+      }
+
+      Logger.recordOutput("Subsystems/VisionSubsystem/MegaTag2/Pose2D", mt2Result.pose);
+
+      if (mt2ValidPose) {
+        swerveDrive.addVisionMeasurement(mt2Result.pose, mt2Result.timestampSeconds, VecBuilder.fill(0, 0, 0));
+      }
+    }
+  }
+
+  // Calculate the standard deviations for the MegaTag1 pose estimation based on number of tags, average distance and average ambiguity
+  public Matrix<N3, N1> getMegaTag1StdDevs(PoseEstimate poseEstimate){
+    var estStdDevs = VisionConstants.kSingleTagStdDevsMT1;
+
+    // Calculate the number of tags, average distance and average ambiguity
+    int numTags = 0; 
+    double avgDist = 0;
+    double avgAmbiguity = 0;
+    for(var value : poseEstimate.rawFiducials){ // Loop through all the tags detected
+      numTags++;
+      avgDist += value.distToCamera;
+      avgAmbiguity += value.ambiguity;
+    }
+
+    // if no tags detected return single tag std devs
+    if (numTags == 0) {
+      return estStdDevs;
+    }
+
+    // Calculate the averages
+    avgDist /= numTags;
+    avgAmbiguity /= numTags;
+
+    // Adjust the standard deviations based on number of tags
+    if (numTags > 1) {
+      estStdDevs = VisionConstants.kMultiTagStdDevsMT1;
+    }
+    // If the average ambiguity is too high, return very high std devs to ignore the pose
+    if (avgAmbiguity > 0.7) {
+      return VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+    }
+
+    // Scale the standard deviations based on the average ambiguity
+    estStdDevs.times((1 + avgAmbiguity) * 5);
+
+    // Log the values
+    Logger.recordOutput("Subsystems/VisionSubsystem/MegaTag1/Average Ambiguity", avgAmbiguity);
+    Logger.recordOutput("Subsystems/VisionSubsystem/MegaTag1/Num Tags", numTags);
+    Logger.recordOutput("Subsystems/VisionSubsystem/MegaTag1/Average Distance", avgDist);
+
+    // If the average distance is too far, return very high std devs to ignore the pose
+    if (numTags == 1 && avgDist > 2.75) {
+      estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+    }else{ // Scale the standard deviations based on the average distance
+      estStdDevs = estStdDevs.times(1 + (avgDist * avgDist/30));
+    }
+
+    return estStdDevs;
+  }
 
   /**
    * Setup AutoBuilder for PathPlanner.
@@ -232,66 +304,6 @@ public class SwerveSubsystem extends SubsystemBase
     // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
     PathfindingCommand.warmupCommand().schedule();
   }
-
-
-
-  public void setupPhotonCameras(){
-
-    for(VisionCamera camera : camerasArray){
-
-      Optional<EstimatedRobotPose> poseEst = camera.getEstimatedGlobalPose();
-
-      if(poseEst.isPresent()){
-
-        var pose = poseEst.get();
-
-        var stdDevs = camera.getEstimationStdDevs();
-
-        swerveDrive.addVisionMeasurement(new Pose2d(pose.estimatedPose.getX(),pose.estimatedPose.getY(), pose.estimatedPose.getRotation().toRotation2d()),
-                                         pose.timestampSeconds,
-                                         stdDevs
-                                        );
-      }
-
-
-    }
-                
-  }
-
-  // public void logTags(){
-  //   if(camerasArray[1].camera.getLatestResult().hasTargets()){
-  //     int  HP_BestTarget = camerasArray[1].camera.getLatestResult().getBestTarget().getFiducialId();
-
-  //     var HP_tagPose = Constants.VisionConstants.kTagLayout.getTagPose(HP_BestTarget);
-
-  //     if(HP_tagPose.isPresent()){
-  //     tagPoses.add(HP_tagPose.get());
-  //   }
-  //   }
-
-
-
-  //   if(camerasArray[0].camera.getLatestResult().hasTargets()){
-  //     int  FL_BestTarget = camerasArray[0].camera.getLatestResult().getBestTarget().getFiducialId();
-
-  //     var FL_tagPose = Constants.VisionConstants.kTagLayout.getTagPose(FL_BestTarget);
-
-  //     if(FL_tagPose.isPresent()){
-  //     tagPoses.add(FL_tagPose.get());
-  //   }
-  //   }
-
-
-
-
-
-  //   Logger.recordOutput("Best_Targets", tagPoses.toArray(new Pose3d[tagPoses.size()]));
-
-  // }
-
-    
-
-
 
 
 
