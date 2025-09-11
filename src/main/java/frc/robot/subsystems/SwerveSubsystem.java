@@ -106,8 +106,6 @@ public class SwerveSubsystem extends SubsystemBase
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
 //    swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
     setupPathPlanner();
-    
-
 
   }
 
@@ -179,7 +177,7 @@ public class SwerveSubsystem extends SubsystemBase
       Logger.recordOutput("Subsystems/VisionSubsystem/MegaTag2/Pose2D", mt2Result.pose);
 
       if (mt2ValidPose) {
-        swerveDrive.addVisionMeasurement(mt2Result.pose, mt2Result.timestampSeconds, VecBuilder.fill(0, 0, 0));
+        swerveDrive.addVisionMeasurement(mt2Result.pose, mt2Result.timestampSeconds, getEstimationStdDevsLimelightMT2(mt2Result));
       }
     }
   }
@@ -233,6 +231,38 @@ public class SwerveSubsystem extends SubsystemBase
 
     return estStdDevs;
   }
+
+  public static Matrix<N3, N1> getEstimationStdDevsLimelightMT2(PoseEstimate poseEstimate) {
+    var estStdDevs = VisionConstants.kReefStdDevs;
+    
+    int numTags = 0;
+    double avgDist = 0;
+    for (var value : poseEstimate.rawFiducials) {
+        numTags++;
+        avgDist += value.distToCamera;
+    }
+
+    if (numTags == 0) {
+        return estStdDevs;
+    }
+
+    avgDist /= numTags;
+
+    // Decrease std devs if multiple targets are visible
+    if (numTags > 1) {
+        estStdDevs.times(0.7);
+    }
+
+    // Increase std devs based on (average) distance
+    if (numTags == 1 && avgDist > 5) {
+        estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+    }else {
+        estStdDevs = estStdDevs.times(1 + (avgDist * avgDist * 5));
+    }
+
+    return estStdDevs;
+}
+
 
   /**
    * Setup AutoBuilder for PathPlanner.
@@ -304,10 +334,6 @@ public class SwerveSubsystem extends SubsystemBase
     // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
     PathfindingCommand.warmupCommand().schedule();
   }
-
-
-
-
   
   /**
    * Get the path follower with events.
@@ -583,13 +609,6 @@ public class SwerveSubsystem extends SubsystemBase
         
     return AutoBuilder.pathfindThenFollowPath(path, constraints);
   }
-
-
-
-
-
-
-
 
 
   /**

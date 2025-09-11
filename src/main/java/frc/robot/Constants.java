@@ -8,6 +8,8 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -230,6 +232,28 @@ public final class Constants
     // MegaTag 1 Std Devs
     public static final Matrix<N3, N1> kSingleTagStdDevsMT1 = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, 4);
     public static final Matrix<N3, N1> kMultiTagStdDevsMT1 = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, 3);
+
+    public static final Matrix<N3, N1> kReefStdDevs = VecBuilder.fill(0.01, 0.01, Double.MAX_VALUE);
+  }
+
+  public static class ReefConstants {
+    public static final Pose2d kAlpha_Reef = new Pose2d(3.245, 4.278, Rotation2d.fromDegrees(0));
+    public static final Pose2d kBravo_Reef = new Pose2d(3.245, 3.950, Rotation2d.fromDegrees(0));
+
+    public static final Pose2d kCharlie_Reef = new Pose2d(3.646, 3.078, Rotation2d.fromDegrees(60));
+    public static final Pose2d kDelta_Reef = new Pose2d(3.932, 2.910, Rotation2d.fromDegrees(60));
+
+    public static final Pose2d kEcho_Reef = new Pose2d(4.889, 2.823, Rotation2d.fromDegrees(120));
+    public static final Pose2d kFoxtrot_Reef = new Pose2d(5.171, 2.985, Rotation2d.fromDegrees(120));
+
+    public static final Pose2d kGolf_Reef = new Pose2d(5.731, 3.769, Rotation2d.fromDegrees(180));
+    public static final Pose2d kHotel_Reef = new Pose2d(5.731, 4.101, Rotation2d.fromDegrees(180));
+
+    public static final Pose2d kIndia_Reef = new Pose2d(5.326, 4.976, Rotation2d.fromDegrees(240));
+    public static final Pose2d kJuliet_Reef = new Pose2d(5.042, 5.140, Rotation2d.fromDegrees(240));
+
+    public static final Pose2d kKilo_Reef = new Pose2d(4.082, 5.226, Rotation2d.fromDegrees(300));
+    public static final Pose2d kLima_Reef = new Pose2d(3.802, 5.064, Rotation2d.fromDegrees(300));
   }
 
   public static class LEDConstants {
