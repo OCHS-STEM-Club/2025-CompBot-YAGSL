@@ -33,6 +33,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SetpointConstants;
 import frc.robot.Constants.SpeedConstants;
+import frc.robot.commands.AutoAlign.AlignToReef;
+import frc.robot.commands.AutoAlign.AlignToReef.ReefSide;
 import frc.robot.commands.Manual.Climber.ClimberManualDown;
 import frc.robot.commands.Manual.Climber.ClimberManualUp;
 import frc.robot.commands.Manual.Elevator.ElevatorManualDown;
@@ -244,6 +246,9 @@ public class RobotContainer
 
   L4_CMD m_L4_CMD_AUTO = new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem); 
 
+
+  AlignToReef m_alignToReef = new AlignToReef(m_swerveSubsystem);
+
   // Trigger m_elevatorCreep_CMD = new Trigger(()-> m_elevatorSubsystem.getElevatorPositionRotations() > SetpointConstants.kL2ElevatorSetpoint);
 
 
@@ -438,13 +443,13 @@ public class RobotContainer
       
     // Driver Controls
 
-      // DRIVER_A_BUTTON.onTrue(
-      //   Commands.runOnce(m_swerveSubsystem :: zeroGyroWithAlliance)
-      // );
-
       DRIVER_A_BUTTON.onTrue(
-        m_swerveSubsystem.drive_To_Reef_A()
+        Commands.runOnce(m_swerveSubsystem :: zeroGyroWithAlliance)
       );
+
+      // DRIVER_A_BUTTON.onTrue(
+      //   m_swerveSubsystem.drive_To_Reef_A()
+      // );
       
       // Driver Elevator Stow
       DRIVER_B_BUTTON.whileTrue(
@@ -495,11 +500,13 @@ public class RobotContainer
 
 
 
-      DRIVER_RIGHT_TRIGGER.whileTrue(m_endEffectorManualOuttake);
+      // DRIVER_RIGHT_TRIGGER.whileTrue(m_endEffectorManualOuttake);
 
-      DRIVER_RIGHT_BUMPER.whileTrue(Commands.runOnce(()->getDesiredOuttakeCMD().schedule())).whileFalse(Commands.runOnce(()->getDesiredOuttakeCMD().cancel()));
+      // DRIVER_RIGHT_BUMPER.whileTrue(Commands.runOnce(()->getDesiredOuttakeCMD().schedule())).whileFalse(Commands.runOnce(()->getDesiredOuttakeCMD().cancel()));
 
+        DRIVER_RIGHT_BUMPER.whileTrue(m_alignToReef.AlignToTheClosestBranch(ReefSide.RIGHT));
 
+        DRIVER_RIGHT_TRIGGER.whileTrue(Commands.runOnce(()->getDesiredOuttakeCMD().schedule())).whileFalse(Commands.runOnce(()->getDesiredOuttakeCMD().cancel()));
 
       
 
@@ -517,7 +524,10 @@ public class RobotContainer
 
 
 
-      DRIVER_LEFT_BUMPER.whileTrue(driveFieldOrientedAnglularVelocity_SLOW);
+      DRIVER_LEFT_BUMPER.whileTrue(
+        m_alignToReef.AlignToTheClosestBranch(ReefSide.LEFT)
+        /*driveFieldOrientedAnglularVelocity_SLOW*/
+        );
 
 
 

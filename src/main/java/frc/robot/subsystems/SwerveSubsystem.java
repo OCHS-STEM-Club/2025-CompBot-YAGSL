@@ -223,7 +223,7 @@ public class SwerveSubsystem extends SubsystemBase
     Logger.recordOutput("Subsystems/VisionSubsystem/MegaTag1/Average Distance", avgDist);
 
     // If the average distance is too far, return very high std devs to ignore the pose
-    if (numTags == 1 && avgDist > 2.75) {
+    if (numTags == 1 && avgDist > 1.5) {
       estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
     }else{ // Scale the standard deviations based on the average distance
       estStdDevs = estStdDevs.times(1 + (avgDist * avgDist/30));
