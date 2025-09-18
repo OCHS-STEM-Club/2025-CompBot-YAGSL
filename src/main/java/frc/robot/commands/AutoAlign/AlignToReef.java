@@ -4,7 +4,8 @@
 
 package frc.robot.commands.AutoAlign;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +116,7 @@ public class AlignToReef extends Command {
 
     path.preventFlipping = true;
 
-    return AutoBuilder.followPath(path);
+    return AutoBuilder.followPath(path).andThen(PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2)));
   }
 
 
