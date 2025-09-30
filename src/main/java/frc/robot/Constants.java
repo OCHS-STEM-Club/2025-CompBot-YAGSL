@@ -255,8 +255,8 @@ public final class Constants
 
   public static class AutoAlignConstants {
     public static final PPHolonomicDriveController kAutoAlignController = new PPHolonomicDriveController(
-      new PIDConstants(2.5, 0, 0),
-      new PIDConstants(2.5, 0, 0));
+      new PIDConstants(1, 0, 0),
+      new PIDConstants(1, 0, 0));
   }
 
   public static class LEDConstants {

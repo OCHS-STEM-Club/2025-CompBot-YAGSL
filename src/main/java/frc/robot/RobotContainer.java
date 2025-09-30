@@ -304,12 +304,20 @@ public class RobotContainer
                                                         new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem).until(()->m_endEffectorSubsystem.hasCoral())
                                                       ));
 
+  NamedCommands.registerCommand("Wait 0.5 sec then EE_Intake", new WaitCommand(0.75)
+  .andThen(
+                                                      new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem).until(()->m_endEffectorSubsystem.hasCoral())
+                                                    ));
+    
+    NamedCommands.registerCommand("alignClosestRightReef", new AlignToReef(m_swerveSubsystem).AlignToTheClosestBranch(ReefSide.RIGHT));
+    NamedCommands.registerCommand("alignClosestLeftReef", new AlignToReef(m_swerveSubsystem).AlignToTheClosestBranch(ReefSide.LEFT));                                               
+
     // driveAngularVelocity.scaleTranslation(speedChooser.getSelected());
 
     NamedCommands.registerCommand("DA2", new ParallelCommandGroup(
       new REEF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, SetpointConstants.kEndEffectorL2AlgaeRemovalSetpoint, SetpointConstants.kElevatorL2AlgaeRemovalSetpoint),
       new EndEffectorManualIntake(m_endEffectorSubsystem)
-    ));
+    ).withTimeout(1));
 
 
 
