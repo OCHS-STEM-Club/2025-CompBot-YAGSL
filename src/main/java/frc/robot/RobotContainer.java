@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Rotation;
+
 import java.io.File;
 import java.util.function.DoubleSupplier;
 
@@ -12,6 +14,8 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -446,6 +450,8 @@ public class RobotContainer
     } else
     {
 
+
+      // m_driverController.rightStick().onTrue(m_alignToReef.getPathFromWaypoint(new Pose2d(0.917,0.622,Rotation2d.fromDegrees(-120))));
 
      
       

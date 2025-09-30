@@ -116,7 +116,7 @@ public class AlignToReef extends Command {
 
     path.preventFlipping = true;
 
-    return AutoBuilder.followPath(path).andThen(PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2)));
+    return AutoBuilder.followPath(path).andThen(PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2))).andThen();
   }
 
 
