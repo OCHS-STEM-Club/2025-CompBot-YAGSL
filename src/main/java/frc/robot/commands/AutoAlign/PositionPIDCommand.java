@@ -4,9 +4,15 @@
 
 package frc.robot.commands.AutoAlign;
 
+
+
+import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Time;
@@ -25,6 +31,7 @@ public class PositionPIDCommand extends Command {
 
   private final Timer timer = new Timer();
 
+  private final Debouncer endTriggerDebouncer = new Debouncer(0.04);
 
   private PositionPIDCommand(SwerveSubsystem swerveSubsystem, Pose2d targetPose) {
     m_swerveSubsystem = swerveSubsystem;
@@ -55,11 +62,24 @@ public class PositionPIDCommand extends Command {
 
     m_swerveSubsystem.drive(
       m_driverController.calculateRobotRelativeSpeeds(m_swerveSubsystem.getPose(), targetState));
+
+      Logger.recordOutput("Auto Adjust X Error", m_swerveSubsystem.getPose().getX()-m_targetPose.getX());
+      Logger.recordOutput("Auto Adjust Y Error", m_swerveSubsystem.getPose().getY()-m_targetPose.getY());
+      Logger.recordOutput("Auto Adjust Rot Error", m_swerveSubsystem.getPose().getRotation().getDegrees()-m_targetPose.getRotation().getDegrees());
   }
 
+
+  // Logger.recordOutput("Auto Adjust X Error", m_swerveSubsystem.getPose().getX()-targetPose.getX());
+  // Logger.recordOutput("Auto Adjust Y Error", m_swerveSubsystem.getPose().getY()-targetPose.getY());
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+      timer.stop();
+
+      Pose2d diffPose2d = m_swerveSubsystem.getPose().relativeTo(m_targetPose);
+
+      System.out.println("Adjustments to alignment took: " + timer.get() + " seconds and interrupted = " + interrupted);
+  }
 
   // Returns true when the command should end.
   @Override

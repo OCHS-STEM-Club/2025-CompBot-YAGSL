@@ -108,6 +108,15 @@ public class AlignToReef extends Command {
 
     PathConstraints pathConstraints = new PathConstraints(1.5, 3, 180, 360);
 
+    if (waypoints.get(0).anchor().getDistance(waypoints.get(1).anchor()) <0.01) {
+      return
+      Commands.sequence(
+          Commands.print("start position PID loop"),
+          PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2)),
+          Commands.print("end position PID loop")  
+      );
+    }
+
     PathPlannerPath path = new PathPlannerPath(
                                               waypoints, 
                                               pathConstraints, 
@@ -116,7 +125,14 @@ public class AlignToReef extends Command {
 
     path.preventFlipping = true;
 
-    return AutoBuilder.followPath(path).andThen(PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2))).andThen();
+    return (AutoBuilder.followPath(path).andThen(
+            PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2))
+            ))
+    .finallyDo((Interupt) -> {
+      if (Interupt) {
+        m_swerveSubsystem.drive(new ChassisSpeeds(0,0,0));
+      }
+    });
   }
 
 
