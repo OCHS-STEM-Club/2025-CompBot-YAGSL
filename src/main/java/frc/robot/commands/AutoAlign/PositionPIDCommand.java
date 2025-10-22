@@ -6,14 +6,20 @@ package frc.robot.commands.AutoAlign;
 
 
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.Timer;
@@ -78,12 +84,32 @@ public class PositionPIDCommand extends Command {
 
       Pose2d diffPose2d = m_swerveSubsystem.getPose().relativeTo(m_targetPose);
 
-      System.out.println("Adjustments to alignment took: " + timer.get() + " seconds and interrupted = " + interrupted);
+      System.out.println("Adjustments to alignment took: " + timer.get() + " seconds and interrupted = " + interrupted
+          + "/nPosition offset: " + Inches.convertFrom(diffPose2d.getTranslation().getNorm(), Meters) + " inches"
+          + "n/Rotation offset: " + diffPose2d.getRotation().getMeasure().in(Degrees) + " deg"
+          );
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+
+    Pose2d diffPose2d = m_swerveSubsystem.getPose().relativeTo(m_targetPose);
+
+    var rotation = MathUtil.isNear(
+      0,
+      diffPose2d.getRotation().getRotations(), 
+      Rotation2d.fromDegrees(1).getDegrees(),
+      0,
+      1
+    );
+
+    var position = diffPose2d.getTranslation().getNorm() < Inches.of(.5).in(Meters);
+
+    return endTriggerDebouncer.calculate(
+      rotation && position
+    );
+
+    
   }
 }

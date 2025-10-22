@@ -134,6 +134,34 @@ public class AlignToReef extends Command {
       }
     });
   }
+  public Command getPathFromWaypointHP(Pose2d waypoint) {
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+      new Pose2d(m_swerveSubsystem.getPose().getTranslation(), getPathVelocityHeading(m_swerveSubsystem.getFieldVelocity(), waypoint)),
+      waypoint
+    );
+
+    PathConstraints pathConstraints = new PathConstraints(1.5, 3, 180, 360);
+
+    if (waypoints.get(0).anchor().getDistance(waypoints.get(1).anchor()) <0.01) {
+      return
+      Commands.sequence(
+          Commands.print("start position PID loop"),
+          PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2)),
+          Commands.print("end position PID loop")  
+      );
+    }
+
+    PathPlannerPath path = new PathPlannerPath(
+                                              waypoints, 
+                                              pathConstraints, 
+                                              new IdealStartingState(getVelocityMagnitude(m_swerveSubsystem.getFieldVelocity()), m_swerveSubsystem.getHeading()),
+                                              new GoalEndState(0.0, waypoint.getRotation()));
+
+    path.preventFlipping = true;
+
+    return (AutoBuilder.followPath(path))
+    ;
+  }
 
 
   // Method to get Velocity Magnitude from ChassisSpeeds
@@ -201,6 +229,12 @@ public class AlignToReef extends Command {
     }, Set.of());
   }
 
+  public Command AlignToLeftHP(){
+    return Commands.defer(()->{
+      return getPathFromWaypoint(new Pose2d(1.091,7.052,Rotation2d.fromDegrees(-55)));
+    }, Set.of());
+  }
+
   public Command AlignToTheClosestPOVBasedBranch(ReefSide side){
     switch (side) {
       case LEFT:
@@ -222,4 +256,6 @@ public class AlignToReef extends Command {
       return AlignToTheClosestRightReefBranch();
     }
   }
+
+
 }
