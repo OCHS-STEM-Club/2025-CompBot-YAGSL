@@ -183,7 +183,7 @@ public final class Constants
 
     public static final double kL1EndEffectorSetpointAlt = 0.5;
     // L2
-    public static final double kL2ElevatorSetpoint = 7.25; 
+    public static final double kL2ElevatorSetpoint = 7.25;
     public static final double kL2EndEffectorSetpoint = 0.148; 
     // L3
     public static final double kL3ElevatorSetpoint = 12.18; 
@@ -234,23 +234,23 @@ public final class Constants
   }
 
   public static class ReefConstants {
-    public static final Pose2d kAlpha_Reef = new Pose2d(3.245, 4.278, Rotation2d.fromDegrees(0));
-    public static final Pose2d kBravo_Reef = new Pose2d(3.245, 3.950, Rotation2d.fromDegrees(0));
+    public static final Pose2d kAlpha_Reef = new Pose2d(3.131, 4.278, Rotation2d.fromDegrees(0));
+    public static final Pose2d kBravo_Reef = new Pose2d(3.131, 3.950, Rotation2d.fromDegrees(0));
 
-    public static final Pose2d kCharlie_Reef = new Pose2d(3.646, 3.078, Rotation2d.fromDegrees(60));
-    public static final Pose2d kDelta_Reef = new Pose2d(3.932, 2.910, Rotation2d.fromDegrees(60));
+    public static final Pose2d kCharlie_Reef = new Pose2d(3.589, 2.998, Rotation2d.fromDegrees(60));
+    public static final Pose2d kDelta_Reef = new Pose2d(3.875, 2.830, Rotation2d.fromDegrees(60));
 
     public static final Pose2d kEcho_Reef = new Pose2d(4.889, 2.823, Rotation2d.fromDegrees(120));
     public static final Pose2d kFoxtrot_Reef = new Pose2d(5.171, 2.985, Rotation2d.fromDegrees(120));
 
-    public static final Pose2d kGolf_Reef = new Pose2d(5.731, 3.769, Rotation2d.fromDegrees(180));
-    public static final Pose2d kHotel_Reef = new Pose2d(5.731, 4.101, Rotation2d.fromDegrees(180));
+    public static final Pose2d kGolf_Reef = new Pose2d(5.845, 3.769, Rotation2d.fromDegrees(180));
+    public static final Pose2d kHotel_Reef = new Pose2d(5.845, 4.101, Rotation2d.fromDegrees(180));
 
-    public static final Pose2d kIndia_Reef = new Pose2d(5.326, 4.976, Rotation2d.fromDegrees(240));
-    public static final Pose2d kJuliet_Reef = new Pose2d(5.042, 5.140, Rotation2d.fromDegrees(240));
+    public static final Pose2d kIndia_Reef = new Pose2d(5.326, 4.976, Rotation2d.fromDegrees(240)); //need to fix
+    public static final Pose2d kJuliet_Reef = new Pose2d(5.042, 5.140, Rotation2d.fromDegrees(240));//need to fix
 
-    public static final Pose2d kKilo_Reef = new Pose2d(4.082, 5.226, Rotation2d.fromDegrees(300));
-    public static final Pose2d kLima_Reef = new Pose2d(3.802, 5.064, Rotation2d.fromDegrees(300));
+    public static final Pose2d kKilo_Reef = new Pose2d(4.082, 5.226, Rotation2d.fromDegrees(300));  //need to fix
+    public static final Pose2d kLima_Reef = new Pose2d(3.802, 5.064, Rotation2d.fromDegrees(300));  //need to fix
   }
 
   public static class AutoAlignConstants {

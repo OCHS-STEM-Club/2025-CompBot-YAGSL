@@ -57,6 +57,9 @@ import frc.robot.commands.Sequential.Reef.L2_CMD;
 import frc.robot.commands.Sequential.Reef.L3_CMD;
 import frc.robot.commands.Sequential.Reef.L4_CMD;
 import frc.robot.commands.Sequential.Reef.REEF_CMD;
+import frc.robot.commands.Sequential.Score.L2_Score;
+import frc.robot.commands.Sequential.Score.L3_Score;
+import frc.robot.commands.Sequential.Score.L4_Score;
 import frc.robot.commands.Setpoints_CMD.Elevator_Setpoint_CMD;
 import frc.robot.commands.Setpoints_CMD.EndEffector_Setpoint_CMD;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -180,6 +183,10 @@ public class RobotContainer
   L2_CMD m_L2_CMD = new L2_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   L3_CMD m_L3_CMD = new L3_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
   L4_CMD m_L4_CMD = new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem);
+
+  L2_Score m_L2_Score = new L2_Score(m_elevatorSubsystem, m_endEffectorSubsystem);
+  L3_Score m_L3_Score = new L3_Score(m_elevatorSubsystem, m_endEffectorSubsystem);
+  L4_Score m_L4_Score = new L4_Score(m_elevatorSubsystem, m_endEffectorSubsystem);
 
   // Algae Removal Commands
   public REEF_CMD m_L3_Algae_Removal = new REEF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, SetpointConstants.kEndEffectorL3AlgaeRemovalSetpoint, SetpointConstants.kElevatorL3AlgaeRemovalSetpoint);
@@ -584,15 +591,15 @@ public class RobotContainer
         m_operatorController1.button(OperatorConstants.kButtonBox_L2_Button_Port1).whileTrue(
           Commands.run(() -> {
             m_elevatorManualDown.cancel();
-            m_L2_CMD.schedule();
+            m_L2_Score.schedule();
             m_endEffectorStow.cancel();
             m_HP_EE_Intake_Sequence.cancel();
           })
         ).whileFalse(
           Commands.runOnce(() -> {
-            m_L2_CMD.cancel();
-            m_elevatorManualDown.schedule();
+            m_L2_Score.cancel();
             m_endEffectorStow.schedule();
+            m_elevatorManualDown.schedule();
           })
         );
 
@@ -600,15 +607,15 @@ public class RobotContainer
         m_operatorController1.button(OperatorConstants.kButtonBox_L3_Button_Port1).whileTrue(
           Commands.run(() -> {
             m_elevatorManualDown.cancel();
-            m_L3_CMD.schedule();
+            m_L3_Score.schedule();
             m_endEffectorStow.cancel();
             m_HP_EE_Intake_Sequence.cancel();
           })
         ).whileFalse(
           Commands.runOnce(() -> {
-            m_L3_CMD.cancel();
-            m_elevatorManualDown.schedule();
+            m_L3_Score.cancel();
             m_endEffectorStow.schedule();
+            m_elevatorManualDown.schedule();
           })
         );
 
@@ -617,14 +624,14 @@ public class RobotContainer
         m_operatorController2.button(OperatorConstants.kButtonBox_L4_Button_Port2).whileTrue(
           Commands.run(() -> {
             m_elevatorManualDown.cancel();
-            m_L4_CMD.schedule();
+            m_L4_Score.schedule();
             m_endEffectorStow.cancel();
             m_HP_EE_Intake_Sequence.cancel();
            
           })
         ).whileFalse(
           Commands.runOnce(() -> {
-            m_L4_CMD.cancel();
+            m_L4_Score.cancel();
             m_elevatorManualDown.schedule();
             m_endEffectorStow.schedule();
           })
