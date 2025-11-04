@@ -240,17 +240,17 @@ public final class Constants
     public static final Pose2d kCharlie_Reef = new Pose2d(3.589, 2.998, Rotation2d.fromDegrees(60));
     public static final Pose2d kDelta_Reef = new Pose2d(3.875, 2.830, Rotation2d.fromDegrees(60));
 
-    public static final Pose2d kEcho_Reef = new Pose2d(4.889, 2.823, Rotation2d.fromDegrees(120));
-    public static final Pose2d kFoxtrot_Reef = new Pose2d(5.171, 2.985, Rotation2d.fromDegrees(120));
+    public static final Pose2d kEcho_Reef = new Pose2d(4.946, 2.724, Rotation2d.fromDegrees(120));
+    public static final Pose2d kFoxtrot_Reef = new Pose2d(5.228, 2.886, Rotation2d.fromDegrees(120));
 
     public static final Pose2d kGolf_Reef = new Pose2d(5.845, 3.769, Rotation2d.fromDegrees(180));
     public static final Pose2d kHotel_Reef = new Pose2d(5.845, 4.101, Rotation2d.fromDegrees(180));
 
-    public static final Pose2d kIndia_Reef = new Pose2d(5.326, 4.976, Rotation2d.fromDegrees(240)); //need to fix
-    public static final Pose2d kJuliet_Reef = new Pose2d(5.042, 5.140, Rotation2d.fromDegrees(240));//need to fix
+    public static final Pose2d kIndia_Reef = new Pose2d(5.383, 5.0747, Rotation2d.fromDegrees(240)); //need to fix
+    public static final Pose2d kJuliet_Reef = new Pose2d(5.099, 5.239, Rotation2d.fromDegrees(240));//need to fix
 
-    public static final Pose2d kKilo_Reef = new Pose2d(4.082, 5.226, Rotation2d.fromDegrees(300));  //need to fix
-    public static final Pose2d kLima_Reef = new Pose2d(3.802, 5.064, Rotation2d.fromDegrees(300));  //need to fix
+    public static final Pose2d kKilo_Reef = new Pose2d(4.025, 5.3247, Rotation2d.fromDegrees(300));  //need to fix
+    public static final Pose2d kLima_Reef = new Pose2d(3.745, 5.1627, Rotation2d.fromDegrees(300));  //need to fix
   }
 
   public static class AutoAlignConstants {
