@@ -98,7 +98,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Elevator Up
     public void elevatorUp() {
-      elevatorLeftLeaderMotor.set(0.25);
+      elevatorLeftLeaderMotor.set(0.15);
       elevatorRightFollowerMotor.setControl(elevatorFollower);
     }
 

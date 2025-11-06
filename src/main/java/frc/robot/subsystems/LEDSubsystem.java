@@ -23,6 +23,7 @@ import frc.robot.Constants.EndEffectorConstants;
 import frc.robot.Constants.LEDConstants;
 // import frc.robot.commands.Sequential.Intaking_CMDs.GI_Intake_Sequence;
 // import frc.robot.commands.Sequential.Intaking_CMDs.HP_Intake_Sequence;
+import frc.robot.commands.AutoAlign.AlignToReef;
 
 public class LEDSubsystem extends SubsystemBase {
   /** Creates a new LEDSubsystem. */
@@ -31,6 +32,7 @@ public class LEDSubsystem extends SubsystemBase {
   private ElevatorSubsystem m_elevatorSubsystem;
   private SwerveSubsystem m_swerveSubsystem;
   private RobotContainer m_robotContainer;
+  private AlignToReef m_align;
 
   // private GI_Intake_Sequence m_GI_Intake_Sequence;
   // private HP_Intake_Sequence m_HP_Intake_Sequence;
@@ -47,7 +49,8 @@ public class LEDSubsystem extends SubsystemBase {
     BROWNOUT,
     ENDGAME,
     Stow,
-    Auto_Align
+    Auto_Align,
+    Done
     
   }
 
@@ -56,13 +59,15 @@ public class LEDSubsystem extends SubsystemBase {
                       EndEffectorSubsystem endEffectorSubsystem,
                       ElevatorSubsystem elevatorSubsystem,
                       SwerveSubsystem swerveSubsystem, 
-                      RobotContainer robotContainer) {
+                      RobotContainer robotContainer,
+                      AlignToReef align) {
 
     // m_coralGroundIntakeSubsystem = coralGroundIntakeSubsystem;
     m_endEffectorSubsystem = endEffectorSubsystem;
     m_elevatorSubsystem = elevatorSubsystem;
     m_swerveSubsystem = swerveSubsystem;
     m_robotContainer = robotContainer;
+    m_align = align;
 
     // m_GI_Intake_Sequence = GI_Intake_Sequence;
     // m_HP_Intake_Sequence = HP_Intake_Sequence;
@@ -104,6 +109,10 @@ public class LEDSubsystem extends SubsystemBase {
         break;
       case Auto_Align:
         m_CANdle.animate(new StrobeAnimation(0, 255, 0, 255, 0.25, LEDConstants.kLEDCount));
+        break;
+
+      case Done:
+      m_CANdle.setLEDs(0, 255, 0);
     }
   }
 
@@ -117,9 +126,12 @@ public class LEDSubsystem extends SubsystemBase {
       setCANdle(LED_States.EE_Has_Coral);
     }else if(m_robotContainer.m_L2_Algae_Removal.isScheduled() || m_robotContainer.m_L3_Algae_Removal.isScheduled()){
       setCANdle(LED_States.Algae_Removal);
+    }else if (m_align.getdone()) {
+      setCANdle(LED_States.Done);
     }else if (m_robotContainer.m_driverController.leftBumper().getAsBoolean() || m_robotContainer.m_driverController.rightBumper().getAsBoolean()) {
       setCANdle(LED_States.Auto_Align);
-    }else{
+    }
+    else{
       setCANdle(LED_States.Stow);
     }
 

@@ -26,7 +26,15 @@ import edu.wpi.first.units.CurrentUnit;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ReefConstants;
+import frc.robot.commands.Sequential.STOW_CMD;
+import frc.robot.commands.Sequential.Reef.L3_CMD;
+import frc.robot.commands.Sequential.Score.L2_Score;
+import frc.robot.commands.Sequential.Score.L3_Score;
+import frc.robot.commands.Sequential.Score.L4_Score;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -35,11 +43,23 @@ public class AlignToReef extends Command {
 
   //Subsystems
   private SwerveSubsystem m_swerveSubsystem;
+  private ElevatorSubsystem m_elevatorSubsystem;
+  private EndEffectorSubsystem m_endEffectorSubsystem;
 
   public enum ReefSide {
     LEFT, 
     RIGHT
   }
+
+  public enum ReefLevel{
+    L1,
+    L2,
+    L3,
+    L4,
+    STOW
+  }
+
+  private ReefLevel desiredLevel  = ReefLevel.STOW;
 
   public ArrayList<Pose2d> allReefPoses = new ArrayList<Pose2d>();
   public ArrayList<Pose2d> leftReefPoses = new ArrayList<Pose2d>();
@@ -47,10 +67,15 @@ public class AlignToReef extends Command {
   public ArrayList<Pose2d> POVBasedLeftReefPoses = new ArrayList<Pose2d>();
   public ArrayList<Pose2d> POVBasedRightReefPoses = new ArrayList<Pose2d>();
 
-  public AlignToReef(SwerveSubsystem swerveSubsystem) {
+  public boolean isDone = false;
+
+  private CommandXboxController m_driverController = new CommandXboxController(0);
+
+  public AlignToReef(SwerveSubsystem swerveSubsystem, ElevatorSubsystem elevatorSubsystem, EndEffectorSubsystem endEffectorSubsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_swerveSubsystem = swerveSubsystem;
-
+    m_elevatorSubsystem = elevatorSubsystem;
+    m_endEffectorSubsystem = endEffectorSubsystem;
     addRequirements(m_swerveSubsystem);
 
     //add all reef poses to list
@@ -112,7 +137,7 @@ public class AlignToReef extends Command {
       return
       Commands.sequence(
           Commands.print("start position PID loop"),
-          PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2)),
+          PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2),this),
           Commands.print("end position PID loop")  
       );
     }
@@ -125,15 +150,28 @@ public class AlignToReef extends Command {
 
     path.preventFlipping = true;
 
-    return (AutoBuilder.followPath(path).andThen(
-            PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2))
-            ))
+    return AutoBuilder.followPath(path).andThen(PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2),this))
+                        
+                                // .alongWith(
+                                //   Commands.waitUntil(
+                                //     ()-> m_swerveSubsystem.getPose().getTranslation().getDistance(waypoints.get(1).anchor()) < 1))
+                                //     .andThen(getDesiredReefCommand(desiredLevel).until(()->m_driverController.leftTrigger().getAsBoolean())
+                                //     .beforeStarting(Commands.print("Going up to L3")))
+
+                                  
+                                  
+
+            
+            
     .finallyDo((Interupt) -> {
       if (Interupt) {
         m_swerveSubsystem.drive(new ChassisSpeeds(0,0,0));
       }
     });
   }
+
+
+
   public Command getPathFromWaypointHP(Pose2d waypoint) {
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
       new Pose2d(m_swerveSubsystem.getPose().getTranslation(), getPathVelocityHeading(m_swerveSubsystem.getFieldVelocity(), waypoint)),
@@ -146,7 +184,7 @@ public class AlignToReef extends Command {
       return
       Commands.sequence(
           Commands.print("start position PID loop"),
-          PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2)),
+          PositionPIDCommand.generateCommand(m_swerveSubsystem, waypoint, Seconds.of(2),this),
           Commands.print("end position PID loop")  
       );
     }
@@ -162,6 +200,27 @@ public class AlignToReef extends Command {
     return (AutoBuilder.followPath(path))
     ;
   }
+
+  public Command setDesiredReefLevel(ReefLevel level){
+    return Commands.runOnce(() -> desiredLevel = level)
+          .alongWith(Commands.print("Set desired reef level to " + level.toString()));
+  }
+  
+  
+  private Command getDesiredReefCommand(ReefLevel level){
+    switch (level) {
+      case L2:
+        return new L2_Score(m_elevatorSubsystem, m_endEffectorSubsystem).until(()-> m_driverController.leftTrigger().getAsBoolean());
+      case L3:
+        return new L3_Score(m_elevatorSubsystem, m_endEffectorSubsystem).until(()-> m_driverController.leftTrigger().getAsBoolean());
+      case L4:
+        return new L4_Score(m_elevatorSubsystem, m_endEffectorSubsystem).until(()-> m_driverController.leftTrigger().getAsBoolean());
+      default:
+        return new STOW_CMD(m_elevatorSubsystem, m_endEffectorSubsystem).until(()-> m_driverController.leftTrigger().getAsBoolean());
+    }
+  }
+
+  
 
 
   // Method to get Velocity Magnitude from ChassisSpeeds
@@ -255,6 +314,14 @@ public class AlignToReef extends Command {
       default:
       return AlignToTheClosestRightReefBranch();
     }
+  }
+
+  public Command setDone(boolean done){
+    return Commands.runOnce(()-> isDone = done);
+  }
+
+  public boolean getdone(){
+    return isDone;
   }
 
 

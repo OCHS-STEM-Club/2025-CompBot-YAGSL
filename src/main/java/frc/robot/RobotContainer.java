@@ -38,6 +38,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.SetpointConstants;
 import frc.robot.Constants.SpeedConstants;
 import frc.robot.commands.AutoAlign.AlignToReef;
+import frc.robot.commands.AutoAlign.AlignToReef.ReefLevel;
 import frc.robot.commands.AutoAlign.AlignToReef.ReefSide;
 import frc.robot.commands.Manual.Climber.ClimberManualDown;
 import frc.robot.commands.Manual.Climber.ClimberManualUp;
@@ -192,9 +193,9 @@ public class RobotContainer
   public REEF_CMD m_L3_Algae_Removal = new REEF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem, SetpointConstants.kEndEffectorL3AlgaeRemovalSetpoint, SetpointConstants.kElevatorL3AlgaeRemovalSetpoint);
   public REEF_CMD m_L2_Algae_Removal = new REEF_CMD(m_elevatorSubsystem, m_endEffectorSubsystem,SetpointConstants.kEndEffectorL2AlgaeRemovalSetpoint, SetpointConstants.kElevatorL2AlgaeRemovalSetpoint);
 
-
+  AlignToReef m_alignToReef = new AlignToReef(m_swerveSubsystem, m_elevatorSubsystem, m_endEffectorSubsystem);
   LEDSubsystem m_ledSubsystem = new LEDSubsystem( m_endEffectorSubsystem, m_elevatorSubsystem, m_swerveSubsystem,
-                                                this);
+                                                this,m_alignToReef);
   
   ClimberManualDown m_climberManualDown = new ClimberManualDown(m_climberSubsystem);
   ClimberManualUp m_climberManualUp = new ClimberManualUp(m_climberSubsystem);
@@ -258,7 +259,7 @@ public class RobotContainer
   L4_CMD m_L4_CMD_AUTO = new L4_CMD(m_elevatorSubsystem, m_endEffectorSubsystem); 
 
 
-  AlignToReef m_alignToReef = new AlignToReef(m_swerveSubsystem);
+  
 
   // Trigger m_elevatorCreep_CMD = new Trigger(()-> m_elevatorSubsystem.getElevatorPositionRotations() > SetpointConstants.kL2ElevatorSetpoint);
 
@@ -320,9 +321,6 @@ public class RobotContainer
                                                       new HP_EE_Intake_Sequence(m_elevatorSubsystem, m_endEffectorSubsystem).until(()->m_endEffectorSubsystem.hasCoral())
                                                     ));
     
-    NamedCommands.registerCommand("alignClosestRightReef", new AlignToReef(m_swerveSubsystem).AlignToTheClosestBranch(ReefSide.RIGHT));
-    NamedCommands.registerCommand("alignClosestLeftReef", new AlignToReef(m_swerveSubsystem).AlignToTheClosestBranch(ReefSide.LEFT));                                               
-
     // driveAngularVelocity.scaleTranslation(speedChooser.getSelected());
 
     NamedCommands.registerCommand("DA2", new ParallelCommandGroup(
@@ -464,24 +462,24 @@ public class RobotContainer
       
     // Driver Controls
 
-      DRIVER_A_BUTTON.onTrue(
-        Commands.runOnce(m_swerveSubsystem :: zeroGyroWithAlliance)
-      );
+      // DRIVER_A_BUTTON.onTrue(
+      //   Commands.runOnce(m_swerveSubsystem :: zeroGyroWithAlliance)
+      // );
 
       // DRIVER_A_BUTTON.onTrue(
       //   m_swerveSubsystem.drive_To_Reef_A()
       // );
       
       // Driver Elevator Stow
-      DRIVER_B_BUTTON.whileTrue(
-        Commands.run(() -> {
-          m_endEffectorStow.schedule();
-        })
-      ).whileFalse(
-        Commands.runOnce(() -> {
-          m_endEffectorStow.cancel();
-        })
-      );
+      // DRIVER_B_BUTTON.whileTrue(
+      //   Commands.run(() -> {
+      //     m_endEffectorStow.schedule();
+      //   })
+      // ).whileFalse(
+      //   Commands.runOnce(() -> {
+      //     m_endEffectorStow.cancel();
+      //   })
+      // );
       // DRIVER_B_BUTTON.whileTrue(m_alignToReef.AlignToLeftHP());
 
       DRIVER_POV_RIGHT.whileTrue(
@@ -520,7 +518,9 @@ public class RobotContainer
      //DRIVER_POV_UP.onTrue(m_HP_EE_Intake_Sequence_Reverse);
 
 
-
+     DRIVER_B_BUTTON.onTrue(m_alignToReef.setDesiredReefLevel(ReefLevel.L2));
+     DRIVER_X_BUTTON.onTrue(m_alignToReef.setDesiredReefLevel(ReefLevel.L3));
+     DRIVER_Y_BUTTON.onTrue(m_alignToReef.setDesiredReefLevel(ReefLevel.L4));
       // DRIVER_RIGHT_TRIGGER.whileTrue(m_endEffectorManualOuttake);
 
       // DRIVER_RIGHT_BUMPER.whileTrue(Commands.runOnce(()->getDesiredOuttakeCMD().schedule())).whileFalse(Commands.runOnce(()->getDesiredOuttakeCMD().cancel()));
@@ -532,10 +532,10 @@ public class RobotContainer
       
 
       // Cancel All Commands
-      DRIVER_X_BUTTON.whileTrue(Commands.run(()->CommandScheduler.getInstance().cancelAll()));
+      DRIVER_POV_DOWN.whileTrue(Commands.run(()->CommandScheduler.getInstance().cancelAll()));
 
-      // Override Intake Command
-      DRIVER_Y_BUTTON.whileTrue(m_endEffectorManualIntake);
+      // // Override Intake Command
+      DRIVER_POV_UP.whileTrue(m_endEffectorManualIntake);
       
       
       // Climber Commands

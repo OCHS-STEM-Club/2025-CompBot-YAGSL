@@ -32,6 +32,8 @@ public class PositionPIDCommand extends Command {
   /** Creates a new PositionPIDCommand. */
   public SwerveSubsystem m_swerveSubsystem;
 
+  private AlignToReef m_align;
+
   public final Pose2d m_targetPose;
   private PPHolonomicDriveController m_driverController = Constants.AutoAlignConstants.kAutoAlignController;
 
@@ -39,15 +41,20 @@ public class PositionPIDCommand extends Command {
 
   private final Debouncer endTriggerDebouncer = new Debouncer(0.04);
 
-  private PositionPIDCommand(SwerveSubsystem swerveSubsystem, Pose2d targetPose) {
+  private PositionPIDCommand(SwerveSubsystem swerveSubsystem, Pose2d targetPose, AlignToReef align) {
     m_swerveSubsystem = swerveSubsystem;
     m_targetPose = targetPose;
 
+    m_align = align;
+
   }
 
-  public static Command generateCommand(SwerveSubsystem swerveSubsystem, Pose2d targetPose, Time timeout) {
-    return new PositionPIDCommand(swerveSubsystem, targetPose)
+  public static Command generateCommand(SwerveSubsystem swerveSubsystem, Pose2d targetPose, Time timeout, AlignToReef align) {
+    return new PositionPIDCommand(swerveSubsystem, targetPose, align)
+        .beforeStarting(align.setDone(false))
+        .andThen(align.setDone(true))
         .withTimeout(timeout)
+
         .finallyDo(() -> {
           swerveSubsystem.drive(new ChassisSpeeds(0,0,0));
           swerveSubsystem.lock();
